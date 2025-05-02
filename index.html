@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>北斗の拳　トレモ数値表示チートコードジェネレータ</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    header { background: #0078d4; color: #fff; padding: 20px; text-align: center; }
+    header h1 { margin: 0; font-size: 1.8rem; }
+    .content { padding: 30px; }
+    .group { display: flex; align-items: center; margin-bottom: 20px; }
+    .group label { width: 160px; font-weight: bold; }
+    .group select { flex: 1; padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; margin-right: 10px; }
+    .group select:last-child { margin-right: 0; }
+    .base, .generated { margin-bottom: 30px; }
+    .base h2, .generated h2 { margin: 0 0 10px; font-size: 1.1rem; color: #0078d4; }
+    textarea { width: 100%; height: 180px; padding: 15px; font-family: monospace; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; resize: vertical; background: #fafafa; }
+    .actions { text-align: center; margin: 30px 0; }
+    .actions button { padding: 12px 30px; font-size: 1rem; background: #0078d4; color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; }
+    .actions button:hover { background: #005a9e; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>北斗の拳　トレモ数値表示チートコードジェネレータ</h1>
+    </header>
+    <div class="content">
+      <!-- グループ単位で実際のゲーム表示に合わせる -->
+      <div class="group">
+        <label>DAMAGE</label>
+        <select id="slot-0"></select>
+        <select id="slot-1"></select>
+      </div>
+      <div class="group">
+        <label>TOTAL DAMAGE</label>
+        <select id="slot-2"></select>
+        <select id="slot-3"></select>
+      </div>
+      <div class="group">
+        <label>STRIKES</label>
+        <select id="slot-4"></select>
+      </div>
+      <div class="group">
+        <label>MAX DAMAGE</label>
+        <select id="slot-5"></select>
+        <select id="slot-6"></select>
+      </div>
+      <div class="group">
+        <label>MAX STRIKES</label>
+        <select id="slot-7"></select>
+      </div>
+
+      <!-- 前提チートコード表示 -->
+      <div class="base">
+        <h2>前提チートコード</h2>
+        <textarea readonly id="base-codes">
+マスターコード:
+EC878528 1456E79B
+
+数値変更コード:
+1CBE6E88 205AE79C
+1CBE6E8C 28DAB025
+1CBE6E90 1446FF25
+1CBE6E94 14D907C6
+1CBE6E98 80DAE7A5
+1CBE6E9C 04D6E7A8
+1CBE6EA0 1446FF65
+1CBE6EA8 88DAE7A5
+1CBE6EAC 14A1FFC6
+1CBE6EB4 B8BAE7C5
+        </textarea>
+      </div>
+
+      <div class="actions">
+        <button id="generate-btn">暗号化チートコード生成</button>
+      </div>
+
+      <!-- 実際に生成されるコード -->
+      <div class="generated">
+        <h2>生成チートコード</h2>
+        <textarea id="output" readonly placeholder="ここに暗号化されたチートコードが表示されます..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/items.js"></script>
+  <script>
+    const displayAddresses = [
+      0x200FFF80, 0x200FFF84, 0x200FFF88, 0x200FFF8C,
+      0x200FFF90, 0x200FFF94, 0x200FFF98, 0x200FFF9C
+    ];
+    // itemsは外部ファイル(js/items.js)で定義されます
+
+    const maskAddr = [0xA6, 0x96, 0x01, 0x82];
+    const subAddr  = [0x6A, 0xFF, 0x7E, 0x5A];
+    const maskVal  = [0xD9, 0x3B, 0x1B, 0xCC];
+    const subVal   = [0xC5, 0xE5, 0x34, 0x27];
+
+    function initSelects() {
+      for (let i = 0; i < 8; i++) {
+        const sel = document.getElementById(`slot-${i}`);
+        for (const [name, addr] of Object.entries(items)) {
+          const opt = document.createElement('option');
+          opt.value = addr === null ? '' : addr.toString(16).toUpperCase().padStart(8,'0');
+          opt.textContent = name;
+          sel.appendChild(opt);
+        }
+      }
+    }
+
+    function encryptDword(hexStr, masks, subs) {
+      const bytes = hexStr.match(/.{2}/g).map(b => parseInt(b,16));
+      const enc = bytes.map((b,i) => ((b ^ masks[i]) - subs[i] + 0x100) & 0xFF);
+      return enc.map(b => b.toString(16).toUpperCase().padStart(2,'0')).join('');
+    }
+
+    function encryptLine(addrHex, valHex) {
+      return `${encryptDword(addrHex, maskAddr, subAddr)} ${encryptDword(valHex, maskVal, subVal)}`;
+    }
+
+    document.getElementById('generate-btn').addEventListener('click', () => {
+      const out = [];
+      for (let i = 0; i < 8; i++) {
+        const sel = document.getElementById(`slot-${i}`);
+        if (sel.value) {
+          const disp = displayAddresses[i].toString(16).toUpperCase().padStart(8,'0');
+          out.push(encryptLine(disp, sel.value));
+        }
+      }
+      document.getElementById('output').value = out.join('\n');
+    });
+
+    // 初期化
+    initSelects();
+  </script>
+</body>
+</html>
