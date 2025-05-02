@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PS2 チートコードジェネレーター</title>
+  <title>北斗の拳　トレモ数値表示チートコードジェネレータ</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; }
     .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
@@ -25,7 +25,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>PS2 チートコードジェネレーター<br><small>（暗号化版）</small></h1>
+      <h1>北斗の拳　トレモ数値表示チートコードジェネレータ</h1>
     </header>
     <div class="content">
       <!-- グループ単位で実際のゲーム表示に合わせる -->
@@ -75,18 +75,24 @@ EC878528 1456E79B
       </div>
 
       <div class="actions">
-        <button id="generate-btn">暗号化チートコード生成</button>
+        <button id="generate-btn">チートコード生成</button>
       </div>
 
       <!-- 実際に生成されるコード -->
       <div class="generated">
         <h2>生成チートコード</h2>
-        <textarea id="output" readonly placeholder="ここに暗号化されたチートコードが表示されます..."></textarea>
+        <textarea id="output" readonly placeholder="ここにチートコードが表示されます..."></textarea>
       </div>
     </div>
   </div>
 
   
+        <!-- ご意見・ご要望 -->
+      <div class="footer" style="text-align:center; margin-top:40px; font-size:0.9rem; color:#555;">
+        ご意見・ご要望などありましたら、下記のTwitterアカウントまでお知らせください。<br>
+        <a href="https://twitter.com/tiki_tiki_bone" target="_blank" style="color:#0078d4; text-decoration:none;">@tiki_tiki_bone</a>
+      </div>
+
   <script type="module">
     import items from './js/items.js';
     const displayAddresses = [
