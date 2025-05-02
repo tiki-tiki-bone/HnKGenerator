@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>北斗の拳　トレモ数値表示チートコードジェネレータ</title>
+  <title>PS2 チートコードジェネレーター</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; }
     .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
@@ -25,7 +25,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>北斗の拳　トレモ数値表示チートコードジェネレータ</h1>
+      <h1>PS2 チートコードジェネレーター<br><small>（暗号化版）</small></h1>
     </header>
     <div class="content">
       <!-- グループ単位で実際のゲーム表示に合わせる -->
@@ -86,8 +86,9 @@ EC878528 1456E79B
     </div>
   </div>
 
-  <script type="module" src="js/items.js"></script>
-  <script>
+  
+  <script type="module">
+    import items from './js/items.js';
     const displayAddresses = [
       0x200FFF80, 0x200FFF84, 0x200FFF88, 0x200FFF8C,
       0x200FFF90, 0x200FFF94, 0x200FFF98, 0x200FFF9C
