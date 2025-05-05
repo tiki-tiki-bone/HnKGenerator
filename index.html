@@ -27,6 +27,14 @@
     .actions { text-align: center; margin: 30px 0; }
     .actions button { padding: 12px 30px; font-size: 1rem; background: #0078d4; color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; }
     .actions button:hover { background: #005a9e; }
+  textarea {
+    padding: 1rem;
+    background: #f0f0f0;
+    white-space: pre-wrap;
+    margin: 0 0.2rem; /* 左右の余白を追加 */
+    box-sizing: border-box; /* 余白がテキストエリア内に含まれるように調整 */
+    height: 340px;
+  }
     
     /* Mobile対応 */
     @media (max-width: 600px) {
@@ -72,6 +80,9 @@
         <select id="slot-7"></select>
       </div>
 
+      <p style="margin-top: 0.5rem; text-align: right; font-size: small;">
+        硬直差の表示には別途<a href="codes.html#negaposi">専用チートコード</a>の適用が必要です。
+      </p>
       <!-- 前提チートコード表示 -->
       <div class="base">
         <h2>前提チートコード</h2>
@@ -89,19 +100,11 @@ EC878528 1456E79B
 1CBE6EA0 1446FF65
 1CBE6EA8 88DAE7A5
 1CBE6EAC 14A1FFC6
-1CBE6EB4 B8BAE7C5
-
-数値をキャラよりも手前に表示する
-1CBE6CEC 205428A5    
-
-メニューを開いた状態でも数値を表示する（動作未確認）
-1CBB8908 104CB14D
-1CBB8910 104CACDD
-1CBB8918 104CADE9
-1CBB8584 0896E6C1
-
-        </textarea>
+1CBE6EB4 B8BAE7C5</textarea>
       </div>
+      <p style="margin-top: 0.5rem; text-align: right;">
+        <a href="codes.html" style="text-decoration: underline;">その他チートコード一覧</a>
+      </p>
 
       <div class="actions">
         <button id="generate-btn">チートコード生成</button>
