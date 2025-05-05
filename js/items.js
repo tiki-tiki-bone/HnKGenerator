@@ -29,6 +29,7 @@ const items = {
     "2P ダガール使用可能までの時間": 0x00ab1268,
     "1P時間停止残り時間": 0x00aaedcc,
     "2P時間停止残り時間": 0x00ab0dec,
+    "硬直差": 0x000a0004,
 };
 
 export default items;
