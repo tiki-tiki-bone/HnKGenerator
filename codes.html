@@ -47,6 +47,30 @@
       margin-top: 2rem;
       font-size: 0.9rem;
     }
+    #annotation {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #fff8dc;
+  border: 1px solid #ccc;
+  padding: 1rem 2rem 1rem 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-size: 0.9rem;
+  max-width: 300px;
+  border-radius: 0.5rem;
+}
+  #annotation-close {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #666;
+  }
   </style>
 </head>
 <body>
@@ -244,6 +268,11 @@
 
   <div class="footer">
     ご意見・ご要望などありましたら、<a href="https://twitter.com/tiki_tiki_bone" target="_blank">@tiki_tiki_bone</a> までお知らせください。
+  </div>
+  <!-- 右下固定注釈ボックス -->
+  <div id="annotation">
+    <button id="annotation-close" onclick="document.getElementById('annotation').style.display='none'">×</button>
+    長いコードの入力には <a href="https://t.co/Sj2PDTp5YK" target="_blank">こちら</a>の使用を推奨します。<br>
   </div>
 </body>
 </html>
