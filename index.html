@@ -1,92 +1,310 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-NM6S92KNW1');
-  </script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>北斗の拳　トレモ数値表示チートコードジェネレータ</title>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; margin: 0; padding: 0; }
-    .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-    header { background: #0078d4; color: #fff; padding: 20px; text-align: center; }
-    header h1 { margin: 0; font-size: 1.8rem; }
-    .content { padding: 30px; }
-    .group { display: flex; align-items: center; margin-bottom: 20px; }
-    .group label { width: 160px; font-weight: bold; }
-    .group select { flex: 1; padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; margin-right: 10px; }
-    .group select:last-child { margin-right: 0; }
-    .base, .generated { margin-bottom: 30px; }
-    .base h2, .generated h2 { margin: 0 0 10px; font-size: 1.1rem; color: #0078d4; }
-    textarea { width: 100%; height: 180px; padding: 15px; font-family: monospace; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; resize: vertical; background: #fafafa; }
-    .actions { text-align: center; margin: 30px 0; }
-    .actions button { padding: 12px 30px; font-size: 1rem; background: #0078d4; color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; }
-    .actions button:hover { background: #005a9e; }
-  textarea {
-    padding: 1rem;
-    background: #f0f0f0;
-    white-space: pre-wrap;
-    margin: 0 0.2rem; /* 左右の余白を追加 */
-    box-sizing: border-box; /* 余白がテキストエリア内に含まれるように調整 */
-    height: 340px;
-  }
-    
-    /* Mobile対応 */
-    @media (max-width: 600px) {
-      .container { margin: 20px 10px; }
-      .content { padding: 20px; }
-      .group { flex-direction: column; align-items: flex-start; }
-      .group label { width: auto; margin-bottom: 8px; }
-      .group select { margin: 0 0 10px; width: 100%; }
-      .actions button { width: 100%; }
-      textarea { height: auto; }
-      .footer { margin: 20px 0; font-size: 0.85rem; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>北斗の拳　トレモ数値表示チートコードジェネレータ</h1>
-    </header>
-    <div class="content">
-      <!-- グループ単位で実際のゲーム表示に合わせる -->
-      <div class="group">
-        <label>DAMAGE</label>
-        <select id="slot-0"></select>
-        <select id="slot-1"></select>
-      </div>
-      <div class="group">
-        <label>TOTAL DAMAGE</label>
-        <select id="slot-2"></select>
-        <select id="slot-3"></select>
-      </div>
-      <div class="group">
-        <label>STRIKES</label>
-        <select id="slot-4"></select>
-      </div>
-      <div class="group">
-        <label>MAX DAMAGE</label>
-        <select id="slot-5"></select>
-        <select id="slot-6"></select>
-      </div>
-      <div class="group">
-        <label>MAX STRIKES</label>
-        <select id="slot-7"></select>
-      </div>
 
-      <p style="margin-top: 0.5rem; text-align: right; font-size: small;">
-        硬直差の表示には別途<a href="codes.html#negaposi">専用チートコード</a>の適用が必要です。
-      </p>
-      <!-- 前提チートコード表示 -->
-      <div class="base">
-        <h2>前提チートコード</h2>
-        <textarea readonly id="base-codes">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-NM6S92KNW1');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>北斗の拳　トレモ数値表示チートコードジェネレータ</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: nowrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.4rem 1rem;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            font-size: 1rem;
+            user-select: none;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            background-color: #ffb347;
+            color: #333;
+            border-color: #ffb347;
+            outline: none;
+        }
+
+        /* ハンバーガーボタン */
+        .menu-toggle {
+            display: none;
+            position: absolute;
+            top: 1.2rem;
+            right: 1rem;
+            width: 30px;
+            height: 22px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: space-between;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .menu-toggle span {
+            display: block;
+            height: 4px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        /* スマホ用 */
+        @media (max-width: 600px) {
+            nav {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #333;
+                flex-direction: column;
+                display: none;
+                /* 初期は非表示 */
+                margin: 0;
+                padding: 0.5rem 0;
+            }
+
+            nav a {
+                padding: 1rem;
+                border: none;
+                text-align: center;
+                font-size: 1.2rem;
+            }
+
+            nav.show {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            main {
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 1rem;
+                background: white;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            }
+
+            @media (max-width: 600px) {
+                nav a {
+                    display: block;
+                    margin: 10px 0;
+                }
+            }
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .group label {
+            width: 160px;
+            font-weight: bold;
+        }
+
+        .group select {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+
+        .group select:last-child {
+            margin-right: 0;
+        }
+
+        .base,
+        .generated {
+            margin-bottom: 30px;
+        }
+
+        .base h2,
+        .generated h2 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: vertical;
+            background: #fafafa;
+        }
+
+        .actions {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .actions button {
+            padding: 12px 30px;
+            font-size: 1rem;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .actions button:hover {
+            background: #005a9e;
+        }
+
+        textarea {
+            padding: 1rem;
+            background: #f0f0f0;
+            white-space: pre-wrap;
+            margin: 0 0.2rem;
+            /* 左右の余白を追加 */
+            box-sizing: border-box;
+            /* 余白がテキストエリア内に含まれるように調整 */
+            height: 340px;
+        }
+
+        /* Mobile対応 */
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .group label {
+                width: auto;
+                margin-bottom: 8px;
+            }
+
+            .group select {
+                margin: 0 0 10px;
+                width: 100%;
+            }
+
+            .actions button {
+                width: 100%;
+            }
+
+            textarea {
+                height: auto;
+            }
+
+            .footer {
+                margin: 20px 0;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>北斗の拳　トレモ数値表示チートコードジェネレータ</h1>
+        <div class="menu-toggle" id="menuToggle" aria-label="メニュー開閉" role="button" tabindex="0">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav id="navMenu">
+            <a href="codes.html">チートコード一覧</a>
+            <a href="index.html">チートコードジェネレータ</a>
+            <a href="iad_frame.html">低ダ攻撃発生Fデータ</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="content">
+            <!-- グループ単位で実際のゲーム表示に合わせる -->
+            <div class="group">
+                <label>DAMAGE</label>
+                <select id="slot-0"></select>
+                <select id="slot-1"></select>
+            </div>
+            <div class="group">
+                <label>TOTAL DAMAGE</label>
+                <select id="slot-2"></select>
+                <select id="slot-3"></select>
+            </div>
+            <div class="group">
+                <label>STRIKES</label>
+                <select id="slot-4"></select>
+            </div>
+            <div class="group">
+                <label>MAX DAMAGE</label>
+                <select id="slot-5"></select>
+                <select id="slot-6"></select>
+            </div>
+            <div class="group">
+                <label>MAX STRIKES</label>
+                <select id="slot-7"></select>
+            </div>
+
+            <p style="margin-top: 0.5rem; text-align: right; font-size: small;">
+                硬直差の表示には別途<a href="codes.html#negaposi">専用チートコード</a>の適用が必要です。
+            </p>
+            <!-- 前提チートコード表示 -->
+            <div class="base">
+                <h2>前提チートコード</h2>
+                <textarea readonly id="base-codes">
 マスターコード:
 EC878528 1456E79B
 
@@ -101,79 +319,97 @@ EC878528 1456E79B
 1CBE6EA8 88DAE7A5
 1CBE6EAC 14A1FFC6
 1CBE6EB4 B8BAE7C5</textarea>
-      </div>
-      <p style="margin-top: 0.5rem; text-align: right;">
-        <a href="codes.html" style="text-decoration: underline;">その他チートコード一覧</a>
-      </p>
+            </div>
+            <p style="margin-top: 0.5rem; text-align: right;">
+                <a href="codes.html" style="text-decoration: underline;">その他チートコード一覧</a>
+            </p>
 
-      <div class="actions">
-        <button id="generate-btn">チートコード生成</button>
-      </div>
+            <div class="actions">
+                <button id="generate-btn">チートコード生成</button>
+            </div>
 
-      <!-- 実際に生成されるコード -->
-      <div class="generated">
-        <h2>生成チートコード</h2>
-        <textarea id="output" readonly placeholder="ここにチートコードが表示されます..."></textarea>
-      </div>
+            <!-- 実際に生成されるコード -->
+            <div class="generated">
+                <h2>生成チートコード</h2>
+                <textarea id="output" readonly placeholder="ここにチートコードが表示されます..."></textarea>
+            </div>
+        </div>
     </div>
-  </div>
 
-  
-        <!-- ご意見・ご要望 -->
-      <div class="footer" style="text-align:center; margin-top:40px; font-size:0.9rem; color:#555;">
+
+    <!-- ご意見・ご要望 -->
+    <div class="footer" style="text-align:center; margin-top:40px; font-size:0.9rem; color:#555;">
         ご意見・ご要望などありましたら、下記のTwitterアカウントまでお知らせください。<br>
-        <a href="https://twitter.com/tiki_tiki_bone" target="_blank" style="color:#0078d4; text-decoration:none;">@tiki_tiki_bone</a>
-      </div>
+        <a href="https://twitter.com/tiki_tiki_bone" target="_blank"
+            style="color:#0078d4; text-decoration:none;">@tiki_tiki_bone</a>
+    </div>
 
-  <script type="module">
-    import items from './js/items.js';
-    const displayAddresses = [
-      0x200FFF80, 0x200FFF84, 0x200FFF88, 0x200FFF8C,
-      0x200FFF90, 0x200FFF94, 0x200FFF98, 0x200FFF9C
-    ];
-    // itemsは外部ファイル(js/items.js)で定義されます
+    <script type="module">
+        import items from './js/items.js';
+        const displayAddresses = [
+            0x200FFF80, 0x200FFF84, 0x200FFF88, 0x200FFF8C,
+            0x200FFF90, 0x200FFF94, 0x200FFF98, 0x200FFF9C
+        ];
+        // itemsは外部ファイル(js/items.js)で定義されます
 
-    const maskAddr = [0xA6, 0x96, 0x01, 0x82];
-    const subAddr  = [0x6A, 0xFF, 0x7E, 0x5A];
-    const maskVal  = [0xD9, 0x3B, 0x1B, 0xCC];
-    const subVal   = [0xC5, 0xE5, 0x34, 0x27];
+        const maskAddr = [0xA6, 0x96, 0x01, 0x82];
+        const subAddr = [0x6A, 0xFF, 0x7E, 0x5A];
+        const maskVal = [0xD9, 0x3B, 0x1B, 0xCC];
+        const subVal = [0xC5, 0xE5, 0x34, 0x27];
 
-    function initSelects() {
-      for (let i = 0; i < 8; i++) {
-        const sel = document.getElementById(`slot-${i}`);
-        for (const [name, addr] of Object.entries(items)) {
-          const opt = document.createElement('option');
-          opt.value = addr === null ? '' : addr.toString(16).toUpperCase().padStart(8,'0');
-          opt.textContent = name;
-          sel.appendChild(opt);
+        function initSelects() {
+            for (let i = 0; i < 8; i++) {
+                const sel = document.getElementById(`slot-${i}`);
+                for (const [name, addr] of Object.entries(items)) {
+                    const opt = document.createElement('option');
+                    opt.value = addr === null ? '' : addr.toString(16).toUpperCase().padStart(8, '0');
+                    opt.textContent = name;
+                    sel.appendChild(opt);
+                }
+            }
         }
-      }
-    }
 
-    function encryptDword(hexStr, masks, subs) {
-      const bytes = hexStr.match(/.{2}/g).map(b => parseInt(b,16));
-      const enc = bytes.map((b,i) => ((b ^ masks[i]) - subs[i] + 0x100) & 0xFF);
-      return enc.map(b => b.toString(16).toUpperCase().padStart(2,'0')).join('');
-    }
-
-    function encryptLine(addrHex, valHex) {
-      return `${encryptDword(addrHex, maskAddr, subAddr)} ${encryptDword(valHex, maskVal, subVal)}`;
-    }
-
-    document.getElementById('generate-btn').addEventListener('click', () => {
-      const out = [];
-      for (let i = 0; i < 8; i++) {
-        const sel = document.getElementById(`slot-${i}`);
-        if (sel.value) {
-          const disp = displayAddresses[i].toString(16).toUpperCase().padStart(8,'0');
-          out.push(encryptLine(disp, sel.value));
+        function encryptDword(hexStr, masks, subs) {
+            const bytes = hexStr.match(/.{2}/g).map(b => parseInt(b, 16));
+            const enc = bytes.map((b, i) => ((b ^ masks[i]) - subs[i] + 0x100) & 0xFF);
+            return enc.map(b => b.toString(16).toUpperCase().padStart(2, '0')).join('');
         }
-      }
-      document.getElementById('output').value = out.join('\n');
-    });
 
-    // 初期化
-    initSelects();
-  </script>
+        function encryptLine(addrHex, valHex) {
+            return `${encryptDword(addrHex, maskAddr, subAddr)} ${encryptDword(valHex, maskVal, subVal)}`;
+        }
+
+        document.getElementById('generate-btn').addEventListener('click', () => {
+            const out = [];
+            for (let i = 0; i < 8; i++) {
+                const sel = document.getElementById(`slot-${i}`);
+                if (sel.value) {
+                    const disp = displayAddresses[i].toString(16).toUpperCase().padStart(8, '0');
+                    out.push(encryptLine(disp, sel.value));
+                }
+            }
+            document.getElementById('output').value = out.join('\n');
+        });
+
+        // 初期化
+        initSelects();
+    </script>
+        <script>
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+        
+            function toggleMenu() {
+              navMenu.classList.toggle('show');
+            }
+        
+            menuToggle.addEventListener('click', toggleMenu);
+            menuToggle.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMenu();
+              }
+            });
+          </script>
 </body>
+
 </html>
