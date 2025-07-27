@@ -622,138 +622,142 @@ function setp2state(stateno) {
 }
 ("use strict");
 function p1getdata_fromjson() {
-    fetch(`./data/${charFolder[p1char]}_offset.json`)
+    p1offset_global["x"] = 0;
+    p1offset_global["y"] = 0;
+    // fetch(`./data/${charFolder[p1char]}_offset.json`)
+    //     .then(function (res) {
+    //         return res.json();
+    //     })
+    //     .then(function (res) {
+    //         if (res[p1stateno] == undefined) {
+    //             p1offset_global["x"] = 0;
+    //             p1offset_global["y"] = 0;
+    //         } else {
+    //             p1offset_global["x"] = res[p1stateno]["x"];
+    //             p1offset_global["y"] = res[p1stateno]["y"];
+    //         }
+    //     })
+    //    .then(() => {
+    fetch(`./data/${charFolder[p1char]}.json`)
         .then(function (res) {
             return res.json();
         })
         .then(function (res) {
-            if (res[p1stateno] == undefined) {
-                p1offset_global["x"] = 0;
-                p1offset_global["y"] = 0;
-            } else {
-                p1offset_global["x"] = res[p1stateno]["x"];
-                p1offset_global["y"] = res[p1stateno]["y"];
+            p1res = res[p1stateno];
+            p1timeno = 0;
+            p1elemno = 0;
+            p1elemtime = 0;
+            p1time = p1res["time"];
+            p1elem = Array(p1res["elems"].length);
+            p1image = Array(p1res["elems"].length);
+            p1offset["x"] = Array(p1res["elems"].length);
+            p1offset["y"] = Array(p1res["elems"].length);
+            for (var i = 0; i < p1res["elems"].length; i++) {
+                p1elem[p1res["elems"][i]["elemno"]] = p1res["elems"][i]["time"];
+                p1image[p1res["elems"][i]["elemno"]] = p1res["elems"][i]["imageno"];
+                p1offset["x"][p1res["elems"][i]["elemno"]] =
+                    p1res["elems"][i]["image_x"] + p1offset_global["x"];
+                p1offset["y"][p1res["elems"][i]["elemno"]] =
+                    p1res["elems"][i]["image_y"] + p1offset_global["y"];
+                p1hitbox[p1res["elems"][i]["elemno"]] = [];
+                for (var j = 0; j < p1res["elems"][i]["boxes"].length; j++) {
+                    var hitbox = [];
+                    hitbox.push(p1res["elems"][i]["boxes"][j]["x"]);
+                    hitbox.push(p1res["elems"][i]["boxes"][j]["y"]);
+                    hitbox.push(p1res["elems"][i]["boxes"][j]["w"]);
+                    hitbox.push(p1res["elems"][i]["boxes"][j]["h"]);
+                    hitbox.push(p1res["elems"][i]["boxes"][j]["attr"]);
+                    p1hitbox[p1res["elems"][i]["elemno"]].push(hitbox);
+                }
             }
-        })
-        .then(() => {
-            fetch(`./data/${charFolder[p1char]}.json`)
-                .then(function (res) {
-                    return res.json();
-                })
-                .then(function (res) {
-                    p1res = res[p1stateno];
-                    p1timeno = 0;
-                    p1elemno = 0;
-                    p1elemtime = 0;
-                    p1time = p1res["time"];
-                    p1elem = Array(p1res["elems"].length);
-                    p1image = Array(p1res["elems"].length);
-                    p1offset["x"] = Array(p1res["elems"].length);
-                    p1offset["y"] = Array(p1res["elems"].length);
-                    for (var i = 0; i < p1res["elems"].length; i++) {
-                        p1elem[p1res["elems"][i]["elemno"]] = p1res["elems"][i]["time"];
-                        p1image[p1res["elems"][i]["elemno"]] = p1res["elems"][i]["imageno"];
-                        p1offset["x"][p1res["elems"][i]["elemno"]] =
-                            p1res["elems"][i]["image_x"] + p1offset_global["x"];
-                        p1offset["y"][p1res["elems"][i]["elemno"]] =
-                            p1res["elems"][i]["image_y"] + p1offset_global["y"];
-                        p1hitbox[p1res["elems"][i]["elemno"]] = [];
-                        for (var j = 0; j < p1res["elems"][i]["boxes"].length; j++) {
-                            var hitbox = [];
-                            hitbox.push(p1res["elems"][i]["boxes"][j]["x"]);
-                            hitbox.push(p1res["elems"][i]["boxes"][j]["y"]);
-                            hitbox.push(p1res["elems"][i]["boxes"][j]["w"]);
-                            hitbox.push(p1res["elems"][i]["boxes"][j]["h"]);
-                            hitbox.push(p1res["elems"][i]["boxes"][j]["attr"]);
-                            p1hitbox[p1res["elems"][i]["elemno"]].push(hitbox);
-                        }
-                    }
 
-                    p1push["stand"]["x1"] = res["playerpush"]["stand"]["lx"];
-                    p1push["stand"]["y1"] = res["playerpush"]["stand"]["uy"];
-                    p1push["stand"]["x2"] = res["playerpush"]["stand"]["rx"];
-                    p1push["stand"]["y2"] = res["playerpush"]["stand"]["dy"];
-                    p1push["crouch"]["x1"] = res["playerpush"]["crouch"]["lx"];
-                    p1push["crouch"]["y1"] = res["playerpush"]["crouch"]["uy"];
-                    p1push["crouch"]["x2"] = res["playerpush"]["crouch"]["rx"];
-                    p1push["crouch"]["y2"] = res["playerpush"]["crouch"]["dy"];
-                    p1push["air"]["x1"] = res["playerpush"]["air"]["lx"];
-                    p1push["air"]["y1"] = res["playerpush"]["air"]["uy"];
-                    p1push["air"]["x2"] = res["playerpush"]["air"]["rx"];
-                    p1push["air"]["y2"] = res["playerpush"]["air"]["dy"];
+            p1push["stand"]["x1"] = res["playerpush"]["stand"]["lx"];
+            p1push["stand"]["y1"] = res["playerpush"]["stand"]["uy"];
+            p1push["stand"]["x2"] = res["playerpush"]["stand"]["rx"];
+            p1push["stand"]["y2"] = res["playerpush"]["stand"]["dy"];
+            p1push["crouch"]["x1"] = res["playerpush"]["crouch"]["lx"];
+            p1push["crouch"]["y1"] = res["playerpush"]["crouch"]["uy"];
+            p1push["crouch"]["x2"] = res["playerpush"]["crouch"]["rx"];
+            p1push["crouch"]["y2"] = res["playerpush"]["crouch"]["dy"];
+            p1push["air"]["x1"] = res["playerpush"]["air"]["lx"];
+            p1push["air"]["y1"] = res["playerpush"]["air"]["uy"];
+            p1push["air"]["x2"] = res["playerpush"]["air"]["rx"];
+            p1push["air"]["y2"] = res["playerpush"]["air"]["dy"];
 
-                    p1movement = p1res["movement"];
-                    p2getdata_fromjson();
-                });
+            p1movement = p1res["movement"];
+            p2getdata_fromjson();
         });
+    //});
 }
 
 ("use strict");
 function p2getdata_fromjson() {
-    fetch(`./data/${charFolder[p2char]}_offset.json`)
+    p2offset_global["x"] = 0;
+    p2offset_global["y"] = 0;
+    // fetch(`./data/${charFolder[p2char]}_offset.json`)
+    //     .then(function (res) {
+    //         return res.json();
+    //     })
+    //     .then(function (res) {
+    //         if (res[p2stateno] == undefined) {
+    //             p2offset_global["x"] = 0;
+    //             p2offset_global["y"] = 0;
+    //         } else {
+    //             p2offset_global["x"] = res[p2stateno]["x"];
+    //             p2offset_global["y"] = res[p2stateno]["y"];
+    //         }
+    //     })
+    //     .then(() => {
+    fetch(`./data/${charFolder[p2char]}.json`)
         .then(function (res) {
             return res.json();
         })
         .then(function (res) {
-            if (res[p2stateno] == undefined) {
-                p2offset_global["x"] = 0;
-                p2offset_global["y"] = 0;
-            } else {
-                p2offset_global["x"] = res[p2stateno]["x"];
-                p2offset_global["y"] = res[p2stateno]["y"];
+            p2res = res[p2stateno];
+            p2timeno = 0;
+            p2elemno = 0;
+            p2elemtime = 0;
+            p2time = p2res["time"];
+            p2elem = Array(p2res["elems"].length);
+            p2image = Array(p2res["elems"].length);
+            p2offset["x"] = Array(p2res["elems"].length);
+            p2offset["y"] = Array(p2res["elems"].length);
+            for (var i = 0; i < p2res["elems"].length; i++) {
+                p2elem[p2res["elems"][i]["elemno"]] = p2res["elems"][i]["time"];
+                p2image[p2res["elems"][i]["elemno"]] = p2res["elems"][i]["imageno"];
+                p2offset["x"][p2res["elems"][i]["elemno"]] =
+                    p2res["elems"][i]["image_x"] + p2offset_global["x"];
+                p2offset["y"][p2res["elems"][i]["elemno"]] =
+                    p2res["elems"][i]["image_y"] + p2offset_global["y"];
+                p2hitbox[p2res["elems"][i]["elemno"]] = [];
+                for (var j = 0; j < p2res["elems"][i]["boxes"].length; j++) {
+                    var hitbox = [];
+                    hitbox.push(p2res["elems"][i]["boxes"][j]["x"]);
+                    hitbox.push(p2res["elems"][i]["boxes"][j]["y"]);
+                    hitbox.push(p2res["elems"][i]["boxes"][j]["w"]);
+                    hitbox.push(p2res["elems"][i]["boxes"][j]["h"]);
+                    hitbox.push(p2res["elems"][i]["boxes"][j]["attr"]);
+                    p2hitbox[p2res["elems"][i]["elemno"]].push(hitbox);
+                }
             }
-        })
-        .then(() => {
-            fetch(`./data/${charFolder[p2char]}.json`)
-                .then(function (res) {
-                    return res.json();
-                })
-                .then(function (res) {
-                    p2res = res[p2stateno];
-                    p2timeno = 0;
-                    p2elemno = 0;
-                    p2elemtime = 0;
-                    p2time = p2res["time"];
-                    p2elem = Array(p2res["elems"].length);
-                    p2image = Array(p2res["elems"].length);
-                    p2offset["x"] = Array(p2res["elems"].length);
-                    p2offset["y"] = Array(p2res["elems"].length);
-                    for (var i = 0; i < p2res["elems"].length; i++) {
-                        p2elem[p2res["elems"][i]["elemno"]] = p2res["elems"][i]["time"];
-                        p2image[p2res["elems"][i]["elemno"]] = p2res["elems"][i]["imageno"];
-                        p2offset["x"][p2res["elems"][i]["elemno"]] =
-                            p2res["elems"][i]["image_x"] + p2offset_global["x"];
-                        p2offset["y"][p2res["elems"][i]["elemno"]] =
-                            p2res["elems"][i]["image_y"] + p2offset_global["y"];
-                        p2hitbox[p2res["elems"][i]["elemno"]] = [];
-                        for (var j = 0; j < p2res["elems"][i]["boxes"].length; j++) {
-                            var hitbox = [];
-                            hitbox.push(p2res["elems"][i]["boxes"][j]["x"]);
-                            hitbox.push(p2res["elems"][i]["boxes"][j]["y"]);
-                            hitbox.push(p2res["elems"][i]["boxes"][j]["w"]);
-                            hitbox.push(p2res["elems"][i]["boxes"][j]["h"]);
-                            hitbox.push(p2res["elems"][i]["boxes"][j]["attr"]);
-                            p2hitbox[p2res["elems"][i]["elemno"]].push(hitbox);
-                        }
-                    }
 
-                    p2push["stand"]["x1"] = res["playerpush"]["stand"]["lx"];
-                    p2push["stand"]["y1"] = res["playerpush"]["stand"]["uy"];
-                    p2push["stand"]["x2"] = res["playerpush"]["stand"]["rx"];
-                    p2push["stand"]["y2"] = res["playerpush"]["stand"]["dy"];
-                    p2push["crouch"]["x1"] = res["playerpush"]["crouch"]["lx"];
-                    p2push["crouch"]["y1"] = res["playerpush"]["crouch"]["uy"];
-                    p2push["crouch"]["x2"] = res["playerpush"]["crouch"]["rx"];
-                    p2push["crouch"]["y2"] = res["playerpush"]["crouch"]["dy"];
-                    p2push["air"]["x1"] = res["playerpush"]["air"]["lx"];
-                    p2push["air"]["y1"] = res["playerpush"]["air"]["uy"];
-                    p2push["air"]["x2"] = res["playerpush"]["air"]["rx"];
-                    p2push["air"]["y2"] = res["playerpush"]["air"]["dy"];
+            p2push["stand"]["x1"] = res["playerpush"]["stand"]["lx"];
+            p2push["stand"]["y1"] = res["playerpush"]["stand"]["uy"];
+            p2push["stand"]["x2"] = res["playerpush"]["stand"]["rx"];
+            p2push["stand"]["y2"] = res["playerpush"]["stand"]["dy"];
+            p2push["crouch"]["x1"] = res["playerpush"]["crouch"]["lx"];
+            p2push["crouch"]["y1"] = res["playerpush"]["crouch"]["uy"];
+            p2push["crouch"]["x2"] = res["playerpush"]["crouch"]["rx"];
+            p2push["crouch"]["y2"] = res["playerpush"]["crouch"]["dy"];
+            p2push["air"]["x1"] = res["playerpush"]["air"]["lx"];
+            p2push["air"]["y1"] = res["playerpush"]["air"]["uy"];
+            p2push["air"]["x2"] = res["playerpush"]["air"]["rx"];
+            p2push["air"]["y2"] = res["playerpush"]["air"]["dy"];
 
-                    p2movement = p2res["movement"];
-                    loadImage();
-                });
+            p2movement = p2res["movement"];
+            loadImage();
         });
+    // });
 }
 
 function p1boost(ischecked) {
