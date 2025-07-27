@@ -1,0 +1,79 @@
+<meta charset="UTF-8">
+<script src="./OpeningMatchupChecker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<canvas id="checker" style="background-color:yellow;"></canvas><br>
+<input type="button" value="再生" onclick="start();"> <input type="button" value="停止" onclick="stop();"> <input type="button" value="次フレーム" onclick="next();"> <input type="button" value="リセット" onclick="reset();">
+1Pキャラ <select id="1P_C" onchange="setp1char(value);">
+<option value="0">ケンシロウ</option>
+<option value="1">ラオウ</option>
+<option value="2">トキ</option>
+<option value="3">ジャギ</option>
+<option value="4">シン</option>
+<option value="5">レイ</option>
+<option value="6">ユダ</option>
+<option value="7">サウザー</option>
+<option value="8">ハート様</option>
+<option value="9">マミヤ</option>
+</select>　2Pキャラ <select id="2P_C" onchange="setp2char(value);">
+<option value="0">ケンシロウ</option>
+<option value="1">ラオウ</option>
+<option value="2">トキ</option>
+<option value="3">ジャギ</option>
+<option value="4">シン</option>
+<option value="5">レイ</option>
+<option value="6">ユダ</option>
+<option value="7">サウザー</option>
+<option value="8">ハート様</option>
+<option value="9">マミヤ</option>
+</select>
+<br>
+1P行動 <select id="1P_M" onchange="setp1state(value);">
+<option value="0">立ち</option>
+<option value="1">しゃがみガード</option>
+<option value="2">しゃがみ</option>
+<option value="4">立ちガード</option>
+<option value="7">バックジャンプ</option>
+<option value="to_vj">垂直ジャンプ</option>
+<option value="9">前ジャンプ</option>
+<option value="5a">遠A</option>
+<option value="5b">遠B</option>
+<option value="5c">遠C</option>
+<option value="5d">遠D</option>
+<option value="2a">2A</option>
+<option value="2b">2B</option>
+<option value="2c">2C</option>
+<option value="2d">2D</option>
+<option value="6a">6A</option>
+<option value="6b">6B</option>
+<option value="6d">6D</option>
+<option value="ab">ヘヴィーストライク</option>
+<option value="ac">グレイヴシュート</option>
+<option value="bd">掴み投げ</option>
+<option value="cd">バニシングストライク</option>
+<option value="e">ブースト</option>
+</select>　2P行動 <select id="2P_M" onchange="setp2state(value);">
+<option value="0">立ち</option>
+<option value="1">しゃがみガード</option>
+<option value="2">しゃがみ</option>
+<option value="4">立ちガード</option>
+<option value="7">バックジャンプ</option>
+<option value="to_vj">垂直ジャンプ</option>
+<option value="9">前ジャンプ</option>
+<option value="5a">遠A</option>
+<option value="5b">遠B</option>
+<option value="5c">遠C</option>
+<option value="5d">遠D</option>
+<option value="2a">2A</option>
+<option value="2b">2B</option>
+<option value="2c">2C</option>
+<option value="2d">2D</option>
+<option value="6a">6A</option>
+<option value="6b">6B</option>
+<option value="6d">6D</option>
+<option value="ab">ヘヴィーストライク</option>
+<option value="ac">グレイヴシュート</option>
+<option value="bd">掴み投げ</option>
+<option value="cd">バニシングストライク</option>
+<option value="e">ブースト</option>
+</select>
+<input type="checkbox" id="p1boost" onclick="p1boost(this.checked);" disabled>1P移動ブースト <input type="checkbox" id="p2boost" onclick="p2boost(this.checked);" disabled>2P移動ブースト
