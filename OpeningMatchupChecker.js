@@ -370,29 +370,29 @@ function loadImage() {
 
     stage_img.src = "./images/tokistage.jpg";
     for (var i = 0; i < p1elem.length; i++) {
-        p1_img[i].src =
-            "./images/" +
-            charFolder[p1char] +
-            "/" +
-            char[p1char] +
-            "_" +
-            p1stateno +
-            "_" +
-            p1image[i] +
-            ".png";
+        p1_img[i].src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+        // "./images/" +
+        // charFolder[p1char] +
+        // "/" +
+        // char[p1char] +
+        // "_" +
+        // p1stateno +
+        // "_" +
+        // p1image[i] +
+        // ".png";
         setloadfunc(p1_img[i]);
     }
     for (var i = 0; i < p2elem.length; i++) {
-        p2_img[i].src =
-            "./images/" +
-            charFolder[p2char] +
-            "/" +
-            char[p2char] +
-            "_" +
-            p2stateno +
-            "_" +
-            p2image[i] +
-            ".png";
+        p2_img[i].src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+        // "./images/" +
+        // charFolder[p2char] +
+        // "/" +
+        // char[p2char] +
+        // "_" +
+        // p2stateno +
+        // "_" +
+        // p2image[i] +
+        // ".png";
         setloadfunc(p2_img[i]);
     }
 }
