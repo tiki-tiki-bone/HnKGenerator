@@ -383,6 +383,13 @@
                         sel.appendChild(o);
                     });
                 });
+                // iOS等でselectのフォーカスが残る問題対策
+                document.querySelectorAll("select").forEach((sel) => {
+                    sel.addEventListener("change", function () {
+                        // すぐblurすると選択が効かない場合があるので、短い遅延を入れる
+                        setTimeout(() => sel.blur(), 50);
+                    });
+                });
             });
         </script>
     </body>
