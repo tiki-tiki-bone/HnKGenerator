@@ -1,8 +1,9 @@
 //描画コンテキストの取得
-var animid;
 
-const char = ["KE", "RA", "TO", "JA", "SH", "RE", "JU", "TH", "HE", "MA"];
-const charFolder = [
+let animId;
+
+const charCodes = ["KE", "RA", "TO", "JA", "SH", "RE", "JU", "TH", "HE", "MA"];
+const charFolders = [
     "kenshiro",
     "raoh",
     "toki",
@@ -14,7 +15,7 @@ const charFolder = [
     "heart",
     "mamiya",
 ];
-const boost = [
+const boostTable = [
     0, 28.799999237060547, 25.920000076293945, 23.328001022338867, 20.995201110839844,
     18.895681381225586, 17.006113052368164, 15.305501937866211, 13.774951934814453,
     12.397457122802734, 11.157711982727051, 10.041940689086914, 9.0377464294433594,
@@ -28,556 +29,642 @@ const boost = [
     0.4256897270679474, 0.3831207454204559, 0.3448086678981781, 0.3103277981281281,
     0.279295027256012, 0.2513655424118042, 0.2262289822101593, 0.2036060839891434,
 ];
-var state = {
-    0: "立ち",
-    1: "しゃがみガード",
-    2: "しゃがみ",
-    4: "立ちガード",
-    7: "バックジャンプ",
-    8: "垂直ジャンプ",
-    9: "前ジャンプ",
+const rawBoostTable = [
+    0, 28.8, 27.72, 26.748, 25.8732, 25.0859, 24.3773, 23.7395, 23.1656, 22.649, 22.1841, 21.7657,
+    21.3891, 21.0502, 20.7452, 20.4707, 20.2236, 20.0012, 19.8011, 19.621, 19.4589, 19.313, 19.1817,
+    19.0635, 18.9572, 18.8615, 18.7753, 18.6978, 18.628, 18.5652, 18.5087, 18.4578, 18.412, 18.3708,
+    18.3337, 18.3004, 18.2703, 18.2433, 18.2189, 18.197, 18.1773, 18.1596, 18.1436, 18.1293,
+    18.1163, 18.1047, 18.0942, 18.0847,
+];
+const charNames = [
+    "ケンシロウ",
+    "ラオウ",
+    "トキ",
+    "ジャギ",
+    "シン",
+    "レイ",
+    "ユダ",
+    "サウザー",
+    "ハート",
+    "マミヤ",
+];
+const stateNames = {
+    stand: "立ち",
+    walk_0: "前歩き",
+    walk_1: "前歩き",
+    "2g_0": "しゃがみガード",
+    "2g_1": "しゃがみガード",
+    crouch: "しゃがみ",
+    "5g_0": "立ちガード",
+    "5g_1": "立ちガード",
+    bj: "バックジャンプ",
+    bj_fall: "バックジャンプ",
+    bj_g_0: "バックジャンプガード",
+    bj_g_1: "バックジャンプガード",
+    vj: "垂直ジャンプ",
+    vj_fall: "垂直ジャンプ",
+    vj_g_0: "垂直ジャンプガード",
+    vj_g_1: "垂直ジャンプガード",
+    fj: "前ジャンプ",
+    fj_fall: "前ジャンプ",
+    fj_g_0: "前ジャンプガード",
+    fj_g_1: "前ジャンプガード",
     "5a": "遠A",
     "5b": "遠B",
     "5c": "遠C",
+    "5c_1": "遠C",
     "5d": "遠D",
     "2a": "2A",
     "2b": "2B",
     "2c": "2C",
+    "2c_1": "2C",
     "2d": "2D",
+    "2d_1": "2D",
     "6a": "6A",
     "6b": "6B",
     "6d": "6D",
     ab: "ヘヴィー",
     ac: "グレ",
     bd: "掴み投げ",
-    cd: "バニ",
+    cd_0: "バニ",
+    cd_1: "バニ",
+    cd_2: "溜めバニ",
+    cd_3: "溜めバニ",
+    cd_4: "溜めバニ",
+    proboke: "挑発",
 };
-var p1char = 0;
-var p2char = 0;
-var stage_img;
-var p1_img = [];
-var p2_img = [];
-var boost_img = [];
+
+// 共通化: p1=players[0], p2=players[1]
+const players = [
+    {
+        char: 0,
+        x: 480,
+        y: 984,
+        facing: 1,
+        stateNo: "stand",
+        time: 0,
+        timeNo: 0,
+        elemNo: 0,
+        elemTime: 0,
+        velocity: { x: 0, y: 0 },
+        push: { stand: {}, crouch: {}, air: {}, current: {} },
+        baseMove: {},
+        movement: [],
+        elem: [],
+        image: [],
+        level: [],
+        offset: { x: [], y: [] },
+        hitbox: [],
+        res: null,
+        boostNo: -1,
+        boostX: 0,
+        boostY: 0,
+        dataJson: "",
+        img: [],
+        offsetGlobal: { x: 0, y: 0 },
+    },
+    {
+        char: 0,
+        x: 800,
+        y: 984,
+        facing: -1,
+        stateNo: "stand",
+        time: 0,
+        timeNo: 0,
+        elemNo: 0,
+        elemTime: 0,
+        velocity: { x: 0, y: 0 },
+        push: { stand: {}, crouch: {}, air: {}, current: {} },
+        baseMove: {},
+        movement: [],
+        elem: [],
+        image: [],
+        level: [],
+        offset: { x: [], y: [] },
+        hitbox: [],
+        res: null,
+        boostNo: -1,
+        boostX: 0,
+        boostY: 0,
+        dataJson: "",
+        img: [],
+        offsetGlobal: { x: 0, y: 0 },
+    },
+];
+var stageImg;
+var boostImgs = [];
 var imgCount = 0;
-
-var p1x = 480.0;
-var p1y = 984.0;
-var p2x = 800.0;
-var p2y = 984.0;
-
-var p1facing = 1;
-var p2facing = -1;
-
-var time = -1;
-//コマ送り
-var isNext = false;
-var isPaused = true;
-//ステート番号
-var p1stateno = 0;
-var p2stateno = 0;
-//ステート全体時間
-var p1time = 0;
-var p2time = 0;
-//ステート内経過時間
-var p1timeno = 0;
-var p2timeno = 0;
-//スプライトの全体表示時間
-var p1elem;
-var p2elem;
-//画像番号
-var p1image;
-var p2image;
-//現在のスプライトの順番
-var p1elemno = 0;
-var p2elemno = 0;
-//現在のスプライトの表示時間
-var p1elemtime = 0;
-var p2elemtime = 0;
-//判定
-var p1hitbox = [];
-var p2hitbox = [];
-//衝突後
 var collision = false;
-//画像オフセット
 var stageoffset = [];
 stageoffset["x"] = -320;
 stageoffset["y"] = -544;
-var p1offset = [];
-var p2offset = [];
-var p1offset_global = [];
-var p2offset_global = [];
-//技固有移動値
-var p1movement = [];
-var p2movement = [];
-//速度
-var p1v = [];
-p1v["x"] = 0;
-p1v["y"] = 0;
-var p2v = [];
-p2v["x"] = 0;
-p2v["y"] = 0;
-//存在判定
-var p1push = [];
-p1push["stand"] = [];
-p1push["crouch"] = [];
-p1push["air"] = [];
-p1push["current"] = [];
-var p2push = [];
-p2push["stand"] = [];
-p2push["crouch"] = [];
-p2push["air"] = [];
-p2push["current"] = [];
-
-//変更後データバッファ
-var p1res;
-var p2res;
-//ブースト経過時間
-var p1boostno = -1;
-var p2boostno = -1;
-var p1boost_x = 0;
-var p1boost_y = 0;
-var p2boost_x = 0;
-var p2boost_y = 0;
-
 var context;
 var canvas;
-
-var p1datajson = "";
-var p2datajson = "";
-window.onload = function () {
+var time = -1;
+var isNext = false;
+var isPaused = true;
+window.onload = async function () {
     canvas = document.getElementById("checker");
-    canvas.width = 640;
-    canvas.height = 480;
+    // 高DPI対応
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = 640 * dpr;
+    canvas.height = 480 * dpr;
+    canvas.style.width = "640px";
+    canvas.style.height = "480px";
 
     if (canvas.getContext) {
         context = canvas.getContext("2d");
-        stage_img = new Image();
-        setloadfunc(stage_img);
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        stageImg = new Image();
+        setloadfunc(stageImg);
     }
-    loadImage_boost();
-    p1getdata_fromjson();
+    loadImageBoost();
+    await getDataFromJson(0);
+    await getDataFromJson(1);
+    await loadImage();
     adjustMoveLists();
     reset();
 };
 
-function loop(timestamp) {
-    setTimeout(function () {
-        time += 1;
-        setup_pos();
-        if (p1stateno == "vj" && p1timeno == 0) {
-            jumpvelset();
-        }
-        jumpvelset();
-        posaddvel();
-        cameramove();
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(stage_img, stageoffset["x"], stageoffset["y"]);
-        context.drawImage(
-            p1_img[p1image[p1elemno]],
-            p1x + stageoffset["x"] + parseInt(p1offset["x"][p1elemno]),
-            p1y +
-                stageoffset["y"] -
-                p1_img[p1image[p1elemno]].height +
-                parseInt(p1offset["y"][p1elemno]),
-        );
-        if (p1boostno >= 0 && p1boostno <= 31) {
-            context.drawImage(
-                boost_img[p1boostno],
-                p1boost_x + stageoffset["x"] - 450 * p1facing,
-                p1boost_y + stageoffset["y"] - 400,
-            );
-        } else if (p1stateno == "e" && p1timeno <= 31) {
-            context.drawImage(
-                boost_img[p1timeno],
-                p1x + stageoffset["x"] - 450 * p1facing,
-                p1y + stageoffset["y"] - 400,
-            );
-        }
-        context.transform(-1, 0, 0, 1, p2_img[p2image[p2elemno]].width, 0);
-        context.drawImage(
-            p2_img[p2image[p2elemno]],
-            -(p2x + stageoffset["x"] - parseInt(p2offset["x"][p2elemno])) +
-                p2_img[p2image[p2elemno]].width,
-            p2y +
-                stageoffset["y"] -
-                p2_img[p2image[p2elemno]].height +
-                parseInt(p2offset["y"][p2elemno]),
-        );
-        context.transform(-1, 0, 0, 1, p2_img[p2image[p2elemno]].width, 0);
-        if (p2boostno >= 0 && p2boostno <= 31) {
-            context.transform(-1, 0, 0, 1, boost_img[p2boostno].width, 0);
-            context.drawImage(
-                boost_img[p2boostno],
-                -(p2boost_x + stageoffset["x"]) - 210 * p2facing,
-                p2boost_y + stageoffset["y"] - 400,
-            );
-            context.transform(-1, 0, 0, 1, boost_img[p2boostno].width, 0);
-        } else if (p2stateno == "e" && p2timeno <= 31) {
-            context.transform(-1, 0, 0, 1, boost_img[p2timeno].width, 0);
-            context.drawImage(
-                boost_img[p2timeno],
-                -(p2x + stageoffset["x"]) - 210 * p2facing,
-                p2boost_y + stageoffset["y"] - 400,
-            );
-            context.transform(-1, 0, 0, 1, boost_img[p2timeno].width, 0);
-        }
+async function loop(timestamp) {
+    time += 1;
+    setUpPos();
+    baseMoveVelSet();
+    await posAddVel();
+    cameraMove();
+    console.log(players[0].x, players[0].y);
+    console.log(players[0].stateNo);
 
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(stageImg, stageoffset["x"], stageoffset["y"]);
+
+    // 共通化: 2キャラ分ループ
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        // 通常画像
+        // if (p.facing === 1) {
+        //     context.drawImage(
+        //         p.img[p.image[p.elemNo]],
+        //         p.x + stageoffset["x"] + parseInt(p.offset.x[p.elemNo]),
+        //         p.y + stageoffset["y"] + parseInt(p.offset.y[p.elemNo]),
+        //     );
+        // } else {
+        //     context.save();
+        //     context.transform(-1, 0, 0, 1, p.img[p.image[p.elemNo]].width, 0);
+        //     context.drawImage(
+        //         p.img[p.image[p.elemNo]],
+        //         -(p.x + stageoffset["x"] - parseInt(p.offset.x[p.elemNo])) +
+        //             p.img[p.image[p.elemNo]].width,
+        //         p.y + stageoffset["y"] + parseInt(p.offset.y[p.elemNo]),
+        //     );
+        //     context.restore();
+        // }
+        // ブースト画像
+        if (p.boostNo >= 0 && p.boostNo <= 31) {
+            if (p.facing === 1) {
+                context.drawImage(
+                    boostImgs[p.boostNo],
+                    p.boostX + stageoffset["x"] - 450 * p.facing,
+                    p.boostY + stageoffset["y"] - 400,
+                );
+            } else {
+                context.save();
+                context.transform(-1, 0, 0, 1, boostImgs[p.boostNo].width, 0);
+                context.drawImage(
+                    boostImgs[p.boostNo],
+                    -(p.boostX + stageoffset["x"]) - 210 * p.facing,
+                    p.boostY + stageoffset["y"] - 400,
+                );
+                context.restore();
+            }
+        } else if (p.stateNo == "e" && p.timeNo <= 31) {
+            if (p.facing === 1) {
+                context.drawImage(
+                    boostImgs[p.timeNo],
+                    p.x + stageoffset["x"] - 450 * p.facing,
+                    p.y + stageoffset["y"] - 400,
+                );
+            } else {
+                context.save();
+                context.transform(-1, 0, 0, 1, boostImgs[p.timeNo].width, 0);
+                context.drawImage(
+                    boostImgs[p.timeNo],
+                    -(p.x + stageoffset["x"]) - 210 * p.facing,
+                    p.boostY + stageoffset["y"] - 400,
+                );
+                context.restore();
+            }
+        }
+    }
+
+    // ヒットボックス描画
+    context.beginPath();
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        for (let i = 0; i < (p.hitbox[p.elemNo] ? p.hitbox[p.elemNo].length : 0); i++) {
+            const box = p.hitbox[p.elemNo][i];
+            if (box[4] == "1") {
+                context.fillStyle = "rgba(" + [0, 0, 255, 0.4] + ")";
+            } else if (box[4] == "0") {
+                context.fillStyle = "rgba(" + [255, 0, 0, 0.4] + ")";
+            } else if (box[4] == "G") {
+                context.fillStyle = "rgba(" + [0, 255, 0, 0.4] + ")";
+            }
+            // 向きで描画位置調整
+            if (p.facing === 1) {
+                context.fillRect(
+                    p.x + stageoffset["x"] + parseInt(box[0]),
+                    p.y + stageoffset["y"] + parseInt(box[1]),
+                    parseInt(box[2]),
+                    parseInt(box[3]),
+                );
+            } else {
+                context.fillRect(
+                    p.x + stageoffset["x"] - parseInt(box[0]),
+                    p.y + stageoffset["y"] + parseInt(box[1]),
+                    -parseInt(box[2]),
+                    parseInt(box[3]),
+                );
+            }
+        }
+    }
+
+    // 存在判定枠
+    context.fillStyle = "rgba(" + [0, 255, 0, 0.4] + ")";
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        let x1 = p.x + stageoffset["x"] + p.push["current"]["x1"] * p.facing;
+        let x2 = p.x + stageoffset["x"] + p.push["current"]["x2"] * p.facing;
+        let y1 = p.y + stageoffset["y"] + p.push["current"]["y1"];
+        let y2 = p.y + stageoffset["y"] + p.push["current"]["y2"];
+        // 左上基準・幅正方向で描画
+        if (x1 > x2) [x1, x2] = [x2, x1];
+        if (y1 > y2) [y1, y2] = [y2, y1];
+        context.fillRect(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    if (collisionCheck() != "") {
+        collision = true;
+    }
+
+    // キャラ座標に赤丸＋P1/P2ラベルを一番上に描画
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        const cx = p.x + stageoffset["x"];
+        const cy = p.y + stageoffset["y"];
         context.beginPath();
-        for (var i = 0; i < p1hitbox[p1elemno].length; i++) {
-            //喰らい判定
-            if (p1hitbox[p1elemno][i][4] == "1") {
-                context.fillStyle = "rgba(" + [0, 0, 255, 0.4] + ")";
-                //攻撃判定
-            } else if (p1hitbox[p1elemno][i][4] == "0") {
-                context.fillStyle = "rgba(" + [255, 0, 0, 0.4] + ")";
-                //その他
-            } else if (p1hitbox[p1elemno][i][4] == "G") {
-                context.fillStyle = "rgba(" + [0, 255, 0, 0.4] + ")";
-            }
-            context.fillRect(
-                p1x + stageoffset["x"] + parseInt(p1hitbox[p1elemno][i][0]),
-                p1y + stageoffset["y"] + parseInt(p1hitbox[p1elemno][i][1]),
-                parseInt(p1hitbox[p1elemno][i][2]),
-                parseInt(p1hitbox[p1elemno][i][3]),
-            );
-        }
-        for (var i = 0; i < p2hitbox[p2elemno].length; i++) {
-            //喰らい判定
-            if (p2hitbox[p2elemno][i][4] == "1") {
-                context.fillStyle = "rgba(" + [0, 0, 255, 0.4] + ")";
-                //攻撃判定
-            } else if (p2hitbox[p2elemno][i][4] == "0") {
-                context.fillStyle = "rgba(" + [255, 0, 0, 0.4] + ")";
-                //その他
-            } else if (p2hitbox[p2elemno][i][4] == "G") {
-                context.fillStyle = "rgba(" + [0, 255, 0, 0.4] + ")";
-            }
-            context.fillRect(
-                p2x + stageoffset["x"] - parseInt(p2hitbox[p2elemno][i][0]),
-                p2y + stageoffset["y"] + parseInt(p2hitbox[p2elemno][i][1]),
-                -parseInt(p2hitbox[p2elemno][i][2]),
-                parseInt(p2hitbox[p2elemno][i][3]),
-            );
-        }
+        context.arc(cx, cy, 6, 0, 2 * Math.PI);
+        context.fillStyle = "red";
+        context.fill();
+        context.strokeStyle = "black";
+        context.lineWidth = 1;
+        context.stroke();
+        // ラベル描画
+        context.font = "bold 8px sans-serif";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = "white";
+        context.fillText(idx === 0 ? "P1" : "P2", cx, cy);
+    }
 
-        context.fillStyle = "rgba(" + [0, 255, 0, 0.4] + ")";
-        context.fillRect(
-            p1x + stageoffset["x"] + p1push["current"]["x1"] * p1facing,
-            p1y + stageoffset["y"] + p1push["current"]["y1"],
-            p1push["current"]["x2"] - p1push["current"]["x1"],
-            p1push["current"]["y2"] - p1push["current"]["y1"],
-        );
-        context.fillRect(
-            p2x + stageoffset["x"] + p2push["current"]["x2"] * p2facing,
-            p2y + stageoffset["y"] + p2push["current"]["y1"],
-            p2push["current"]["x2"] - p2push["current"]["x1"],
-            p2push["current"]["y2"] - p2push["current"]["y1"],
-        );
-
-        if (collision_check() != "") {
-            collision = true;
-            reset();
+    // 共通化: アニメ進行・状態遷移
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        p.timeNo++;
+        p.elemTime++;
+        if (p.elemTime >= p.elem[p.elemNo] && p.elem[p.elemNo] != -1) {
+            p.elemNo++;
+            p.elemTime = 0;
         }
-        p1timeno++;
-        p2timeno++;
-        p1elemtime++;
-        p2elemtime++;
-        if (p1elemtime >= p1elem[p1elemno] && p1elem[p1elemno] != -1) {
-            p1elemno++;
-            p1elemtime = 0;
-        }
-        if (p1elemno >= p1elem.length) {
-            p1elemno = 0;
-            if (p1stateno == "to_vj") {
-                p1stateno = "vj";
-                p1getdata_fromjson();
-            } else if (
-                p1stateno != "2a" &&
-                p1stateno != "2b" &&
-                p1stateno != "2c" &&
-                p1stateno != "2d" &&
-                p1time != -1
-            ) {
-                p1stateno = 0;
-                jQuery("#1P_M").val("0");
-                p1getdata_fromjson();
-                stop();
-            } else if (p1time != -1) {
-                p1stateno = 1;
-                jQuery("#1P_M").val("1");
-                p1getdata_fromjson();
-                stop();
-            }
-        }
-        if (p2elemtime >= p2elem[p2elemno] && p2elem[p2elemno] != -1) {
-            p2elemno++;
-            p2elemtime = 0;
-        }
-        if (p2elemno >= p2elem.length) {
-            p2elemno = 0;
-            p2elemtime = 0;
+        if (p.elemNo >= p.elem.length) {
+            p.elemNo = 0;
+            // 状態遷移
             if (
-                p2stateno != "2a" &&
-                p2stateno != "2b" &&
-                p2stateno != "2c" &&
-                p2stateno != "2d" &&
-                p2time != -1
+                typeof p.stateNo === "string" &&
+                p.stateNo.includes("to_") &&
+                p.stateNo.includes("_g")
             ) {
-                p2stateno = 0;
-                jQuery("#2P_M").val("0");
-                p2getdata_fromjson();
-                stop();
-            } else if (p2time != -1) {
-                p2stateno = 1;
-                jQuery("#2P_M").val("1");
-                p2getdata_fromjson();
-                stop();
+                p.stateNo = p.stateNo.replace("to_", "");
+                p.stateNo = p.stateNo.replace("_g", "_g_0");
+                getDataFromJson(idx);
+            } else if (typeof p.stateNo === "string" && p.stateNo.includes("to_")) {
+                p.stateNo = p.stateNo.replace("to_", "");
+                getDataFromJson(idx);
+            } else if (p.stateNo == "vj") {
+                p.stateNo = "vj_fall";
+                getDataFromJson(idx);
+            } else if (p.stateNo == "bj") {
+                p.stateNo = "bj_fall";
+                getDataFromJson(idx);
+            } else if (p.stateNo == "fj") {
+                p.stateNo = "fj_fall";
+                getDataFromJson(idx);
+            } else if (p.stateNo == "cd_0") {
+                p.stateNo = "cd_1";
+                getDataFromJson(idx);
+            } else if (p.stateNo == "cd_2") {
+                p.stateNo = "cd_3";
+                getDataFromJson(idx);
+            } else if (p.stateNo == "cd_3") {
+                p.stateNo = "cd_4";
+                getDataFromJson(idx);
+            } else if (p.stateNo == "walk_0") {
+                p.stateNo = "walk_1";
+                getDataFromJson(idx);
+            } else if (p.stateNo.includes("g_0")) {
+                p.stateNo = p.stateNo.replace("_0", "_1");
+                getDataFromJson(idx);
+            } else if (p.char == 3 && p.stateNo == "6b") {
+                p.stateNo = "6b_1";
+                getDataFromJson(idx);
+            } else if (p.char == 3 && p.stateNo == "6b_1") {
+                p.stateNo = "6b_2";
+                getDataFromJson(idx);
+            } else if (
+                p.char == 1 &&
+                (p.stateNo == "5c" || p.stateNo == "5d" || p.stateNo == "2c" || p.stateNo == "2d")
+            ) {
+                p.stateNo = p.stateNo + "_1";
+                getDataFromJson(idx);
+            } else if (
+                p.stateNo != "2a" &&
+                p.stateNo != "2b" &&
+                !p.stateNo.includes("2c") &&
+                !p.stateNo.includes("2d") &&
+                p.time != -1
+            ) {
+                p.stateNo = "5g_0";
+                jQuery(idx === 0 ? "#1P_M" : "#2P_M").val("5g_0");
+                getDataFromJson(idx);
+                p._motionEnded = true;
+            } else if (p.time != -1) {
+                p.stateNo = "2g_0";
+                jQuery(idx === 0 ? "#1P_M" : "#2P_M").val("2g_0");
+                getDataFromJson(idx);
+                p._motionEnded = true;
             }
         }
+    }
 
-        if (time >= 200) {
-            stop();
-            reset();
-        }
+    // 両方のキャラのモーションが終わったらstop()
+    if (players[0]._motionEnded && players[1]._motionEnded) {
+        stop();
+        // フラグリセット
+        players[0]._motionEnded = false;
+        players[1]._motionEnded = false;
+    }
+    if (collision) {
+        await init();
+        stop();
+        time = 0;
+    }
 
-        if (isNext == true) {
-            isNext = false;
-            stop();
-            return;
-        }
-        if (isPaused != true) {
-            animid = window.requestAnimationFrame((ts) => loop(ts));
-        }
-    }, 1000 / 60);
+    if (time >= 200) {
+        stop();
+        reset();
+    }
+
+    if (isNext == true) {
+        isNext = false;
+        stop();
+    }
+    if (isPaused != true) {
+        animId = window.requestAnimationFrame((ts) => loop(ts));
+    }
 }
 
 function setloadfunc(obj) {
     obj.onload = function () {
         imgCount++;
-        if (imgCount == p1_img.length + p2_img.length + boost_img.length + 1) next();
+        // 2キャラ分+ブースト+ステージ
+        let total = players[0].img.length + players[1].img.length + boostImgs.length + 1;
+        if (imgCount == total) next();
     };
 }
 
 function loadImage() {
-    p1_img = [];
-    p2_img = [];
-    for (var i = 0; i < p1elem.length; i++) {
-        p1_img.push(new Image());
+    // 各キャラのimg配列を初期化
+    for (let idx = 0; idx < 2; idx++) {
+        players[idx].img = [];
+        for (let i = 0; i < players[idx].elem.length; i++) {
+            players[idx].img.push(new Image());
+        }
+        for (let i = 0; i < players[idx].elem.length; i++) {
+            players[idx].img[i].src =
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+X2ZkAAAAASUVORK5CYII=";
+            // 本来は画像パスをここで組み立てる
+            setloadfunc(players[idx].img[i]);
+        }
     }
-    for (var i = 0; i < p2elem.length; i++) {
-        p2_img.push(new Image());
-    }
-
-    stage_img.src = "./images/tokistage.jpg";
-    for (var i = 0; i < p1elem.length; i++) {
-        p1_img[i].src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-        // "./images/" +
-        // charFolder[p1char] +
-        // "/" +
-        // char[p1char] +
-        // "_" +
-        // p1stateno +
-        // "_" +
-        // p1image[i] +
-        // ".png";
-        setloadfunc(p1_img[i]);
-    }
-    for (var i = 0; i < p2elem.length; i++) {
-        p2_img[i].src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-        // "./images/" +
-        // charFolder[p2char] +
-        // "/" +
-        // char[p2char] +
-        // "_" +
-        // p2stateno +
-        // "_" +
-        // p2image[i] +
-        // ".png";
-        setloadfunc(p2_img[i]);
-    }
+    return new Promise((resolve, reject) => {
+        stageImg.onload = () => resolve(stageImg);
+        stageImg.onerror = reject;
+        stageImg.src = "./images/tokistage.jpg";
+    });
 }
 
-function draw_rect(x, y, w, h, attr) {}
-
-function loadImage_boost() {
+function loadImageBoost() {
     for (var i = 0; i < 32; i++) {
-        boost_img[i] = new Image();
-        boost_img[i].src = "./images/boost/boost_" + i + ".png";
-        setloadfunc(boost_img[i]);
+        boostImgs[i] = new Image();
+        boostImgs[i].src = "./images/boost/boost_" + i + ".png";
+        setloadfunc(boostImgs[i]);
     }
 }
 
 function stop() {
-    window.cancelAnimationFrame(animid);
+    window.cancelAnimationFrame(animId);
     isPaused = true;
 }
 
 function start() {
     if (isPaused == true) {
-        animid = window.requestAnimationFrame((ts) => loop(ts));
+        animId = window.requestAnimationFrame((ts) => loop(ts));
         isPaused = false;
     }
 }
 
 function next() {
     if (isPaused == true) {
-        animid = window.requestAnimationFrame((ts) => loop(ts));
+        animId = window.requestAnimationFrame((ts) => loop(ts));
     }
     isNext = true;
 }
 
-function setup_pos() {
-    p1v["x"] = 0;
-    p1v["y"] = 0;
-    p2v["x"] = 0;
-    p2v["y"] = 0;
-    if (p1y < 984) {
-        p1push["current"] = p1push["air"];
-    } else if (
-        p1y >= 984 &&
-        p1stateno != "1" &&
-        p1stateno != "2" &&
-        p1stateno != "2a" &&
-        p1stateno != "2b" &&
-        p1stateno != "2c" &&
-        p1stateno != "2d"
-    ) {
-        p1push["current"] = p1push["stand"];
-    } else {
-        p1push["current"] = p1push["crouch"];
-    }
-    if (p2y < 984) {
-        p2push["current"] = p2push["air"];
-    } else if (
-        p2y >= 984 &&
-        p2stateno != "1" &&
-        p2stateno != "2" &&
-        p2stateno != "2a" &&
-        p2stateno != "2b" &&
-        p2stateno != "2c" &&
-        p2stateno != "2d"
-    ) {
-        p2push["current"] = p2push["stand"];
-    } else {
-        p2push["current"] = p2push["crouch"];
-    }
-    if (p1boostno >= 0) {
-        p1v["x"] += boost[p1boostno];
-        p1boostno++;
-        if (p1boostno >= boost.length) p1boostno = -1;
-        jQuery("#p1boost").prop("checked", false);
-    }
-    if (p2boostno >= 0) {
-        p2v["x"] += boost[p2boostno];
-        p2boostno++;
-        if (p2boostno >= boost.length) p2boostno = -1;
-        jQuery("#p2boost").prop("checked", false);
-    }
-    for (var i = 0; i < p1movement.length; i++) {
-        if (p1movement[i]["time"] == p1timeno) {
-            p1v["x"] += parseFloat(p1movement[i]["x"]);
-            p1v["y"] += parseFloat(p1movement[i]["y"]);
+function setUpPos() {
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        if (p.boostNo >= 0) {
+            p.velocity.x = boostTable[p.boostNo];
+            p.boostNo++;
+            if (p.boostNo >= boostTable.length) p.boostNo = -1;
+            jQuery(idx === 0 ? "#p1boost" : "#p2boost").prop("checked", false);
         }
-    }
-    for (var i = 0; i < p2movement.length; i++) {
-        if (p2movement[i]["time"] == p2timeno) {
-            p2v["x"] += parseFloat(p2movement[i]["x"]);
-            p2v["y"] += parseFloat(p2movement[i]["y"]);
+        if (p.stateNo == "e") {
+            p.velocity.x = rawBoostTable[p.timeNo];
+        }
+        for (let i = 0; i < (p.movement ? p.movement.length : 0); i++) {
+            if (p.movement[i]["time"] == p.timeNo) {
+                move(idx, parseFloat(p.movement[i]["x"]), parseFloat(p.movement[i]["y"]));
+            }
         }
     }
 }
 
-function jumpvelset() {
-    if (p1stateno == "vj") {
-        p1v["y"] = -15;
-    }
-    if (p2stateno == "vj") {
-        p2v["y"] = -15;
+function baseMoveVelSet() {
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        if (p.timeNo == 0) {
+            if (p.stateNo == "vj" || p.stateNo == "vj_g_0") {
+                p.velocity.y = p.baseMove["vertical_jump_y"];
+            } else if (p.stateNo == "bj" || p.stateNo == "bj_g_0") {
+                p.velocity.y = p.baseMove["back_jump_y"];
+            } else if (p.stateNo == "fj" || p.stateNo == "fj_g_0") {
+                p.velocity.y = p.baseMove["forward_jump_y"];
+            }
+            if (p.char == 2 && p.stateNo == "walk_1") {
+                p.velocity.x = p.baseMove["forward_walk"];
+            }
+        }
+        if (p.timeNo == 1) {
+            if (p.stateNo == "bj" || p.stateNo == "bj_g_0") {
+                p.velocity.x = p.baseMove["back_jump_x"];
+            } else if (p.stateNo == "fj" || p.stateNo == "fj_g_0") {
+                p.velocity.x = p.baseMove["forward_jump_x"];
+            }
+        }
+        if (p.timeNo == 3) {
+            if (p.stateNo == "walk_0") {
+                p.velocity.x = p.baseMove["forward_walk"];
+            }
+        }
     }
 }
 
-function posaddvel() {
-    if (p1y < 984) {
-        p1v["y"] += 1.1;
-    }
-    if (p2y < 984) {
-        p2v["y"] += 1.1;
+async function posAddVel() {
+    // 振り向き判定を行うstateNoリスト
+    const autoFacingStates = ["stand", "land", "walk_0", "walk_1"];
+
+    // 重力加算
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        if (p.y < 984 || p.velocity.y < 0) {
+            if (!(p.char == 3 && p.stateNo.includes("6b"))) {
+                p.velocity.y += 1.1;
+            }
+        }
     }
 
-    var p1x_ = p1x + p1v["x"] * p1facing;
-    var p1y_ = p1y + p1v["y"];
-    var p2x_ = p2x + p2v["x"] * p2facing;
-    var p2y_ = p2y + p2v["y"];
-    var mx1, my1, mx2, my2, ex1, ey1, ex2, ey2;
-    mx1 = p1x_ + p1push["current"]["x1"] * p1facing;
-    my1 = p1y_ + p1push["current"]["y1"];
-    mx2 = p1x_ + p1push["current"]["x2"] * p1facing;
-    my2 = p1y_ + p1push["current"]["y2"];
-    if (mx1 > mx2) {
-        var temp = mx1;
-        mx1 = mx2;
-        mx2 = temp;
+    // 共通化: 振り向き判定を行うstateNoのみ自動で向きを判定
+    for (let idx = 0; idx < 2; idx++) {
+        const otherIdx = 1 - idx;
+        const p = players[idx];
+        const prevFacing = p.facing;
+        if (autoFacingStates.includes(p.stateNo)) {
+            if (p.x === players[otherIdx].x) {
+                // 同座標なら何もしない
+            } else if (p.x < players[otherIdx].x) {
+                p.facing = 1;
+            } else {
+                p.facing = -1;
+            }
+        }
+        // 前歩き中に振り向いたら立ちガードに切り替え
+        if ((p.stateNo === "walk_0" || p.stateNo === "walk_1") && prevFacing !== p.facing) {
+            p.stateNo = "5g_0";
+            await getDataFromJson(idx);
+        }
     }
-    ex1 = p2x_ + p2push["current"]["x1"] * p2facing;
-    ey1 = p2y_ + p2push["current"]["y1"];
-    ex2 = p2x_ + p2push["current"]["x2"] * p2facing;
-    ey2 = p2y_ + p2push["current"]["y2"];
-    if (ex1 > ex2) {
-        var temp = ex1;
-        ex1 = ex2;
-        ex2 = temp;
+
+    // 2キャラの次フレーム座標・push枠計算
+    const px = [
+        players[0].x + players[0].velocity.x * players[0].facing,
+        players[1].x + players[1].velocity.x * players[1].facing,
+    ];
+    const py = [players[0].y + players[0].velocity.y, players[1].y + players[1].velocity.y];
+    let box = [[], []];
+    for (let idx = 0; idx < 2; idx++) {
+        const p = players[idx];
+        if (py[idx] < 984) {
+            p.push.current = p.push.air;
+        } else if (
+            py[idx] >= 984 &&
+            p.stateNo != "1" &&
+            p.stateNo != "2" &&
+            p.stateNo != "2a" &&
+            p.stateNo != "2b" &&
+            p.stateNo != "2c" &&
+            p.stateNo != "2d"
+        ) {
+            p.push.current = p.push.stand;
+        } else {
+            p.push.current = p.push.crouch;
+        }
+        box[idx] = {
+            x1: px[idx] + p.push.current.x1 * p.facing,
+            y1: py[idx] + p.push.current.y1,
+            x2: px[idx] + p.push.current.x2 * p.facing,
+            y2: py[idx] + p.push.current.y2,
+        };
+        if (box[idx].x1 > box[idx].x2) {
+            let temp = box[idx].x1;
+            box[idx].x1 = box[idx].x2;
+            box[idx].x2 = temp;
+        }
     }
-    if (mx1 <= ex2 && ex1 <= mx2 && my1 <= ey2 && ey1 <= my2) {
-        p1move((p1v["x"] - p2v["x"]) / 2, p1v["y"]);
-        p2move((p2v["x"] - p1v["x"]) / 2, p2v["y"]);
-        var dx =
-            (p1x + p1push["current"]["x2"] * p1facing - p2x - p2push["current"]["x2"] * p2facing) /
-            2;
-        p1move(-dx, 0);
-        p2move(-dx, 0);
+
+    // 衝突判定
+    if (
+        box[0].x1 <= box[1].x2 &&
+        box[1].x1 <= box[0].x2 &&
+        box[0].y1 <= box[1].y2 &&
+        box[1].y1 <= box[0].y2
+    ) {
+        // 片方空中
+        if (
+            (players[0].push.current == players[0].push.air &&
+                players[1].push.current != players[1].push.air) ||
+            (players[0].push.current != players[0].push.air &&
+                players[1].push.current == players[1].push.air)
+        ) {
+            move(0, 0, players[0].velocity.y);
+            move(1, 0, players[1].velocity.y);
+            let dx =
+                players[0].x +
+                players[0].push.current.x2 * players[0].facing -
+                players[1].x -
+                players[1].push.current.x2 * players[1].facing;
+            if (players[0].push.current == players[0].push.air) {
+                move(0, -dx, 0);
+            } else {
+                move(1, -dx, 0);
+            }
+        } else {
+            move(0, (players[0].velocity.x - players[1].velocity.x) / 2, players[0].velocity.y);
+            move(1, (players[1].velocity.x - players[0].velocity.x) / 2, players[1].velocity.y);
+            let dx =
+                (players[0].x +
+                    players[0].push.current.x2 * players[0].facing -
+                    players[1].x -
+                    players[1].push.current.x2 * players[1].facing) /
+                2;
+            move(0, -dx, 0);
+            move(1, -dx, 0);
+        }
     } else {
-        p1move(p1v["x"], p1v["y"]);
-        p2move(p2v["x"], p2v["y"]);
+        move(0, players[0].velocity.x, players[0].velocity.y);
+        move(1, players[1].velocity.x, players[1].velocity.y);
     }
 }
 
-function p1move(x, y) {
-    x = parseFloat(x);
-    y = parseFloat(y);
-    p1x += x * p1facing;
-    p1y += y;
-    if (p1x < 0) {
-        p1x = 0;
-    }
-    if (p1x > 1280 - p1push[""]) {
-        p1x = 1280;
-    }
-    if (p1y < -64) {
-        p1y = -64;
-    }
-    if (p1y > 984) {
-        p1y = 984;
-    }
-}
-
-function p2move(x, y) {
-    p2x += x * p2facing;
-    p2y += y;
-    if (p2x < 0) p2x = 0;
-    if (p2x > 1280) p2x = 1280;
-    if (p2y < -64) p2y = -64;
-    if (p2y > 984) p2y = 984;
-}
-
-function setp1char(charid) {
-    p1char = charid;
+function setChar(idx, charId) {
+    players[idx].char = charId;
     adjustMoveLists();
-    p1getdata_fromjson();
+    getDataFromJson(idx);
 }
 
 function adjustMoveLists() {
-    adjustMoveList("1P_M", p1char);
-    adjustMoveList("2P_M", p2char);
+    adjustMoveList("1P_M", players[0].char);
+    adjustMoveList("2P_M", players[1].char);
 }
 
 function adjustMoveList(pulldownId, charId) {
@@ -593,380 +680,308 @@ function adjustMoveList(pulldownId, charId) {
     }
 }
 
-function setp2char(charid) {
-    p2char = charid;
+function SetBoostCheckboxEnabled(idx) {
+    let stateNo = players[idx].stateNo;
+    if (
+        stateNo == "stand" ||
+        stateNo == "walk_0" ||
+        stateNo == "walk_1" ||
+        stateNo == "crouch" ||
+        stateNo.includes("2g") ||
+        stateNo.includes("5g") ||
+        stateNo == "e" ||
+        stateNo.includes("j")
+    ) {
+        jQuery(idx === 0 ? "#p1boost" : "#p2boost").attr("disabled", true);
+    } else {
+        jQuery(idx === 0 ? "#p1boost" : "#p2boost").attr("disabled", false);
+    }
+}
+
+function setState(idx, stateNo) {
+    stop();
+    players[idx].stateNo = stateNo;
+    SetBoostCheckboxEnabled(idx);
+    getDataFromJson(idx);
+    if ((players[idx].boostNo = -1)) {
+        players[idx].velocity.x = 0;
+    }
+}
+("use strict");
+
+// 共通化: p1=0, p2=1
+async function getDataFromJson(idx) {
+    const p = players[idx];
+    p.offsetGlobal.x = 0;
+    p.offsetGlobal.y = 0;
+    return fetch(`./data/${charFolders[p.char]}.json`)
+        .then(function (res) {
+            return res.json();
+        })
+        .then(function (res) {
+            let stateno = p.stateNo;
+            // 共通化: _g_0/_g_1→ag_0/ag_1, to_*_g→to_*
+            if (/^(bj|fj|vj)_g_0$/.test(stateno)) {
+                stateno = "ag_0";
+            } else if (/^(bj|fj|vj)_g_1$/.test(stateno)) {
+                stateno = "ag_1";
+            } else if (/^to_(bj|fj|vj)_g$/.test(stateno)) {
+                stateno = stateno.replace(/_g$/, "");
+            }
+            p.res = res[stateno];
+            p.timeNo = 0;
+            p.elemNo = 0;
+            p.elemTime = 0;
+            p.time = p.res["time"];
+            const n = p.res["elems"].length;
+            p.elem = Array(n);
+            p.image = Array(n);
+            p.offset.x = Array(n);
+            p.offset.y = Array(n);
+            p.level = Array(n);
+            p.hitbox = Array(n);
+            p.res["elems"].forEach((e) => {
+                const no = e.elemno;
+                p.elem[no] = e.time;
+                p.image[no] = e.imageno;
+                p.level[no] = e.level;
+                p.offset.x[no] = e.image_x + p.offsetGlobal.x;
+                p.offset.y[no] = e.image_y + p.offsetGlobal.y;
+                p.hitbox[no] = e.boxes.map((b) => [b.x, b.y, b.w, b.h, b.attr]);
+            });
+
+            ["stand", "crouch", "air"].forEach((type) => {
+                ["x1", "y1", "x2", "y2"].forEach((key, i) => {
+                    const map = { x1: "lx", y1: "uy", x2: "rx", y2: "dy" };
+                    p.push[type][key] = res["playerpush"][type][map[key]];
+                });
+            });
+
+            p.baseMove = res["base_movement"];
+            p.movement = p.res["movement"];
+        });
+}
+
+// 共通化: 移動関数
+function move(idx, x, y) {
+    const p = players[idx];
+    x = parseFloat(x);
+    y = parseFloat(y);
+    p.x += x * p.facing;
+    p.y += y;
+    if (p.x < 0) p.x = 0;
+    if (p.x > 1280) p.x = 1280;
+    if (p.y < -64) p.y = -64;
+    if (p.y > 984) {
+        p.y = 984;
+        if (!(p.char == 3 && p.stateNo.includes("6b"))) {
+            p.stateNo = "land";
+            getDataFromJson(idx);
+            p.velocity.x = 0;
+            p.velocity.y = 0;
+        }
+    }
+}
+
+("use strict");
+function setBoost(idx, ischecked) {
+    const p = players[idx];
+    if (ischecked) {
+        p.boostNo = 0;
+        p.boostX = p.x;
+        p.boostY = p.y;
+    } else {
+        p.boostNo = -1;
+    }
+}
+
+async function init() {
+    const initVals = [
+        { x: 480.0, pm: "#1P_M", pb: "#p1boost" },
+        { x: 800.0, pm: "#2P_M", pb: "#p2boost" },
+    ];
+    for (let idx = 0; idx < 2; idx++) {
+        players[idx].x = initVals[idx].x;
+        players[idx].y = 984.0;
+        players[idx].velocity.x = 0.0;
+        players[idx].velocity.y = 0.0;
+        players[idx].boostNo = -1;
+        players[idx].stateNo = "stand";
+        SetBoostCheckboxEnabled(idx);
+        jQuery(initVals[idx].pm).val("stand");
+        jQuery(initVals[idx].pb).prop("checked", false);
+    }
+    await getDataFromJson(0);
+    await getDataFromJson(1);
+    await loadImage();
     adjustMoveLists();
-    p2getdata_fromjson();
-}
-
-function setp1state(stateno) {
-    stop();
-    p1stateno = stateno;
-    if (p1stateno == 0 || p1stateno == 1 || p1stateno == 2 || p1stateno == 4 || p1stateno == "e") {
-        jQuery("#p1boost").attr("disabled", true);
-    } else {
-        jQuery("#p1boost").attr("disabled", false);
-    }
-    p1getdata_fromjson();
-}
-
-function setp2state(stateno) {
-    stop();
-    p2stateno = stateno;
-    if (p2stateno == 0 || p2stateno == 1 || p1stateno == 2 || p2stateno == 4 || p2stateno == "e") {
-        jQuery("#p2boost").attr("disabled", true);
-    } else {
-        jQuery("#p2boost").attr("disabled", false);
-    }
-    p2getdata_fromjson();
-}
-("use strict");
-function p1getdata_fromjson() {
-    p1offset_global["x"] = 0;
-    p1offset_global["y"] = 0;
-    // fetch(`./data/${charFolder[p1char]}_offset.json`)
-    //     .then(function (res) {
-    //         return res.json();
-    //     })
-    //     .then(function (res) {
-    //         if (res[p1stateno] == undefined) {
-    //             p1offset_global["x"] = 0;
-    //             p1offset_global["y"] = 0;
-    //         } else {
-    //             p1offset_global["x"] = res[p1stateno]["x"];
-    //             p1offset_global["y"] = res[p1stateno]["y"];
-    //         }
-    //     })
-    //    .then(() => {
-    fetch(`./data/${charFolder[p1char]}.json`)
-        .then(function (res) {
-            return res.json();
-        })
-        .then(function (res) {
-            p1res = res[p1stateno];
-            p1timeno = 0;
-            p1elemno = 0;
-            p1elemtime = 0;
-            p1time = p1res["time"];
-            p1elem = Array(p1res["elems"].length);
-            p1image = Array(p1res["elems"].length);
-            p1offset["x"] = Array(p1res["elems"].length);
-            p1offset["y"] = Array(p1res["elems"].length);
-            for (var i = 0; i < p1res["elems"].length; i++) {
-                p1elem[p1res["elems"][i]["elemno"]] = p1res["elems"][i]["time"];
-                p1image[p1res["elems"][i]["elemno"]] = p1res["elems"][i]["imageno"];
-                p1offset["x"][p1res["elems"][i]["elemno"]] =
-                    p1res["elems"][i]["image_x"] + p1offset_global["x"];
-                p1offset["y"][p1res["elems"][i]["elemno"]] =
-                    p1res["elems"][i]["image_y"] + p1offset_global["y"];
-                p1hitbox[p1res["elems"][i]["elemno"]] = [];
-                for (var j = 0; j < p1res["elems"][i]["boxes"].length; j++) {
-                    var hitbox = [];
-                    hitbox.push(p1res["elems"][i]["boxes"][j]["x"]);
-                    hitbox.push(p1res["elems"][i]["boxes"][j]["y"]);
-                    hitbox.push(p1res["elems"][i]["boxes"][j]["w"]);
-                    hitbox.push(p1res["elems"][i]["boxes"][j]["h"]);
-                    hitbox.push(p1res["elems"][i]["boxes"][j]["attr"]);
-                    p1hitbox[p1res["elems"][i]["elemno"]].push(hitbox);
-                }
-            }
-
-            p1push["stand"]["x1"] = res["playerpush"]["stand"]["lx"];
-            p1push["stand"]["y1"] = res["playerpush"]["stand"]["uy"];
-            p1push["stand"]["x2"] = res["playerpush"]["stand"]["rx"];
-            p1push["stand"]["y2"] = res["playerpush"]["stand"]["dy"];
-            p1push["crouch"]["x1"] = res["playerpush"]["crouch"]["lx"];
-            p1push["crouch"]["y1"] = res["playerpush"]["crouch"]["uy"];
-            p1push["crouch"]["x2"] = res["playerpush"]["crouch"]["rx"];
-            p1push["crouch"]["y2"] = res["playerpush"]["crouch"]["dy"];
-            p1push["air"]["x1"] = res["playerpush"]["air"]["lx"];
-            p1push["air"]["y1"] = res["playerpush"]["air"]["uy"];
-            p1push["air"]["x2"] = res["playerpush"]["air"]["rx"];
-            p1push["air"]["y2"] = res["playerpush"]["air"]["dy"];
-
-            p1movement = p1res["movement"];
-            p2getdata_fromjson();
-        });
-    //});
-}
-
-("use strict");
-function p2getdata_fromjson() {
-    p2offset_global["x"] = 0;
-    p2offset_global["y"] = 0;
-    // fetch(`./data/${charFolder[p2char]}_offset.json`)
-    //     .then(function (res) {
-    //         return res.json();
-    //     })
-    //     .then(function (res) {
-    //         if (res[p2stateno] == undefined) {
-    //             p2offset_global["x"] = 0;
-    //             p2offset_global["y"] = 0;
-    //         } else {
-    //             p2offset_global["x"] = res[p2stateno]["x"];
-    //             p2offset_global["y"] = res[p2stateno]["y"];
-    //         }
-    //     })
-    //     .then(() => {
-    fetch(`./data/${charFolder[p2char]}.json`)
-        .then(function (res) {
-            return res.json();
-        })
-        .then(function (res) {
-            p2res = res[p2stateno];
-            p2timeno = 0;
-            p2elemno = 0;
-            p2elemtime = 0;
-            p2time = p2res["time"];
-            p2elem = Array(p2res["elems"].length);
-            p2image = Array(p2res["elems"].length);
-            p2offset["x"] = Array(p2res["elems"].length);
-            p2offset["y"] = Array(p2res["elems"].length);
-            for (var i = 0; i < p2res["elems"].length; i++) {
-                p2elem[p2res["elems"][i]["elemno"]] = p2res["elems"][i]["time"];
-                p2image[p2res["elems"][i]["elemno"]] = p2res["elems"][i]["imageno"];
-                p2offset["x"][p2res["elems"][i]["elemno"]] =
-                    p2res["elems"][i]["image_x"] + p2offset_global["x"];
-                p2offset["y"][p2res["elems"][i]["elemno"]] =
-                    p2res["elems"][i]["image_y"] + p2offset_global["y"];
-                p2hitbox[p2res["elems"][i]["elemno"]] = [];
-                for (var j = 0; j < p2res["elems"][i]["boxes"].length; j++) {
-                    var hitbox = [];
-                    hitbox.push(p2res["elems"][i]["boxes"][j]["x"]);
-                    hitbox.push(p2res["elems"][i]["boxes"][j]["y"]);
-                    hitbox.push(p2res["elems"][i]["boxes"][j]["w"]);
-                    hitbox.push(p2res["elems"][i]["boxes"][j]["h"]);
-                    hitbox.push(p2res["elems"][i]["boxes"][j]["attr"]);
-                    p2hitbox[p2res["elems"][i]["elemno"]].push(hitbox);
-                }
-            }
-
-            p2push["stand"]["x1"] = res["playerpush"]["stand"]["lx"];
-            p2push["stand"]["y1"] = res["playerpush"]["stand"]["uy"];
-            p2push["stand"]["x2"] = res["playerpush"]["stand"]["rx"];
-            p2push["stand"]["y2"] = res["playerpush"]["stand"]["dy"];
-            p2push["crouch"]["x1"] = res["playerpush"]["crouch"]["lx"];
-            p2push["crouch"]["y1"] = res["playerpush"]["crouch"]["uy"];
-            p2push["crouch"]["x2"] = res["playerpush"]["crouch"]["rx"];
-            p2push["crouch"]["y2"] = res["playerpush"]["crouch"]["dy"];
-            p2push["air"]["x1"] = res["playerpush"]["air"]["lx"];
-            p2push["air"]["y1"] = res["playerpush"]["air"]["uy"];
-            p2push["air"]["x2"] = res["playerpush"]["air"]["rx"];
-            p2push["air"]["y2"] = res["playerpush"]["air"]["dy"];
-
-            p2movement = p2res["movement"];
-            loadImage();
-        });
-    // });
-}
-
-function p1boost(ischecked) {
-    if (ischecked == true) {
-        p1boostno = 0;
-        p1boost_x = p1x;
-        p1boost_y = p1y;
-    } else p1boostno = -1;
-}
-
-function p2boost(ischecked) {
-    if (ischecked == true) {
-        p2boostno = 0;
-        p2boost_x = p2x;
-        p2boost_y = p2y;
-    } else p2boostno = 0;
-}
-
-function reset() {
-    p1x = 480.0;
-    p1y = 984.0;
-    p1boostno = -1;
-    p1stateno = 0;
-    jQuery("#1P_M").val("0");
-    jQuery("#p1boost").prop("checked", false);
-    p2x = 800.0;
-    p2y = 984.0;
-    p2boostno = -1;
-    p2stateno = 0;
-    jQuery("#2P_M").val("0");
-    jQuery("#p2boost").prop("checked", false);
-    p1getdata_fromjson();
     time = -1;
+    collision = false;
+}
+
+async function reset() {
+    await init();
     next();
 }
 
-function collision_check() {
-    var p1hit = false;
-    var p2hit = false;
-    var clash = false;
-    var p1hitbox_r = [];
-    var p1hitbox_b = [];
-    var p2hitbox_r = [];
-    var p2hitbox_b = [];
+function collisionCheck() {
+    let hit = [false, false];
+    let clash = false;
+    let hitboxR = [[], []];
+    let hitboxB = [[], []];
     context.fillStyle = "white";
-    context.font = "20px 'MS Pゴシック'";
+    context.strokeStyle = "black";
+    context.lineWidth = 2;
+    context.font = "18px 'MS Pゴシック'";
 
     //データ分別
-    for (var i = 0; i < p1hitbox[p1elemno].length; i++) {
-        var hitbox = [];
-        if (p1hitbox[p1elemno][i][4] == "0") {
-            hitbox["x"] = parseInt(p1hitbox[p1elemno][i][0]);
-            hitbox["y"] = parseInt(p1hitbox[p1elemno][i][1]);
-            hitbox["w"] = parseInt(p1hitbox[p1elemno][i][2]);
-            hitbox["h"] = parseInt(p1hitbox[p1elemno][i][3]);
-            p1hitbox_r.push(hitbox);
-        } else if (p1hitbox[p1elemno][i][4] == "1") {
-            hitbox["x"] = parseInt(p1hitbox[p1elemno][i][0]);
-            hitbox["y"] = parseInt(p1hitbox[p1elemno][i][1]);
-            hitbox["w"] = parseInt(p1hitbox[p1elemno][i][2]);
-            hitbox["h"] = parseInt(p1hitbox[p1elemno][i][3]);
-            p1hitbox_b.push(hitbox);
-        }
-    }
-
-    for (var i = 0; i < p2hitbox[p2elemno].length; i++) {
-        var hitbox = [];
-        if (p2hitbox[p2elemno][i][4] == "0") {
-            hitbox["x"] = parseInt(p2hitbox[p2elemno][i][0]);
-            hitbox["y"] = parseInt(p2hitbox[p2elemno][i][1]);
-            hitbox["w"] = parseInt(p2hitbox[p2elemno][i][2]);
-            hitbox["h"] = parseInt(p2hitbox[p2elemno][i][3]);
-            p2hitbox_r.push(hitbox);
-        } else if (p2hitbox[p2elemno][i][4] == "1") {
-            hitbox["x"] = parseInt(p2hitbox[p2elemno][i][0]);
-            hitbox["y"] = parseInt(p2hitbox[p2elemno][i][1]);
-            hitbox["w"] = parseInt(p2hitbox[p2elemno][i][2]);
-            hitbox["h"] = parseInt(p2hitbox[p2elemno][i][3]);
-            p2hitbox_b.push(hitbox);
+    for (let idx = 0; idx < 2; idx++) {
+        let p = players[idx];
+        let hbox = p.hitbox[p.elemNo] || [];
+        for (let i = 0; i < hbox.length; i++) {
+            let box = hbox[i];
+            let obj = {
+                x: parseInt(box[0]),
+                y: parseInt(box[1]),
+                w: parseInt(box[2]),
+                h: parseInt(box[3]),
+            };
+            if (box[4] == "0") hitboxR[idx].push(obj);
+            else if (box[4] == "1") hitboxB[idx].push(obj);
         }
     }
 
     //相殺判定
-    for (var i = 0; i < p1hitbox_r.length; i++) {
-        var mx1 = p1x + p1hitbox_r[i]["x"] * p1facing;
-        var my1 = p1y + p1hitbox_r[i]["y"];
-        var mx2 = mx1 + p1hitbox_r[i]["w"] * p1facing;
-        var my2 = my1 + p1hitbox_r[i]["h"];
-        if (mx1 > mx2) {
-            var temp = mx1;
-            mx1 = mx2;
-            mx2 = temp;
-        }
-        for (var j = 0; j < p2hitbox_r.length; j++) {
-            var ex1 = p2x + p2hitbox_r[j]["x"] * p2facing;
-            var ey1 = p2y + p2hitbox_r[j]["y"];
-            var ex2 = ex1 + p2hitbox_r[j]["w"] * p2facing;
-            var ey2 = ey1 + p2hitbox_r[j]["h"];
-            if (ex1 > ex2) {
-                var temp = ex1;
-                ex1 = ex2;
-                ex2 = temp;
-            }
+    for (let i = 0; i < hitboxR[0].length; i++) {
+        let mx1 = players[0].x + hitboxR[0][i].x * players[0].facing;
+        let my1 = players[0].y + hitboxR[0][i].y;
+        let mx2 = mx1 + hitboxR[0][i].w * players[0].facing;
+        let my2 = my1 + hitboxR[0][i].h;
+        if (mx1 > mx2) [mx1, mx2] = [mx2, mx1];
+        for (let j = 0; j < hitboxR[1].length; j++) {
+            let ex1 = players[1].x + hitboxR[1][j].x * players[1].facing;
+            let ey1 = players[1].y + hitboxR[1][j].y;
+            let ex2 = ex1 + hitboxR[1][j].w * players[1].facing;
+            let ey2 = ey1 + hitboxR[1][j].h;
+            if (ex1 > ex2) [ex1, ex2] = [ex2, ex1];
             if (mx1 < ex2 && ex1 < mx2 && my1 < ey2 && ey1 < my2) {
                 clash = true;
             }
         }
     }
-    if (clash == false) {
+    if (clash) {
+        if (
+            players[1].level[players[1].elemNo] - 3 >= players[0].level[players[0].elemNo] &&
+            players[1].y >= 984
+        ) {
+            clash = false;
+        }
+        if (players[0].stateNo == "bd" || players[1].stateNo == "bd") {
+            clash = false;
+        }
+    }
+    if (!clash) {
         //P1ヒット判定
-        for (var i = 0; i < p1hitbox_r.length; i++) {
-            var mx1 = p1x + p1hitbox_r[i]["x"] * p1facing;
-            var my1 = p1y + p1hitbox_r[i]["y"];
-            var mx2 = mx1 + p1hitbox_r[i]["w"] * p1facing;
-            var my2 = my1 + p1hitbox_r[i]["h"];
-            if (mx1 > mx2) {
-                var temp = mx1;
-                mx1 = mx2;
-                mx2 = temp;
-            }
-            for (var j = 0; j < p2hitbox_b.length; j++) {
-                var ex1 = p2x + p2hitbox_b[j]["x"] * p2facing;
-                var ey1 = p2y + p2hitbox_b[j]["y"];
-                var ex2 = ex1 + p2hitbox_b[j]["w"] * p2facing;
-                var ey2 = ey1 + p2hitbox_b[j]["h"];
-                if (ex1 > ex2) {
-                    var temp = ex1;
-                    ex1 = ex2;
-                    ex2 = temp;
-                }
+        for (let i = 0; i < hitboxR[0].length; i++) {
+            let mx1 = players[0].x + hitboxR[0][i].x * players[0].facing;
+            let my1 = players[0].y + hitboxR[0][i].y;
+            let mx2 = mx1 + hitboxR[0][i].w * players[0].facing;
+            let my2 = my1 + hitboxR[0][i].h;
+            if (mx1 > mx2) [mx1, mx2] = [mx2, mx1];
+            for (let j = 0; j < hitboxB[1].length; j++) {
+                let ex1 = players[1].x + hitboxB[1][j].x * players[1].facing;
+                let ey1 = players[1].y + hitboxB[1][j].y;
+                let ex2 = ex1 + hitboxB[1][j].w * players[1].facing;
+                let ey2 = ey1 + hitboxB[1][j].h;
+                if (ex1 > ex2) [ex1, ex2] = [ex2, ex1];
                 if (mx1 < ex2 && ex1 < mx2 && my1 < ey2 && ey1 < my2) {
-                    p1hit = true;
+                    hit[0] = true;
                 }
             }
         }
 
         //P2ヒット判定
-        for (var i = 0; i < p2hitbox_r.length; i++) {
-            var mx1 = p2x + p2hitbox_r[i]["x"] * p2facing;
-            var my1 = p2y + p2hitbox_r[i]["y"];
-            var mx2 = mx1 + p2hitbox_r[i]["w"] * p2facing;
-            var my2 = my1 + p2hitbox_r[i]["h"];
-            if (mx1 > mx2) {
-                var temp = mx1;
-                mx1 = mx2;
-                mx2 = temp;
-            }
-            for (var j = 0; j < p1hitbox_b.length; j++) {
-                var ex1 = p1x + p1hitbox_b[j]["x"] * p1facing;
-                var ey1 = p1y + p1hitbox_b[j]["y"];
-                var ex2 = ex1 + p1hitbox_b[j]["w"] * p1facing;
-                var ey2 = ey1 + p1hitbox_b[j]["h"];
-                if (ex1 > ex2) {
-                    var temp = ex1;
-                    ex1 = ex2;
-                    ex2 = temp;
-                }
+        for (let i = 0; i < hitboxR[1].length; i++) {
+            let mx1 = players[1].x + hitboxR[1][i].x * players[1].facing;
+            let my1 = players[1].y + hitboxR[1][i].y;
+            let mx2 = mx1 + hitboxR[1][i].w * players[1].facing;
+            let my2 = my1 + hitboxR[1][i].h;
+            if (mx1 > mx2) [mx1, mx2] = [mx2, mx1];
+            for (let j = 0; j < hitboxB[0].length; j++) {
+                let ex1 = players[0].x + hitboxB[0][j].x * players[0].facing;
+                let ey1 = players[0].y + hitboxB[0][j].y;
+                let ex2 = ex1 + hitboxB[0][j].w * players[0].facing;
+                let ey2 = ey1 + hitboxB[0][j].h;
+                if (ex1 > ex2) [ex1, ex2] = [ex2, ex1];
                 if (mx1 < ex2 && ex1 < mx2 && my1 < ey2 && ey1 < my2) {
-                    p2hit = true;
+                    hit[1] = true;
                 }
             }
         }
     }
     context.textAlign = "right";
+    context.strokeText(`${time}F目`, 630, 470);
     context.fillText(`${time}F目`, 630, 470);
     if (clash) {
-        context.textAlign = "left";
-        context.fillText("相殺", 10, 50);
-        context.textAlign = "right";
-        context.fillText("相殺", 630, 50);
+        const aligns = ["left", "right"];
+        const xs = [10, 630];
+        for (let i = 0; i < 2; i++) {
+            context.textAlign = aligns[i];
+            context.strokeText("相殺", xs[i], 90);
+            context.fillText("相殺", xs[i], 90);
+        }
     }
-    if (p1hit && !p2hit) {
-        context.textAlign = "left";
-        context.fillText("◯", 10, 50);
-    } else if (!p1hit && p2hit) {
-        context.textAlign = "left";
-        context.fillText("×", 10, 50);
+    if (
+        !clash &&
+        hit[0] &&
+        players[1].level[players[1].elemNo] - 3 >= players[0].level[players[0].elemNo]
+    ) {
+        hit[0] = false;
     }
-    if (p2hit && !p1hit) {
-        context.textAlign = "right";
-        context.fillText("◯", 630, 50);
-    } else if (p1hit && !p2hit) {
-        context.textAlign = "right";
-        context.fillText("×", 630, 50);
-    }
-
-    if (p1hit && p2hit) {
-        context.textAlign = "left";
-        context.fillText("相打ち（勝敗ランダム）", 10, 50);
-        context.textAlign = "right";
-        context.fillText("相打ち（勝敗ランダム）", 630, 50);
-    }
-    if (p1hit || p2hit || clash) {
-        context.textAlign = "left";
-        context.fillText(state[p1stateno], 10, 20);
-        context.textAlign = "right";
-        context.fillText(state[p2stateno], 630, 20);
+    const marks = [
+        hit[0] && !hit[1] ? "◯" : !hit[0] && hit[1] ? "×" : "",
+        hit[1] && !hit[0] ? "◯" : hit[0] && !hit[1] ? "×" : "",
+    ];
+    const aligns = ["left", "right"];
+    const xs = [10, 630];
+    for (let i = 0; i < 2; i++) {
+        if (marks[i]) {
+            context.textAlign = aligns[i];
+            context.strokeText(marks[i], xs[i], 90);
+            context.fillText(marks[i], xs[i], 90);
+        }
     }
 
-    if (p1hit && p2hit) return "trade";
-    else if (p1hit) return "p1";
-    else if (p2hit) return "p2";
+    if (hit[0] && hit[1]) {
+        context.textAlign = "left";
+        context.strokeText("相打ち（勝敗ランダム）", 10, 90);
+        context.fillText("相打ち（勝敗ランダム）", 10, 90);
+        context.textAlign = "right";
+        context.strokeText("相打ち（勝敗ランダム）", 630, 90);
+        context.fillText("相打ち（勝敗ランダム）", 630, 90);
+    }
+    if (hit[0] || hit[1] || clash) {
+        const aligns = ["left", "right"];
+        const xs = [10, 630];
+        for (let i = 0; i < 2; i++) {
+            context.textAlign = aligns[i];
+            context.strokeText(charNames[players[i].char], xs[i], 30);
+            context.fillText(charNames[players[i].char], xs[i], 30);
+            context.strokeText(stateNames[players[i].stateNo], xs[i], 60);
+            context.fillText(stateNames[players[i].stateNo], xs[i], 60);
+        }
+    }
+
+    if (hit[0] && hit[1]) return "trade";
+    else if (hit[0]) return "p1";
+    else if (hit[1]) return "p2";
     else if (clash) return "clash";
     else return "";
 }
 
-function cameramove() {
+function cameraMove() {
     //X軸
-    stageoffset["x"] = -320 - (p1x + p2x) / 2 + 640;
+    stageoffset["x"] = -320 - (players[0].x + players[1].x) / 2 + 640;
     if (stageoffset["x"] > 0) {
         stageoffset["x"] = 0;
     } else if (stageoffset["x"] < -640) {
@@ -974,14 +989,14 @@ function cameramove() {
     }
 
     //Y軸
-    if (p1y < 750 && p2y >= 750) {
-        stageoffset["y"] = -544 + (750 - p1y);
+    if (players[0].y < 750 && players[1].y >= 750) {
+        stageoffset["y"] = -544 + (750 - players[0].y);
         if (stageoffset["y"] > -300) stageoffset["y"] = -300;
-    } else if (p1y >= 750 && p2y <= 750) {
-        stageoffset["y"] = -544 + (750 - p2y);
+    } else if (players[0].y >= 750 && players[1].y <= 750) {
+        stageoffset["y"] = -544 + (750 - players[1].y);
         if (stageoffset["y"] > -300) stageoffset["y"] = -300;
-    } else if (p1y < 750 && p2y < 750) {
-        stageoffset["y"] = -544 - (p1y + p2y) / 2 - 984;
+    } else if (players[0].y < 750 && players[1].y < 750) {
+        stageoffset["y"] = -544 - (players[0].y + players[1].y) / 2 - 984;
     } else {
         stageoffset["y"] = -544;
     }
