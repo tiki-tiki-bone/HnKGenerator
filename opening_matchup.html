@@ -405,18 +405,10 @@
                         sel.appendChild(o);
                     });
                 });
-                // iOS等でselectのフォーカスが残る問題対策（連続で開いても閉じない方式）
-                const selects = Array.from(document.querySelectorAll("select"));
-                selects.forEach((sel) => {
-                    sel.addEventListener("mousedown", (e) => {
-                        selects.forEach((s2) => {
-                            if (s2 !== sel) s2.blur();
-                        });
-                    });
-                    sel.addEventListener("touchstart", (e) => {
-                        selects.forEach((s2) => {
-                            if (s2 !== sel) s2.blur();
-                        });
+                // iOS等でselectのフォーカスが残る問題対策（change時に300ms遅延でblur）
+                document.querySelectorAll("select").forEach((sel) => {
+                    sel.addEventListener("change", function () {
+                        setTimeout(() => sel.blur(), 300);
                     });
                 });
             });
