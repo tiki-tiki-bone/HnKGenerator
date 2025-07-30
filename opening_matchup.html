@@ -387,13 +387,30 @@
                 { value: "provoke", label: "挑発" },
             ];
             window.addEventListener("DOMContentLoaded", () => {
-                ["1P_C", "2P_C"].forEach((id) => {
+                ["1P_C", "2P_C"].forEach((id, idx) => {
                     const sel = document.getElementById(id);
                     charOptions.forEach((opt) => {
                         const o = document.createElement("option");
                         o.value = opt.value;
                         o.textContent = opt.label;
                         sel.appendChild(o);
+                    });
+                    // キャラ変更時に行動プルダウンの選択肢を自動修正
+                    sel.addEventListener("change", function () {
+                        const moveSel = document.getElementById(idx === 0 ? "1P_M" : "2P_M");
+                        // 選択中のoptionがdisabledなら、最初の有効なoptionに切り替え
+                        if (
+                            moveSel.options[moveSel.selectedIndex] &&
+                            moveSel.options[moveSel.selectedIndex].disabled
+                        ) {
+                            for (let i = 0; i < moveSel.options.length; ++i) {
+                                if (!moveSel.options[i].disabled) {
+                                    moveSel.selectedIndex = i;
+                                    moveSel.dispatchEvent(new Event("change"));
+                                    break;
+                                }
+                            }
+                        }
                     });
                 });
                 ["1P_M", "2P_M"].forEach((id) => {
@@ -403,12 +420,6 @@
                         o.value = opt.value;
                         o.textContent = opt.label;
                         sel.appendChild(o);
-                    });
-                });
-                // iOS等でselectのフォーカスが残る問題対策（change時に300ms遅延でblur）
-                document.querySelectorAll("select").forEach((sel) => {
-                    sel.addEventListener("change", function () {
-                        setTimeout(() => sel.blur(), 300);
                     });
                 });
             });
