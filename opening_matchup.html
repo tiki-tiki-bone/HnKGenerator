@@ -180,14 +180,27 @@
                 .controls-wrap {
                     gap: 0.5em;
                 }
-                .btn-row,
-                .select-row,
-                .checkbox-row {
+                .btn-row {
+                    flex-direction: row;
+                    gap: 0.18em;
+                }
+                .select-row {
                     flex-direction: column;
                     gap: 0.3em;
                 }
+                .checkbox-row {
+                    flex-direction: row;
+                    gap: 0.3em;
+                }
                 .select-block {
-                    min-width: 0;
+                    min-width: 90px;
+                    width: 100%;
+                }
+                .main-controls-row {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    gap: 0.18em;
                 }
             }
             .main-controls-row {
@@ -200,12 +213,6 @@
             @media (max-width: 900px) {
                 .main-controls-row {
                     gap: 0.18em 0.18em;
-                }
-            }
-            @media (max-width: 600px) {
-                .main-controls-row {
-                    flex-direction: column;
-                    gap: 0.18em;
                 }
             }
         </style>
@@ -264,22 +271,22 @@
                         </div>
                     </div>
                     <div class="checkbox-row">
-                        <label
-                            ><input
+                        <label for="p1boost">
+                            <input
                                 type="checkbox"
                                 id="p1boost"
                                 onclick="setBoost(0, this.checked);"
                                 disabled
-                            />1P移動ブースト</label
-                        >
-                        <label
-                            ><input
+                            />1P移動ブースト
+                        </label>
+                        <label for="p2boost">
+                            <input
                                 type="checkbox"
                                 id="p2boost"
                                 onclick="setBoost(1, this.checked);"
                                 disabled
-                            />2P移動ブースト</label
-                        >
+                            />2P移動ブースト
+                        </label>
                     </div>
                 </div>
             </section>
