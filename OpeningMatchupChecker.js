@@ -320,7 +320,8 @@ async function loop(timestamp) {
         context.lineWidth = 1;
         context.stroke();
         // ラベル描画
-        context.font = "bold 8px sans-serif";
+        context.font =
+            "bold 8px system-ui, -apple-system, 'Meiryo', 'Hiragino Kaku Gothic ProN', 'Segoe UI', Arial, sans-serif";
         context.textAlign = "center";
         context.textBaseline = "middle";
         context.fillStyle = "white";
@@ -832,7 +833,8 @@ function collisionCheck() {
     context.fillStyle = "white";
     context.strokeStyle = "black";
     context.lineWidth = 2;
-    context.font = "18px 'MS Pゴシック'";
+    context.font =
+        "18px system-ui, -apple-system, 'Meiryo', 'Hiragino Kaku Gothic ProN', 'Segoe UI', Arial, sans-serif";
 
     //データ分別
     for (let idx = 0; idx < 2; idx++) {
