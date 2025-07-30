@@ -387,7 +387,8 @@
                 { value: "provoke", label: "挑発" },
             ];
             window.addEventListener("DOMContentLoaded", () => {
-                ["1P_C", "2P_C"].forEach((id, idx) => {
+                // キャラ選択肢生成
+                ["1P_C", "2P_C"].forEach((id) => {
                     const sel = document.getElementById(id);
                     charOptions.forEach((opt) => {
                         const o = document.createElement("option");
@@ -395,32 +396,43 @@
                         o.textContent = opt.label;
                         sel.appendChild(o);
                     });
-                    // キャラ変更時に行動プルダウンの選択肢を自動修正
-                    sel.addEventListener("change", function () {
-                        const moveSel = document.getElementById(idx === 0 ? "1P_M" : "2P_M");
-                        // 選択中のoptionがdisabledなら、最初の有効なoptionに切り替え
-                        if (
-                            moveSel.options[moveSel.selectedIndex] &&
-                            moveSel.options[moveSel.selectedIndex].disabled
-                        ) {
-                            for (let i = 0; i < moveSel.options.length; ++i) {
-                                if (!moveSel.options[i].disabled) {
-                                    moveSel.selectedIndex = i;
-                                    moveSel.dispatchEvent(new Event("change"));
-                                    break;
-                                }
-                            }
-                        }
-                    });
                 });
-                ["1P_M", "2P_M"].forEach((id) => {
-                    const sel = document.getElementById(id);
+
+                // 行動プルダウンのoptionをキャラごとに再生成する関数
+                function updateMoveOptions(pulldownId, charId) {
+                    const sel = document.getElementById(pulldownId);
+                    // 一旦全option削除
+                    while (sel.firstChild) sel.removeChild(sel.firstChild);
+                    // キャラごとに有効なoptionのみ追加
                     moveOptions.forEach((opt) => {
+                        if (opt.value === "6d" && charId !== "2") return;
+                        if (opt.value === "6b" && parseInt(charId, 10) >= 5 && charId !== "7")
+                            return;
+                        if (opt.value === "bd" && charId === "2") return;
                         const o = document.createElement("option");
                         o.value = opt.value;
                         o.textContent = opt.label;
                         sel.appendChild(o);
                     });
+                    // 必ず先頭optionを選択し、changeイベントを発火
+                    if (sel.options.length > 0) {
+                        sel.selectedIndex = 0;
+                        sel.dispatchEvent(new Event("change"));
+                    }
+                }
+
+                // キャラ変更時に行動プルダウンの選択肢を再生成
+                ["1P_C", "2P_C"].forEach((id, idx) => {
+                    const sel = document.getElementById(id);
+                    sel.addEventListener("change", function () {
+                        updateMoveOptions(idx === 0 ? "1P_M" : "2P_M", sel.value);
+                    });
+                });
+
+                // 初期化時に行動プルダウン生成
+                ["1P_M", "2P_M"].forEach((id, idx) => {
+                    const charSel = document.getElementById(idx === 0 ? "1P_C" : "2P_C");
+                    updateMoveOptions(id, charSel.value);
                 });
             });
         </script>
