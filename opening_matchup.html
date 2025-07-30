@@ -146,6 +146,68 @@
                     max-height: 75vw;
                 }
             }
+            .controls-wrap {
+                margin: 0.2em 0 0.7em 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.25em;
+            }
+            .btn-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.18em;
+                margin-bottom: 0.05em;
+            }
+            .select-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.35em;
+                margin-bottom: 0.03em;
+            }
+            .select-block {
+                display: flex;
+                flex-direction: column;
+                gap: 0.07em;
+                min-width: 120px;
+            }
+            .checkbox-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5em;
+                margin-top: 0.05em;
+            }
+            @media (max-width: 600px) {
+                .controls-wrap {
+                    gap: 0.5em;
+                }
+                .btn-row,
+                .select-row,
+                .checkbox-row {
+                    flex-direction: column;
+                    gap: 0.3em;
+                }
+                .select-block {
+                    min-width: 0;
+                }
+            }
+            .main-controls-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.3em 0.4em;
+                align-items: flex-end;
+                margin-bottom: 0.1em;
+            }
+            @media (max-width: 900px) {
+                .main-controls-row {
+                    gap: 0.18em 0.18em;
+                }
+            }
+            @media (max-width: 600px) {
+                .main-controls-row {
+                    flex-direction: column;
+                    gap: 0.18em;
+                }
+            }
         </style>
         <script src="./OpeningMatchupChecker.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -173,31 +235,53 @@
         </header>
         <main>
             <section>
-                <canvas id="checker" style="background-color: white"></canvas><br />
-                <input type="button" value="再生" onclick="start();" />
-                <input type="button" value="停止" onclick="stop();" />
-                <input type="button" value="次フレーム" onclick="next();" />
-                <input type="button" value="リセット" onclick="reset();" /> 1Pキャラ
-                <select id="1P_C" onchange="setChar(0, value);"></select
-                >　2Pキャラ
-                <select id="2P_C" onchange="setChar(1, value);"></select>
-                <br />
-                1P行動
-                <select id="1P_M" onchange="setState(0, value);"></select>
-                2P行動
-                <select id="2P_M" onchange="setState(1, value);"></select>
-                <input
-                    type="checkbox"
-                    id="p1boost"
-                    onclick="setBoost(0, this.checked);"
-                    disabled
-                />1P移動ブースト
-                <input
-                    type="checkbox"
-                    id="p2boost"
-                    onclick="setBoost(1, this.checked);"
-                    disabled
-                />2P移動ブースト
+                <canvas id="checker" style="background-color: white"></canvas>
+                <div class="controls-wrap">
+                    <div class="main-controls-row">
+                        <div class="btn-row">
+                            <input type="button" value="再生" onclick="start();" />
+                            <input type="button" value="停止" onclick="stop();" />
+                            <input type="button" value="次フレーム" onclick="next();" />
+                            <input type="button" value="リセット" onclick="reset();" />
+                        </div>
+                        <div class="select-block">
+                            <label for="1P_C">1Pキャラ</label>
+                            <select id="1P_C" onchange="setChar(0, value);"></select>
+                        </div>
+                        <div class="select-block">
+                            <label for="2P_C">2Pキャラ</label>
+                            <select id="2P_C" onchange="setChar(1, value);"></select>
+                        </div>
+                    </div>
+                    <div class="select-row">
+                        <div class="select-block">
+                            <label for="1P_M">1P行動</label>
+                            <select id="1P_M" onchange="setState(0, value);"></select>
+                        </div>
+                        <div class="select-block">
+                            <label for="2P_M">2P行動</label>
+                            <select id="2P_M" onchange="setState(1, value);"></select>
+                        </div>
+                    </div>
+                    <div class="checkbox-row">
+                        <label
+                            ><input
+                                type="checkbox"
+                                id="p1boost"
+                                onclick="setBoost(0, this.checked);"
+                                disabled
+                            />1P移動ブースト</label
+                        >
+                        <label
+                            ><input
+                                type="checkbox"
+                                id="p2boost"
+                                onclick="setBoost(1, this.checked);"
+                                disabled
+                            />2P移動ブースト</label
+                        >
+                    </div>
+                </div>
             </section>
             <section>
                 <h2>このツールについて</h2>
