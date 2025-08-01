@@ -3,7 +3,6 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>北斗の拳 開幕行動チェッカー</title>
         <style>
             body {
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -147,10 +146,11 @@
                 }
             }
             .controls-wrap {
-                margin: 0.2em 0 0.7em 0;
+                margin: 0.2em auto 0.7em auto;
                 display: flex;
                 flex-direction: column;
                 gap: 0.25em;
+                max-width: 640px;
             }
             .btn-row {
                 display: flex;
@@ -202,7 +202,6 @@
                     align-items: flex-end;
                     gap: 0.18em;
                 }
-                /* 1P/2Pキャラ選択だけ横並び */
                 .main-controls-row .select-block {
                     flex-direction: column;
                     min-width: 90px;
@@ -242,8 +241,23 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     </head>
     <body>
+        <script>
+            // ダブルタップズーム無効化（ピンチインアウトは有効）
+            let lastTouchEnd = 0;
+            document.addEventListener(
+                "touchend",
+                function (event) {
+                    const now = new Date().getTime();
+                    if (now - lastTouchEnd <= 300) {
+                        event.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                },
+                false,
+            );
+        </script>
         <header>
-            <h1>北斗の拳 技相性チェッカー</h1>
+            <h1>北斗の拳 開幕行動チェッカー</h1>
             <div
                 class="menu-toggle"
                 id="menuToggle"
@@ -370,13 +384,16 @@
                 { value: "5a", label: "遠A" },
                 { value: "5b", label: "遠B" },
                 { value: "5c", label: "遠C" },
+                { value: "5c_2", label: "最大溜め遠C" },
                 { value: "5d", label: "遠D" },
                 { value: "2a", label: "2A" },
                 { value: "2b", label: "2B" },
                 { value: "2c", label: "2C" },
+                { value: "2c_2", label: "最大溜め遠C" },
                 { value: "2d", label: "2D" },
                 { value: "6a", label: "6A" },
                 { value: "6b", label: "6B" },
+                { value: "6c", label: "6C" },
                 { value: "6d", label: "6D" },
                 { value: "ab", label: "ヘヴィーストライク" },
                 { value: "ac", label: "グレイヴシュート" },
@@ -405,13 +422,23 @@
                     while (sel.firstChild) sel.removeChild(sel.firstChild);
                     // キャラごとに有効なoptionのみ追加
                     moveOptions.forEach((opt) => {
-                        if (opt.value === "6d" && charId !== "2") return;
-                        if (opt.value === "6b" && parseInt(charId, 10) >= 5 && charId !== "7")
+                        // 最大溜め遠Cは常にグレーアウトで表示
+                        if ((opt.value === "5c_2" || opt.value === "2c_2") && charId != "8") {
                             return;
-                        if (opt.value === "bd" && charId === "2") return;
+                        }
+                        if (opt.value === "6d" && charId !== "2") return;
+                        else if (opt.value === "6c" && charId !== "9") return;
+                        else if (opt.value === "6b" && parseInt(charId, 10) >= 5 && charId !== "7")
+                            return;
+                        else if (opt.value === "bd" && (charId === "2" || charId === "9")) return;
+                        else if (charId === "8" && (opt.value === "e" || opt.value == "ac")) return;
                         const o = document.createElement("option");
                         o.value = opt.value;
                         o.textContent = opt.label;
+                        if (opt.value === "5c_2" || opt.value === "2c_2") {
+                            o.disabled = true;
+                            o.style.color = "#aaa";
+                        }
                         sel.appendChild(o);
                     });
                     // 必ず先頭optionを選択し、changeイベントを発火
