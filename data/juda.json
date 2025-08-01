@@ -2924,7 +2924,7 @@
             {
                 "elemno": 5,
                 "imageno": 5,
-                "time": 8,
+                "time": 4,
                 "level": 0,
                 "boxes": [
                     { "attr": 1, "x": -12, "y": -273, "w": 20, "h": 35 },
@@ -2938,6 +2938,22 @@
             },
             {
                 "elemno": 6,
+                "imageno": 5,
+                "time": 4,
+                "level": 0,
+                "boxes": [
+                    { "attr": 0, "x": 111, "y": -194, "w": 41, "h": 82 },
+                    { "attr": 1, "x": -12, "y": -273, "w": 20, "h": 35 },
+                    { "attr": 1, "x": -43, "y": -245, "w": 30, "h": 62 },
+                    { "attr": 1, "x": -29, "y": -249, "w": 53, "h": 249 },
+                    { "attr": 1, "x": 18, "y": -150, "w": 41, "h": 150 },
+                    { "attr": 1, "x": 13, "y": -251, "w": 130, "h": 30 }
+                ],
+                "image_x": 0,
+                "image_y": 0
+            },
+            {
+                "elemno": 7,
                 "imageno": 6,
                 "time": 8,
                 "level": 0,
@@ -2952,7 +2968,7 @@
                 "image_y": 0
             },
             {
-                "elemno": 7,
+                "elemno": 8,
                 "imageno": 7,
                 "time": 8,
                 "level": 0,
@@ -2967,7 +2983,7 @@
                 "image_y": 0
             },
             {
-                "elemno": 8,
+                "elemno": 9,
                 "imageno": 8,
                 "time": 8,
                 "level": 0,
@@ -2982,7 +2998,7 @@
                 "image_y": 0
             },
             {
-                "elemno": 9,
+                "elemno": 10,
                 "imageno": 9,
                 "time": 8,
                 "level": 0,
@@ -2997,7 +3013,7 @@
                 "image_y": 0
             },
             {
-                "elemno": 10,
+                "elemno": 11,
                 "imageno": 10,
                 "time": 5,
                 "level": 0,
