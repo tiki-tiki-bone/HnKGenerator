@@ -593,9 +593,6 @@ async function loop(timestamp) {
             await init({ keepStateNo: true, keepBoostCheckbox: true });
             stop();
             time = 0;
-            // フラグリセット
-            players[0]._motionEnded = false;
-            players[1]._motionEnded = false;
             jQuery("#1P_M").attr("disabled", false);
             jQuery("#2P_M").attr("disabled", false);
         }
@@ -1041,8 +1038,6 @@ async function init(options = {}) {
         // armorBlockedAttackIdsもリセット
         players[idx].armorBlockedAttackIds = [];
     }
-    await getDataFromJson(0);
-    await getDataFromJson(1);
     await loadImage();
     collision = false;
 }
