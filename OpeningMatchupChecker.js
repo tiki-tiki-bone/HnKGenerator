@@ -15,6 +15,7 @@ function drawCharStateText({
     const align = aligns[pIdx];
     const x = xs[pIdx];
     context.textAlign = align;
+    context.lineWidth = 2;
     context.font = font;
     context.strokeText(charNames[players[pIdx].char], x, 30);
     context.fillText(charNames[players[pIdx].char], x, 30);
@@ -61,12 +62,13 @@ function drawCharStateText({
             context.fillText(extraText, x, 90);
         }
     }
+    context.strokeText("デバッグ用 " + players[pIdx].timeNo + "F目", x, 120);
+    context.strokeText("デバッグ用 " + players[pIdx].stateNo, x, 150);
 }
 //描画コンテキストの取得
 
 let animId;
 
-const charCodes = ["KE", "RA", "TO", "JA", "SH", "RE", "JU", "TH", "HE", "MA"];
 const charFolders = [
     "kenshiro",
     "raoh",
@@ -261,7 +263,7 @@ var pauseFrames = 0;
 window.onload = async function () {
     canvas = document.getElementById("checker");
     // 高DPI対応
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = window.devicePixelRatio;
     canvas.width = 640 * dpr;
     canvas.height = 480 * dpr;
     canvas.style.width = "640px";
@@ -277,46 +279,10 @@ window.onload = async function () {
     await getDataFromJson(0);
     await getDataFromJson(1);
     await loadImage();
-    reset();
+    await reset();
 };
 
-async function loop(timestamp) {
-    for (let idx = 0; idx < 2; idx++) {
-        const stateNo = players[idx].stateNo;
-        if (
-            stateNo === "stand" ||
-            stateNo === "walk_0" ||
-            stateNo === "walk_1" ||
-            stateNo === "2g_0" ||
-            stateNo === "2g_1" ||
-            stateNo === "5g_0" ||
-            stateNo === "5g_1" ||
-            stateNo === "e" ||
-            stateNo === "crouch"
-        ) {
-            players[idx]._motionEnded = true;
-            idx === 0
-                ? jQuery("#1P_M").attr("disabled", false)
-                : jQuery("#2P_M").attr("disabled", false);
-        } else {
-            idx === 0
-                ? jQuery("#1P_M").attr("disabled", true)
-                : jQuery("#2P_M").attr("disabled", true);
-        }
-    }
-    if (pauseFrames > 0) {
-        pauseFrames--;
-        if (isPaused != true) {
-            animId = window.requestAnimationFrame((ts) => loop(ts));
-        }
-        return;
-    }
-    time += 1;
-    await setUpPos();
-    baseMoveVelSet();
-    await posAddVel();
-    cameraMove();
-
+function drawImages() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(stageImg, stageoffset["x"], stageoffset["y"]);
 
@@ -426,10 +392,6 @@ async function loop(timestamp) {
         //context.fillRect(x1, y1, x2 - x1, y2 - y1);
     }
 
-    if (collisionCheck() != "") {
-        collision = true;
-    }
-
     // キャラ座標に赤丸＋P1/P2ラベルを一番上に描画
     for (let idx = 0; idx < 2; idx++) {
         const p = players[idx];
@@ -449,6 +411,50 @@ async function loop(timestamp) {
         context.textBaseline = "middle";
         context.fillStyle = "white";
         context.fillText(idx === 0 ? "P1" : "P2", cx, cy);
+    }
+}
+
+async function loop(timestamp) {
+    for (let idx = 0; idx < 2; idx++) {
+        const stateNo = players[idx].stateNo;
+        if (
+            stateNo === "stand" ||
+            stateNo === "walk_0" ||
+            stateNo === "walk_1" ||
+            stateNo === "2g_0" ||
+            stateNo === "2g_1" ||
+            stateNo === "5g_0" ||
+            stateNo === "5g_1" ||
+            stateNo === "e" ||
+            stateNo === "crouch"
+        ) {
+            players[idx]._motionEnded = true;
+            idx === 0
+                ? jQuery("#1P_M").attr("disabled", false)
+                : jQuery("#2P_M").attr("disabled", false);
+        } else {
+            idx === 0
+                ? jQuery("#1P_M").attr("disabled", true)
+                : jQuery("#2P_M").attr("disabled", true);
+        }
+    }
+    if (pauseFrames > 0) {
+        pauseFrames--;
+        if (isPaused != true) {
+            animId = window.requestAnimationFrame((ts) => loop(ts));
+        }
+        return;
+    }
+    time += 1;
+    await setUpPos();
+    baseMoveVelSet();
+    await posAddVel();
+    cameraMove();
+
+    drawImages();
+
+    if (collisionCheck() != "") {
+        collision = true;
     }
 
     // 共通化: アニメ進行・状態遷移
@@ -547,8 +553,6 @@ async function loop(timestamp) {
             }
         }
     }
-    //console.log(players[1].whiffedStateNo);
-
     // 両方のキャラのモーションが終わったら
     if (players[0]._motionEnded && players[1]._motionEnded) {
         // どちらも空振り判定か？
@@ -584,15 +588,13 @@ async function loop(timestamp) {
                     extraText: isWhiffState(players[idx].whiffedStateNo) ? "空振り" : null,
                 });
             }
-        }
-        if (isWhiffState(players[0].whiffedStateNo) || isWhiffState(players[1].whiffedStateNo)) {
+
             players[0].stateNo = players[0].selectedStateNo;
             players[1].stateNo = players[1].selectedStateNo;
             jQuery("#1P_M").val(players[0].selectedStateNo);
             jQuery("#2P_M").val(players[1].selectedStateNo);
             await init({ keepStateNo: true, keepBoostCheckbox: true });
             stop();
-            time = 0;
             jQuery("#1P_M").attr("disabled", false);
             jQuery("#2P_M").attr("disabled", false);
         }
@@ -600,11 +602,10 @@ async function loop(timestamp) {
     if (collision) {
         await init({ keepStateNo: true, keepBoostCheckbox: true });
         stop();
-        time = 0;
     }
     if (time >= 200) {
+        await init({ keepStateNo: true, keepBoostCheckbox: true });
         stop();
-        reset();
     }
 
     if (isNext == true) {
@@ -621,7 +622,6 @@ function setloadfunc(obj) {
         imgCount++;
         // 2キャラ分+ブースト+ステージ
         let total = players[0].img.length + players[1].img.length + boostImgs.length + 1;
-        if (imgCount == total) next();
     };
 }
 
@@ -855,9 +855,10 @@ async function posAddVel() {
     }
 }
 
-function setChar(idx, charId) {
+async function setChar(idx, charId) {
     players[idx].char = charId;
-    setState(idx, players[idx].stateNo);
+    await setState(idx, players[idx].stateNo);
+    drawImages();
 }
 
 function SetBoostCheckboxEnabled(idx) {
@@ -997,7 +998,6 @@ async function init(options = {}) {
         { x: 800.0, pm: "#2P_M", pb: "#p2boost" },
     ];
     for (let idx = 0; idx < 2; idx++) {
-        time = -1;
         players[idx].x = initVals[idx].x;
         players[idx].y = 984.0;
         players[idx].velocity.x = 0.0;
@@ -1038,13 +1038,14 @@ async function init(options = {}) {
         // armorBlockedAttackIdsもリセット
         players[idx].armorBlockedAttackIds = [];
     }
+    time = 0;
     await loadImage();
     collision = false;
 }
 
 async function reset() {
     await init();
-    next();
+    drawImages();
 }
 
 function collisionCheck() {
@@ -1231,7 +1232,7 @@ function collisionCheck() {
         clash = false;
     }
 
-    if (time >= 1) {
+    if (time >= 0) {
         context.textAlign = "right";
         context.strokeText(`${time}F目`, 630, 460);
         context.fillText(`${time}F目`, 630, 460);
