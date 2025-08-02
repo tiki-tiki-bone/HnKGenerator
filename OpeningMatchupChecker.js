@@ -23,32 +23,34 @@ function drawCharStateText({
     // 空振り系はwhiffedStateNo優先
     if (whiffedStateNo !== undefined && whiffedStateNo !== null) {
         stateText = stateNames[whiffedStateNo];
-        // ブースト判定
-        if (
-            boostNo >= 0 &&
-            !(
-                whiffedStateNo == "stand" ||
-                whiffedStateNo == "walk_0" ||
-                whiffedStateNo == "walk_1" ||
-                whiffedStateNo == "crouch" ||
-                whiffedStateNo.includes("2g") ||
-                whiffedStateNo.includes("5g") ||
-                whiffedStateNo == "e" ||
-                whiffedStateNo.includes("j") ||
-                players[pIdx].char == 8 ||
-                stateNo == "6c"
-            )
-        ) {
-            stateText = "ブー" + stateText;
-        }
-        if (startFrame > 0) {
-            stateText = startFrame + "F遅らせ" + stateText;
-        }
     } else if (stateNo !== undefined && stateNo !== null) {
         stateText = stateNames[stateNo];
     } else {
         stateText = "";
     }
+    // ブースト判定
+    if (
+        boostNo >= 0 &&
+        !(
+            stateText == "stand" ||
+            stateText == "walk_0" ||
+            stateText == "walk_1" ||
+            stateText == "crouch" ||
+            stateText.includes("2g") ||
+            stateText.includes("5g") ||
+            stateText == "e" ||
+            stateText.includes("j") ||
+            players[pIdx].char == 8 ||
+            stateText == "6c" ||
+            stateText == ""
+        )
+    ) {
+        stateText = "ブー" + stateText;
+    }
+    if (startFrame > 0) {
+        stateText = startFrame + "F遅らせ" + stateText;
+    }
+
     context.strokeText(stateText, x, 60);
     context.fillText(stateText, x, 60);
     if (extraText) {
@@ -62,8 +64,10 @@ function drawCharStateText({
             context.fillText(extraText, x, 90);
         }
     }
-    context.strokeText("デバッグ用 " + players[pIdx].timeNo + "F目", x, 120);
+    context.strokeText("デバッグ用 " + (players[pIdx].timeNo + 1) + "F目", x, 120);
     context.strokeText("デバッグ用 " + players[pIdx].stateNo, x, 150);
+    context.strokeText("デバッグ用 " + players[pIdx].x, x, 180);
+    context.strokeText("デバッグ用 " + players[pIdx].y, x, 210);
 }
 //描画コンテキストの取得
 
@@ -260,6 +264,8 @@ var time = -1;
 var isNext = false;
 var isPaused = true;
 var pauseFrames = 0;
+var isRunning = false;
+var prevTimeStamp = -1;
 window.onload = async function () {
     canvas = document.getElementById("checker");
     // 高DPI対応
@@ -415,6 +421,12 @@ function drawImages() {
 }
 
 async function loop(timestamp) {
+    if (prevTimeStamp >= 0 && timestamp - prevTimeStamp < Math.floor((1 / 60.0) * 1000)) {
+        animId = window.requestAnimationFrame((ts) => loop(ts));
+        return;
+    }
+    prevTimeStamp = timestamp;
+    isRunning = true;
     for (let idx = 0; idx < 2; idx++) {
         const stateNo = players[idx].stateNo;
         if (
@@ -426,6 +438,7 @@ async function loop(timestamp) {
             stateNo === "5g_0" ||
             stateNo === "5g_1" ||
             stateNo === "e" ||
+            stateNo.includes("j") ||
             stateNo === "crouch"
         ) {
             players[idx]._motionEnded = true;
@@ -450,7 +463,6 @@ async function loop(timestamp) {
     baseMoveVelSet();
     await posAddVel();
     cameraMove();
-
     drawImages();
 
     if (collisionCheck() != "") {
@@ -612,9 +624,11 @@ async function loop(timestamp) {
         isNext = false;
         stop();
     }
+
     if (isPaused != true) {
         animId = window.requestAnimationFrame((ts) => loop(ts));
     }
+    isRunning = false;
 }
 
 function setloadfunc(obj) {
@@ -655,19 +669,18 @@ function loadImageBoost() {
 }
 
 function stop() {
-    window.cancelAnimationFrame(animId);
     isPaused = true;
 }
 
 function start() {
-    if (isPaused == true) {
+    if (isPaused == true && !isRunning) {
         animId = window.requestAnimationFrame((ts) => loop(ts));
         isPaused = false;
     }
 }
 
 function next() {
-    if (isPaused == true) {
+    if (isPaused == true && !isRunning) {
         animId = window.requestAnimationFrame((ts) => loop(ts));
     }
     isNext = true;
@@ -1011,23 +1024,7 @@ async function init(options = {}) {
             jQuery(initVals[idx].pm).val("stand");
         }
         players[idx].startFrame = 0;
-        // 指定ステートなら最初から_motionEnded=true
-        if (
-            players[idx].stateNo === "stand" ||
-            players[idx].stateNo === "walk_0" ||
-            players[idx].stateNo === "walk_1" ||
-            players[idx].stateNo === "2g_0" ||
-            players[idx].stateNo === "2g_1" ||
-            players[idx].stateNo === "5g_0" ||
-            players[idx].stateNo === "5g_1" ||
-            players[idx].stateNo.includes("j") ||
-            players[idx].stateNo === "e" ||
-            players[idx].stateNo === "crouch"
-        ) {
-            players[idx]._motionEnded = true;
-        } else {
-            players[idx]._motionEnded = false;
-        }
+        players[idx]._motionEnded = false;
         SetBoostCheckboxEnabled(idx);
         if (options.keepBoostCheckbox && players[idx].boostNo >= 0) {
             jQuery(initVals[idx].pb).prop("checked", true);
@@ -1040,6 +1037,7 @@ async function init(options = {}) {
     }
     time = 0;
     await loadImage();
+    cameraMove();
     collision = false;
 }
 
@@ -1237,19 +1235,7 @@ function collisionCheck() {
         context.strokeText(`${time}F目`, 630, 460);
         context.fillText(`${time}F目`, 630, 460);
     }
-    if (clash) {
-        const aligns = ["left", "right"];
-        const xs = [10, 630];
-        for (let i = 0; i < 2; i++) {
-            context.textAlign = aligns[i];
-            let text = "相殺";
-            if (is2POnly) {
-                text += i == 0 ? "(2P時◯)" : "(1P時×)";
-            }
-            context.strokeText(text, xs[i], 90);
-            context.fillText(text, xs[i], 90);
-        }
-    }
+
     if (
         !clash &&
         hit[0] &&
@@ -1258,65 +1244,42 @@ function collisionCheck() {
         hit[0] = false;
     }
 
-    const marks = [
-        hit[0] && !hit[1] ? "◯" : !hit[0] && hit[1] ? "×" : "",
-        hit[1] && !hit[0] ? "◯" : hit[0] && !hit[1] ? "×" : "",
-    ];
-    const aligns = ["left", "right"];
-    const xs = [10, 630];
-    if (!clash) {
+    let marks = ["", ""];
+
+    if (clash) {
         for (let i = 0; i < 2; i++) {
-            if (marks[i]) {
-                context.textAlign = aligns[i];
-                let text = marks[i];
-                if (is2POnly) {
-                    text += i == 0 ? "(2P時相殺)" : "(1P時相殺)";
-                }
-                context.strokeText(text, xs[i], 90);
-                context.fillText(text, xs[i], 90);
+            marks[i] = "相殺";
+            if (is2POnly) {
+                marks[i] += i == 0 ? "(2P時◯)" : "(1P時×)";
             }
+        }
+    } else {
+        marks = [
+            hit[0] && !hit[1] ? "◯" : !hit[0] && hit[1] ? "×" : "",
+            hit[1] && !hit[0] ? "◯" : hit[0] && !hit[1] ? "×" : "",
+        ];
+        for (let i = 0; i < 2; i++) {
+            if (is2POnly) {
+                marks[i] += i == 0 ? "(2P時相殺)" : "(1P時相殺)";
+            }
+        }
+        if (hit[0] && hit[1]) {
+            marks[0] = "相打ち（勝敗ランダム）";
+            marks[1] = "相打ち（勝敗ランダム）";
         }
     }
 
-    if (hit[0] && hit[1] && !clash) {
-        context.textAlign = "left";
-        context.strokeText("相打ち（勝敗ランダム）", 10, 90);
-        context.fillText("相打ち（勝敗ランダム）", 10, 90);
-        context.textAlign = "right";
-        context.strokeText("相打ち（勝敗ランダム）", 630, 90);
-        context.fillText("相打ち（勝敗ランダム）", 630, 90);
-    }
     if (hit[0] || hit[1] || clash) {
-        const aligns = ["left", "right"];
-        const xs = [10, 630];
-        for (let i = 0; i < 2; i++) {
-            context.textAlign = aligns[i];
-            context.strokeText(charNames[players[i].char], xs[i], 30);
-            context.fillText(charNames[players[i].char], xs[i], 30);
-            let stateText = stateNames[players[i].stateNo];
-            if (
-                players[i].boostNo >= 0 &&
-                !(
-                    players[i].stateNo == "stand" ||
-                    players[i].stateNo == "walk_0" ||
-                    players[i].stateNo == "walk_1" ||
-                    players[i].stateNo == "crouch" ||
-                    players[i].stateNo.includes("2g") ||
-                    players[i].stateNo.includes("5g") ||
-                    players[i].stateNo == "e" ||
-                    players[i].stateNo.includes("j") ||
-                    players[i].char == 8 ||
-                    players[i].stateNo == "6c"
-                )
-            ) {
-                stateText = "ブー" + stateText;
-            }
-
-            if (players[i].startFrame > 0) {
-                stateText = players[i].startFrame + "F遅らせ" + stateText;
-            }
-            context.strokeText(stateText, xs[i], 60);
-            context.fillText(stateText, xs[i], 60);
+        for (let idx = 0; idx < 2; idx++) {
+            drawCharStateText({
+                context,
+                pIdx: idx,
+                stateNo: players[idx].stateNo,
+                whiffedStateNo: players[idx].whiffedStateNo,
+                boostNo: players[idx].boostNo,
+                startFrame: players[idx].startFrame,
+                extraText: marks[idx],
+            });
         }
     }
 
