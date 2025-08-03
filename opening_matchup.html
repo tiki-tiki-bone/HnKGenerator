@@ -242,23 +242,9 @@
         </style>
         <script src="./OpeningMatchupChecker.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <title>北斗の拳 開幕行動チェッカー</title>
     </head>
     <body>
-        <script>
-            // ダブルタップズーム無効化（ピンチインアウトは有効）
-            let lastTouchEnd = 0;
-            document.addEventListener(
-                "touchend",
-                function (event) {
-                    const now = new Date().getTime();
-                    if (now - lastTouchEnd <= 300) {
-                        event.preventDefault();
-                    }
-                    lastTouchEnd = now;
-                },
-                false,
-            );
-        </script>
         <header>
             <h1>北斗の拳 開幕行動チェッカー</h1>
             <div
@@ -330,10 +316,16 @@
                 </div>
             </section>
             <section>
-                <h2>このツールについて</h2>
+                <h2>備考</h2>
                 <p>
-                    キャラ・技ごとの相性や当たり判定を可視化できるツールです。<br />
-                    使い方やご要望は下記Twitterまでご連絡ください。
+                    ・技硬直が終了し次第、ガードモーションに移行します。<br />
+                    ・ガード時、技の中下段の区別はしていません。<br />
+                    ・実機の挙動を完全に再現するものではありません。振り向き処理やブースなどは実装していません。<br />
+                    ・不具合や、実機と勝敗の結果が異なる組み合わせなどありましたら<a
+                        href="https://twitter.com/tiki_tiki_bone"
+                        target="_blank"
+                        >@tiki_tiki_bone</a
+                    >にご連絡頂けますと幸いです。
                 </p>
             </section>
         </main>

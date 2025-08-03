@@ -1,24 +1,15 @@
-// キャラ・技・アーマー・空振り等の出力共通関数
-// プレイヤー番号pIdx(0:1P, 1:2P)でx/alignを自動決定
-function drawCharStateText({
-    context,
+// 1P/2Pごとのテキスト行をまとめて記憶する配列（0:1P, 1:2P）
+let textlines = [[], []];
+
+// キャラ・技・アーマー・空振り等の出力行を配列に追加する関数
+function addCharStateTextLine({
     pIdx,
     stateNo = null,
     whiffedStateNo = null,
     boostNo = null,
     startFrame = 0,
     extraText = null,
-    font = "18px system-ui, -apple-system, 'Meiryo', 'Hiragino Kaku Gothic ProN', 'Segoe UI', Arial, sans-serif",
 }) {
-    const aligns = ["left", "right"];
-    const xs = [10, 630];
-    const align = aligns[pIdx];
-    const x = xs[pIdx];
-    context.textAlign = align;
-    context.lineWidth = 2;
-    context.font = font;
-    context.strokeText(charNames[players[pIdx].char], x, 30);
-    context.fillText(charNames[players[pIdx].char], x, 30);
     let stateText;
     // 空振り系はwhiffedStateNo優先
     if (whiffedStateNo !== undefined && whiffedStateNo !== null) {
@@ -51,23 +42,31 @@ function drawCharStateText({
         stateText = startFrame + "F遅らせ" + stateText;
     }
 
-    context.strokeText(stateText, x, 60);
-    context.fillText(stateText, x, 60);
+    if (
+        players[pIdx].stateNo.includes("g") &&
+        whiffedStateNo !== undefined &&
+        whiffedStateNo !== null &&
+        !(players[pIdx].stateNo.includes("g_0") & (players[pIdx].timeNo == 0))
+    ) {
+        stateText += "後ガード";
+    }
+
+    // 1P/2Pごとにシンプルな配列でpush
+    const lines = [];
+    lines.push(charNames[players[pIdx].char]);
+    lines.push(stateText);
     if (extraText) {
         if (Array.isArray(extraText)) {
-            extraText.forEach((t, i) => {
-                context.strokeText(t, x, 90 + i * 30);
-                context.fillText(t, x, 90 + i * 30);
-            });
+            extraText.forEach((t) => lines.push(t));
         } else {
-            context.strokeText(extraText, x, 90);
-            context.fillText(extraText, x, 90);
+            lines.push(extraText);
         }
     }
-    context.strokeText("デバッグ用 " + (players[pIdx].timeNo + 1) + "F目", x, 120);
-    context.strokeText("デバッグ用 " + players[pIdx].stateNo, x, 150);
-    context.strokeText("デバッグ用 " + players[pIdx].x, x, 180);
-    context.strokeText("デバッグ用 " + players[pIdx].y, x, 210);
+    lines.push("デバッグ用 " + (players[pIdx].timeNo + 1) + "F目");
+    lines.push("デバッグ用 " + players[pIdx].stateNo);
+    lines.push("デバッグ用 " + players[pIdx].x);
+    lines.push("デバッグ用 " + players[pIdx].y);
+    textlines[pIdx] = textlines[pIdx].concat(lines);
 }
 //描画コンテキストの取得
 
@@ -181,6 +180,25 @@ const stateNames = {
     e: "ブースト",
     provoke: "挑発",
 };
+
+function drawCharStateTextLines() {
+    const font =
+        "18px system-ui, -apple-system, 'Meiryo', 'Hiragino Kaku Gothic ProN', 'Segoe UI', Arial, sans-serif";
+    const baseX = [10, 630];
+    const baseY = [30, 30];
+    const align = ["left", "right"];
+    for (let pIdx = 0; pIdx < 2; pIdx++) {
+        context.font = font;
+        context.textAlign = align[pIdx];
+        context.lineWidth = 2;
+        textlines[pIdx].forEach((text, i) => {
+            let y = baseY[pIdx] + i * 30;
+            context.strokeText(text, baseX[pIdx], y);
+            context.fillText(text, baseX[pIdx], y);
+        });
+        textlines[pIdx].length = 0;
+    }
+}
 
 // 共通化: p1=players[0], p2=players[1]
 const players = [
@@ -556,15 +574,22 @@ async function loop(timestamp) {
                 jQuery(idx === 0 ? "#1P_M" : "#2P_M").val("5g_0");
                 await getDataFromJson(idx);
                 p._motionEnded = true;
+                if (textlines[idx].length >= 3) {
+                    textlines[idx][2] = "ガード";
+                }
             } else if (p.time != -1) {
                 p.whiffedStateNo = p.stateNo;
                 p.stateNo = "2g_0";
                 jQuery(idx === 0 ? "#1P_M" : "#2P_M").val("2g_0");
                 await getDataFromJson(idx);
                 p._motionEnded = true;
+                if (textlines[idx].length >= 3) {
+                    textlines[idx][2] = "ガード";
+                }
             }
         }
     }
+
     // 両方のキャラのモーションが終わったら
     if (players[0]._motionEnded && players[1]._motionEnded) {
         // どちらも空振り判定か？
@@ -590,7 +615,7 @@ async function loop(timestamp) {
                 if (players[idx].whiffedStateNo == null) {
                     players[idx].whiffedStateNo = players[idx].stateNo;
                 }
-                drawCharStateText({
+                addCharStateTextLine({
                     context,
                     pIdx: idx,
                     stateNo: players[idx].stateNo,
@@ -624,6 +649,9 @@ async function loop(timestamp) {
         isNext = false;
         stop();
     }
+
+    // --- テキスト行の描画 ---
+    drawCharStateTextLines();
 
     if (isPaused != true) {
         animId = window.requestAnimationFrame((ts) => loop(ts));
@@ -870,8 +898,11 @@ async function posAddVel() {
 
 async function setChar(idx, charId) {
     players[idx].char = charId;
-    await setState(idx, players[idx].stateNo);
-    drawImages();
+    await init({ keepStateNo: true, keepBoostCheckbox: true });
+    for (let i = 0; i < players[idx].img.length; i++) {
+        await setState(idx, players[idx].stateNo);
+    }
+    //drawImages();
 }
 
 function SetBoostCheckboxEnabled(idx) {
@@ -1175,7 +1206,7 @@ function collisionCheck() {
                             }
                             // この攻撃IDを記録（攻撃側で管理）
                             players[attackerIdx].armorBlockedAttackIds.push(attackId);
-                            drawCharStateText({
+                            addCharStateTextLine({
                                 context,
                                 pIdx: defenderIdx,
                                 stateNo: players[defenderIdx].stateNo,
@@ -1190,7 +1221,7 @@ function collisionCheck() {
                                 pauseFrames = 30;
                             }
                             players[attackerIdx].armorBlockedAttackIds.push(attackId);
-                            drawCharStateText({
+                            addCharStateTextLine({
                                 context,
                                 pIdx: defenderIdx,
                                 stateNo: players[defenderIdx].stateNo,
@@ -1254,11 +1285,16 @@ function collisionCheck() {
             }
         }
     } else {
+        // ◯×の判定
         marks = [
             hit[0] && !hit[1] ? "◯" : !hit[0] && hit[1] ? "×" : "",
             hit[1] && !hit[0] ? "◯" : hit[0] && !hit[1] ? "×" : "",
         ];
+        // ×のとき、食らった側のstateNoにgが含まれていたら「ガード」
         for (let i = 0; i < 2; i++) {
+            if (marks[i] === "×" && players[i].stateNo && players[i].stateNo.includes("g")) {
+                marks[i] = "ガード";
+            }
             if (is2POnly) {
                 marks[i] += i == 0 ? "(2P時相殺)" : "(1P時相殺)";
             }
@@ -1271,7 +1307,7 @@ function collisionCheck() {
 
     if (hit[0] || hit[1] || clash) {
         for (let idx = 0; idx < 2; idx++) {
-            drawCharStateText({
+            addCharStateTextLine({
                 context,
                 pIdx: idx,
                 stateNo: players[idx].stateNo,
