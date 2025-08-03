@@ -48,7 +48,7 @@ function addCharStateTextLine({
         whiffedStateNo !== null &&
         !(players[pIdx].stateNo.includes("g_0") & (players[pIdx].timeNo == 0))
     ) {
-        stateText += "後ガード";
+        stateText += "空振り後ガード";
     }
 
     // 1P/2Pごとにシンプルな配列でpush
@@ -136,16 +136,19 @@ const stateNames = {
     "5g_0": "立ちガード",
     "5g_1": "立ちガード",
     to_bj: "バックジャンプ移行",
+    to_bj_g: "バックジャンプ移行",
     bj: "バックジャンプ",
     bj_fall: "バックジャンプ",
     bj_g_0: "バックジャンプガード",
     bj_g_1: "バックジャンプガード",
     to_vj: "垂直ジャンプ移行",
+    to_vj_g: "垂直ジャンプ移行",
     vj: "垂直ジャンプ",
     vj_fall: "垂直ジャンプ",
     vj_g_0: "垂直ジャンプガード",
     vj_g_1: "垂直ジャンプガード",
     to_fj: "前ジャンプ移行",
+    to_fj_g: "前ジャンプ移行",
     fj: "前ジャンプ",
     fj_fall: "前ジャンプ",
     fj_g_0: "前ジャンプガード",
@@ -612,7 +615,10 @@ async function loop(timestamp) {
         }
         if (isWhiffState(players[0].whiffedStateNo) || isWhiffState(players[1].whiffedStateNo)) {
             for (let idx = 0; idx < 2; idx++) {
-                if (players[idx].whiffedStateNo == null) {
+                if (
+                    players[idx].whiffedStateNo == null &&
+                    isWhiffState(players[idx].whiffedStateNo)
+                ) {
                     players[idx].whiffedStateNo = players[idx].stateNo;
                 }
                 addCharStateTextLine({
@@ -1292,7 +1298,12 @@ function collisionCheck() {
         ];
         // ×のとき、食らった側のstateNoにgが含まれていたら「ガード」
         for (let i = 0; i < 2; i++) {
-            if (marks[i] === "×" && players[i].stateNo && players[i].stateNo.includes("g")) {
+            if (
+                marks[i] === "×" &&
+                players[i].stateNo &&
+                players[i].stateNo.includes("g") &&
+                !players[i].stateNo.includes("to_")
+            ) {
                 marks[i] = "ガード";
             }
             if (is2POnly) {
