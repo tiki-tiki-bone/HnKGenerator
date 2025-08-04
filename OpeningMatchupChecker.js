@@ -290,7 +290,7 @@ function addCharStateTextLine({
         whiffedStateNo !== null &&
         !(players[pIdx].stateNo.includes("g_0") & (players[pIdx].timeNo == 0))
     ) {
-        stateText += "空振り後ガード";
+        stateText += players[pIdx].stateNo == "land" ? "空振り" : "" + "後ガード";
     }
 
     // 1P/2Pごとにシンプルな配列でpush
