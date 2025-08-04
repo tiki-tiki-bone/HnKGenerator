@@ -774,7 +774,7 @@
             {
                 "elemno": 1,
                 "imageno": 1,
-                "time": 4,
+                "time": 10,
                 "level": 3,
                 "boxes": [
                     { "attr": 0, "x": 8, "y": -196, "w": 153, "h": 71 },
@@ -789,21 +789,6 @@
             {
                 "elemno": 2,
                 "imageno": 2,
-                "time": 6,
-                "level": 3,
-                "boxes": [
-                    { "attr": 0, "x": 8, "y": -196, "w": 153, "h": 71 },
-                    { "attr": 1, "x": 8, "y": -192, "w": 65, "h": 22 },
-                    { "attr": 1, "x": -50, "y": -225, "w": 64, "h": 105 },
-                    { "attr": 1, "x": -37, "y": -121, "w": 76, "h": 55 },
-                    { "attr": 1, "x": -47, "y": -66, "w": 105, "h": 66 }
-                ],
-                "image_x": 0,
-                "image_y": 0
-            },
-            {
-                "elemno": 3,
-                "imageno": 3,
                 "time": 7,
                 "level": 0,
                 "boxes": [
@@ -817,8 +802,8 @@
                 "image_y": 0
             },
             {
-                "elemno": 4,
-                "imageno": 4,
+                "elemno": 3,
+                "imageno": 3,
                 "time": 8,
                 "level": 0,
                 "boxes": [
