@@ -308,7 +308,7 @@ function addCharStateTextLine({
     //lines.push("デバッグ用 " + players[pIdx].stateNo);
     //lines.push("デバッグ用 " + players[pIdx].x);
     //lines.push("デバッグ用 " + players[pIdx].y);
-    textlines[pIdx] = textlines[pIdx].concat(lines);
+    textlines[pIdx] = lines;
 }
 
 function drawImages() {
@@ -942,6 +942,7 @@ async function setState(idx, stateNo) {
     // 技を出し始めたフレームを記憶
     players[idx].startFrame = time;
     players[idx].stateNo = stateNo;
+    players[idx]._motionEnded = false;
     if (players[idx].boostNo >= 0) {
         jQuery(idx === 0 ? "#p1boost" : "#p2boost").prop("checked", true);
         setBoost(idx, true);
