@@ -1,542 +1,564 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-NM6S92KNW1');
-  </script>
-  <meta charset="UTF-8">
-  <title>低ダ攻撃発生Fデータ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: "Helvetica Neue", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #333;
-    }
-    header {
-      background-color: #333;
-      color: white;
-      padding: 2rem 1rem 1rem;
-      text-align: center;
-      position: relative;
-    }
+    <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta charset="UTF-8" />
+        <title>低ダ攻撃発生Fデータ</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+            body {
+                font-family: "Helvetica Neue", sans-serif;
+                margin: 0;
+                padding: 0;
+                background: #f9f9f9;
+                color: #333;
+            }
+            header {
+                background-color: #333;
+                color: white;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
 
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: nowrap;
-    }
+            nav {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
 
-    .table-container {
-    width: fit-content; /* 中身（テーブル）の幅に合わせる */
-    margin: auto;       /* 横中央 */
-    background-color: white;
-      padding: 0.5rem;
-      background: white;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    }
+            .table-container {
+                width: fit-content; /* 中身（テーブル）の幅に合わせる */
+                margin: auto; /* 横中央 */
+                background-color: white;
+                padding: 0.5rem;
+                background: white;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.4rem 1rem;
-      border: 2px solid transparent;
-      border-radius: 6px;
-      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-      font-size: 1rem;
-      user-select: none;
-    }
-    table {
-      margin-left: auto;
-      margin-right: auto;
-    }
-    nav a:hover,
-    nav a:focus {
-      background-color: #ffb347;
-      color: #333;
-      border-color: #ffb347;
-      outline: none;
-    }
+            nav a {
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 6px;
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
 
-    /* ハンバーガーボタン */
-    .menu-toggle {
-      display: none;
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      width: 30px;
-      height: 22px;
-      cursor: pointer;
-      flex-direction: column;
-      justify-content: space-between;
-      user-select: none;
-      z-index: 10;
-    }
-    .menu-toggle span {
-      display: block;
-      height: 4px;
-      background: white;
-      border-radius: 2px;
-    }
+            table {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            nav a:hover,
+            nav a:focus {
+                background-color: #ffb347;
+                color: #333;
+                border-color: #ffb347;
+                outline: none;
+            }
 
-    td.right {
-      text-align: right;
-    }
+            /* ハンバーガーボタン */
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: white;
+                border-radius: 2px;
+            }
 
-    table {
-      border-collapse: collapse;
-    }
+            td.right {
+                text-align: right;
+            }
 
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0 5px;
-    }
+            table {
+                border-collapse: collapse;
+            }
 
-    /* スマホ用 */
-    @media (max-width: 600px) {
-      nav {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: #333;
-        flex-direction: column;
-        display: none; /* 初期は非表示 */
-        margin: 0;
-        padding: 0.5rem 0;
-      }
-      nav a {
-        padding: 1rem;
-        border: none;
-        text-align: center;
-        font-size: 1.2rem;
-      }
-      nav.show {
-        display: flex;
-      }
+            th,
+            td {
+                border: 1px solid #ccc;
+                padding: 0 5px;
+            }
 
-      .menu-toggle {
-        display: flex;
-      }
-    h1 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
+            /* スマホ用 */
+            @media (max-width: 600px) {
+                nav {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none; /* 初期は非表示 */
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+                nav a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.2rem;
+                }
+                nav.show {
+                    display: flex;
+                }
 
-    .table-container {
-      max-width: 90%;
-      margin: 0 auto 50px;
-      overflow-x: auto;
-    }
+                .menu-toggle {
+                    display: flex;
+                }
 
-    table {
-      width: 100%;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    main {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background: white;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    }
+                h1 {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+            }
 
-    th, td {
-      border: 1px solid #ccc;
-      padding: 5px;
-      text-align: center;
-    }
-    
-    th {
-      background-color: #f0f0f0;
-    }
+            .table-container {
+                max-width: 90%;
+                margin: 0 auto 50px;
+                overflow-x: auto;
+            }
 
-    @media (max-width: 600px) {
-      nav a {
-        display: block;
-        margin: 10px 0;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>低ダ攻撃発生Fデータ</h1>
-    <div class="menu-toggle" id="menuToggle" aria-label="メニュー開閉" role="button" tabindex="0">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <nav id="navMenu">
-      <a href="codes.html">チートコード一覧</a>
-      <a href="index.html">チートコードジェネレータ</a>
-      <a href="iad_frame.html">低ダ攻撃発生Fデータ</a>
-    </nav>
-  </header>
+            table {
+                width: 100%;
+                background: white;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+            main {
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 1rem;
+                background: white;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            }
 
-  <main>
-    <br>
-  <div class="table-container">
-    <table>
-      <tr>
-        <th rowspan="2">自分</th>
-        <th rowspan="2">相手</th>
-        <th rowspan="2">技</th>
-        <th rowspan="2">J入力からヒット</th>
-        <th colspan="5">フレーム内訳</th>
-      </tr>
-      <tr>
-        <th>J移行F</th>
-        <th>低ダ発生F</th>
-        <th>攻撃発生F</th>
-        <th>持続ヒット</th>
-      </tr>
-      <tr>
-        <td rowspan="2">ケン</td>
-        <td rowspan="24">トキ</td>
-        <td>JB</td>
-        <td class="right">20</td>
-        <td class="right">4</td>
-        <td class="right">6</td>
-        <td class="right">10</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">18</td>
-        <td class="right">4</td>
-        <td class="right">4</td>
-        <td class="right">10</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ラオウ</td>
-        <td>JB</td>
-        <td class="right">21</td>
-        <td class="right">4</td>
-        <td class="right">7</td>
-        <td class="right">8</td>
-        <td class="right">2</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">20</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">8</td>
-        <td class="right">3</td>
-      </tr>
-      <tr>
-        <td rowspan="2">トキ</td>
-        <td>JD</td>
-        <td class="right">19</td>
-        <td class="right">4</td>
-        <td class="right">6</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJD</td>
-        <td class="right">17</td>
-        <td class="right">4</td>
-        <td class="right">4</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ジャギ</td>
-        <td>JD</td>
-        <td class="right">22</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">10</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJD</td>
-        <td class="right">19</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">10</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">シン</td>
-        <td>JB</td>
-        <td class="right">22</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">10</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">19</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">10</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">レイ</td>
-        <td>JB</td>
-        <td class="right">21</td>
-        <td class="right">4</td>
-        <td class="right">7</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">21</td>
-        <td class="right">4</td>
-        <td class="right">6</td>
-        <td class="right">5</td>
-        <td class="right">6</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ユダ</td>
-        <td>JB</td>
-        <td class="right">21</td>
-        <td class="right">5</td>
-        <td class="right">8</td>
-        <td class="right">5</td>
-        <td class="right">3</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">18</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">3</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ユダ(垂直J)</td>
-        <td>JB</td>
-        <td class="right">21</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">5</td>
-        <td class="right">4</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">17</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">3</td>
-      </tr>
-      <tr>
-        <td rowspan="2">サウザー</td>
-        <td>JB</td>
-        <td class="right">20</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">8</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">18</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">8</td>
-        <td class="right">1</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ハート</td>
-        <td>JD</td>
-        <td class="right">25</td>
-        <td class="right">10</td>
-        <td class="right">6</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJD</td>
-        <td class="right">23</td>
-        <td class="right">10</td>
-        <td class="right">4</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ハート(垂直J)</td>
-        <td>JD</td>
-        <td class="right">23</td>
-        <td class="right">8</td>
-        <td class="right">6</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJD</td>
-        <td class="right">21</td>
-        <td class="right">8</td>
-        <td class="right">4</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">マミヤ</td>
-        <td>JD</td>
-        <td class="right">22</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">9</td>
-        <td class="right">1</td>
-      </tr>
-      <tr>
-        <td>HJD</td>
-        <td class="right">19</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">9</td>
-        <td class="right">1</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ラオウ</td>
-        <td rowspan="13">ラオウ</td>
-        <td>JB</td>
-        <td class="right">19</td>
-        <td class="right">4</td>
-        <td class="right">7</td>
-        <td class="right">8</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">17</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">8</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">レイ</td>
-        <td>JB</td>
-        <td class="right">16</td>
-        <td class="right">4</td>
-        <td class="right">7</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">16</td>
-        <td class="right">4</td>
-        <td class="right">6</td>
-        <td class="right">5</td>
-        <td class="right">1</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ユダ</td>
-        <td>JB</td>
-        <td class="right">18</td>
-        <td class="right">5</td>
-        <td class="right">8</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">15</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="2">ユダ(垂直J)</td>
-        <td>JB</td>
-        <td class="right">17</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">14</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>サウザー</td>
-        <td>JB</td>
-        <td class="right">17</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">8</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td rowspan="4">マミヤ</td>
-        <td>JD</td>
-        <td class="right">21</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJD</td>
-        <td class="right">18</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">9</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>JB</td>
-        <td class="right">17</td>
-        <td class="right">4</td>
-        <td class="right">8</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-      <tr>
-        <td>HJB</td>
-        <td class="right">14</td>
-        <td class="right">4</td>
-        <td class="right">5</td>
-        <td class="right">5</td>
-        <td class="right">0</td>
-      </tr>
-    </table>
-    <div style="width: 100%; text-align: right; margin-top: 0.5em; color: #666; font-size: 0.9em;">
-      備考：最も早く攻撃がヒットするよう、距離を調整しています。
-      </div>
-  </div>
-</main>
-<script>
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
+            th,
+            td {
+                border: 1px solid #ccc;
+                padding: 5px;
+                text-align: center;
+            }
 
-    function toggleMenu() {
-      navMenu.classList.toggle('show');
-    }
+            th {
+                background-color: #f0f0f0;
+            }
 
-    menuToggle.addEventListener('click', toggleMenu);
-    menuToggle.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleMenu();
-      }
-    });
-  </script>
-</body>
+            @media (max-width: 600px) {
+                nav a {
+                    display: block;
+                    margin: 10px 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>低ダ攻撃発生Fデータ</h1>
+            <div
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="メニュー開閉"
+                role="button"
+                tabindex="0"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="navMenu">
+                <a href="codes.html">チートコード一覧</a>
+                <a href="index.html">チートコードジェネレータ</a>
+                <a href="iad_frame.html">低ダ攻撃発生Fデータ</a>
+                <a href="opening_matchup.html">開幕行動チェッカー</a>
+            </nav>
+        </header>
+
+        <main>
+            <br />
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th rowspan="2">自分</th>
+                        <th rowspan="2">相手</th>
+                        <th rowspan="2">技</th>
+                        <th rowspan="2">J入力からヒット</th>
+                        <th colspan="5">フレーム内訳</th>
+                    </tr>
+                    <tr>
+                        <th>J移行F</th>
+                        <th>低ダ発生F</th>
+                        <th>攻撃発生F</th>
+                        <th>持続ヒット</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ケン</td>
+                        <td rowspan="24">トキ</td>
+                        <td>JB</td>
+                        <td class="right">20</td>
+                        <td class="right">4</td>
+                        <td class="right">6</td>
+                        <td class="right">10</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">18</td>
+                        <td class="right">4</td>
+                        <td class="right">4</td>
+                        <td class="right">10</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ラオウ</td>
+                        <td>JB</td>
+                        <td class="right">21</td>
+                        <td class="right">4</td>
+                        <td class="right">7</td>
+                        <td class="right">8</td>
+                        <td class="right">2</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">20</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">8</td>
+                        <td class="right">3</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">トキ</td>
+                        <td>JD</td>
+                        <td class="right">19</td>
+                        <td class="right">4</td>
+                        <td class="right">6</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJD</td>
+                        <td class="right">17</td>
+                        <td class="right">4</td>
+                        <td class="right">4</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ジャギ</td>
+                        <td>JD</td>
+                        <td class="right">22</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">10</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJD</td>
+                        <td class="right">19</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">10</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">シン</td>
+                        <td>JB</td>
+                        <td class="right">22</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">10</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">19</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">10</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">レイ</td>
+                        <td>JB</td>
+                        <td class="right">21</td>
+                        <td class="right">4</td>
+                        <td class="right">7</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">21</td>
+                        <td class="right">4</td>
+                        <td class="right">6</td>
+                        <td class="right">5</td>
+                        <td class="right">6</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ユダ</td>
+                        <td>JB</td>
+                        <td class="right">21</td>
+                        <td class="right">5</td>
+                        <td class="right">8</td>
+                        <td class="right">5</td>
+                        <td class="right">3</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">18</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">3</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ユダ(垂直J)</td>
+                        <td>JB</td>
+                        <td class="right">21</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">5</td>
+                        <td class="right">4</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">17</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">3</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">サウザー</td>
+                        <td>JB</td>
+                        <td class="right">20</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">8</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">18</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">8</td>
+                        <td class="right">1</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ハート</td>
+                        <td>JD</td>
+                        <td class="right">25</td>
+                        <td class="right">10</td>
+                        <td class="right">6</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJD</td>
+                        <td class="right">23</td>
+                        <td class="right">10</td>
+                        <td class="right">4</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ハート(垂直J)</td>
+                        <td>JD</td>
+                        <td class="right">23</td>
+                        <td class="right">8</td>
+                        <td class="right">6</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJD</td>
+                        <td class="right">21</td>
+                        <td class="right">8</td>
+                        <td class="right">4</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">マミヤ</td>
+                        <td>JD</td>
+                        <td class="right">22</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">9</td>
+                        <td class="right">1</td>
+                    </tr>
+                    <tr>
+                        <td>HJD</td>
+                        <td class="right">19</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">9</td>
+                        <td class="right">1</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ラオウ</td>
+                        <td rowspan="13">ラオウ</td>
+                        <td>JB</td>
+                        <td class="right">19</td>
+                        <td class="right">4</td>
+                        <td class="right">7</td>
+                        <td class="right">8</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">17</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">8</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">レイ</td>
+                        <td>JB</td>
+                        <td class="right">16</td>
+                        <td class="right">4</td>
+                        <td class="right">7</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">16</td>
+                        <td class="right">4</td>
+                        <td class="right">6</td>
+                        <td class="right">5</td>
+                        <td class="right">1</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ユダ</td>
+                        <td>JB</td>
+                        <td class="right">18</td>
+                        <td class="right">5</td>
+                        <td class="right">8</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">15</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">ユダ(垂直J)</td>
+                        <td>JB</td>
+                        <td class="right">17</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">14</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>サウザー</td>
+                        <td>JB</td>
+                        <td class="right">17</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">8</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4">マミヤ</td>
+                        <td>JD</td>
+                        <td class="right">21</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJD</td>
+                        <td class="right">18</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">9</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>JB</td>
+                        <td class="right">17</td>
+                        <td class="right">4</td>
+                        <td class="right">8</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                    <tr>
+                        <td>HJB</td>
+                        <td class="right">14</td>
+                        <td class="right">4</td>
+                        <td class="right">5</td>
+                        <td class="right">5</td>
+                        <td class="right">0</td>
+                    </tr>
+                </table>
+                <div
+                    style="
+                        width: 100%;
+                        text-align: right;
+                        margin-top: 0.5em;
+                        color: #666;
+                        font-size: 0.9em;
+                    "
+                >
+                    備考：最も早く攻撃がヒットするよう、距離を調整しています。
+                </div>
+            </div>
+        </main>
+        <script>
+            const menuToggle = document.getElementById("menuToggle");
+            const navMenu = document.getElementById("navMenu");
+
+            function toggleMenu() {
+                navMenu.classList.toggle("show");
+            }
+
+            menuToggle.addEventListener("click", toggleMenu);
+            menuToggle.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleMenu();
+                }
+            });
+        </script>
+    </body>
 </html>
