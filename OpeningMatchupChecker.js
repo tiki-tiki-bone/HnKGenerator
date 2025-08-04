@@ -1,73 +1,3 @@
-// 1P/2Pごとのテキスト行をまとめて記憶する配列（0:1P, 1:2P）
-let textlines = [[], []];
-
-// キャラ・技・アーマー・空振り等の出力行を配列に追加する関数
-function addCharStateTextLine({
-    pIdx,
-    stateNo = null,
-    whiffedStateNo = null,
-    boostNo = null,
-    startFrame = 0,
-    extraText = null,
-}) {
-    let stateText;
-    // 空振り系はwhiffedStateNo優先
-    if (whiffedStateNo !== undefined && whiffedStateNo !== null) {
-        stateText = stateNames[whiffedStateNo];
-    } else if (stateNo !== undefined && stateNo !== null) {
-        stateText = stateNames[stateNo];
-    } else {
-        stateText = "";
-    }
-    // ブースト判定
-    if (
-        boostNo >= 0 &&
-        !(
-            stateText == "stand" ||
-            stateText == "walk_0" ||
-            stateText == "walk_1" ||
-            stateText == "crouch" ||
-            stateText.includes("2g") ||
-            stateText.includes("5g") ||
-            stateText == "e" ||
-            stateText.includes("j") ||
-            players[pIdx].char == 8 ||
-            stateText == "6c" ||
-            stateText == ""
-        )
-    ) {
-        stateText = "ブー" + stateText;
-    }
-    if (startFrame > 0) {
-        stateText = startFrame + "F遅らせ" + stateText;
-    }
-
-    if (
-        players[pIdx].stateNo.includes("g") &&
-        whiffedStateNo !== undefined &&
-        whiffedStateNo !== null &&
-        !(players[pIdx].stateNo.includes("g_0") & (players[pIdx].timeNo == 0))
-    ) {
-        stateText += "空振り後ガード";
-    }
-
-    // 1P/2Pごとにシンプルな配列でpush
-    const lines = [];
-    lines.push(charNames[players[pIdx].char]);
-    lines.push(stateText);
-    if (extraText) {
-        if (Array.isArray(extraText)) {
-            extraText.forEach((t) => lines.push(t));
-        } else {
-            lines.push(extraText);
-        }
-    }
-    lines.push("デバッグ用 " + (players[pIdx].timeNo + 1) + "F目");
-    lines.push("デバッグ用 " + players[pIdx].stateNo);
-    lines.push("デバッグ用 " + players[pIdx].x);
-    lines.push("デバッグ用 " + players[pIdx].y);
-    textlines[pIdx] = textlines[pIdx].concat(lines);
-}
 //描画コンテキストの取得
 
 let animId;
@@ -289,6 +219,8 @@ var isPaused = true;
 var pauseFrames = 0;
 var isRunning = false;
 var prevTimeStamp = -1;
+let textlines = [[], []];
+
 window.onload = async function () {
     canvas = document.getElementById("checker");
     // 高DPI対応
@@ -310,6 +242,74 @@ window.onload = async function () {
     await loadImage();
     await reset();
 };
+
+// キャラ・技・アーマー・空振り等の出力行を配列に追加する関数
+function addCharStateTextLine({
+    pIdx,
+    stateNo = null,
+    whiffedStateNo = null,
+    boostNo = null,
+    startFrame = 0,
+    extraText = null,
+}) {
+    let stateText;
+    // 空振り系はwhiffedStateNo優先
+    if (whiffedStateNo !== undefined && whiffedStateNo !== null) {
+        stateText = stateNames[whiffedStateNo];
+    } else if (stateNo !== undefined && stateNo !== null) {
+        stateText = stateNames[stateNo];
+    } else {
+        stateText = "";
+    }
+    // ブースト判定
+    if (
+        boostNo >= 0 &&
+        !(
+            stateText == "stand" ||
+            stateText == "walk_0" ||
+            stateText == "walk_1" ||
+            stateText == "crouch" ||
+            stateText.includes("2g") ||
+            stateText.includes("5g") ||
+            stateText == "e" ||
+            stateText.includes("j") ||
+            players[pIdx].char == 8 ||
+            stateText == "6c" ||
+            stateText == ""
+        )
+    ) {
+        stateText = "ブー" + stateText;
+    }
+    if (startFrame > 0) {
+        stateText = startFrame + "F遅らせ" + stateText;
+    }
+
+    if (
+        players[pIdx].stateNo.includes("g") &&
+        whiffedStateNo !== undefined &&
+        whiffedStateNo !== null &&
+        !(players[pIdx].stateNo.includes("g_0") & (players[pIdx].timeNo == 0))
+    ) {
+        stateText += "空振り後ガード";
+    }
+
+    // 1P/2Pごとにシンプルな配列でpush
+    const lines = [];
+    lines.push(charNames[players[pIdx].char]);
+    lines.push(stateText);
+    if (extraText) {
+        if (Array.isArray(extraText)) {
+            extraText.forEach((t) => lines.push(t));
+        } else {
+            lines.push(extraText);
+        }
+    }
+    lines.push("デバッグ用 " + (players[pIdx].timeNo + 1) + "F目");
+    lines.push("デバッグ用 " + players[pIdx].stateNo);
+    lines.push("デバッグ用 " + players[pIdx].x);
+    lines.push("デバッグ用 " + players[pIdx].y);
+    textlines[pIdx] = textlines[pIdx].concat(lines);
+}
 
 function drawImages() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -640,11 +640,13 @@ async function loop(timestamp) {
             jQuery("#2P_M").val(players[1].selectedStateNo);
             await init({ keepStateNo: true, keepBoostCheckbox: true });
             stop();
-            jQuery("#1P_M").attr("disabled", false);
-            jQuery("#2P_M").attr("disabled", false);
         }
     }
     if (collision) {
+        players[0].stateNo = players[0].selectedStateNo;
+        players[1].stateNo = players[1].selectedStateNo;
+        jQuery("#1P_M").val(players[0].selectedStateNo);
+        jQuery("#2P_M").val(players[1].selectedStateNo);
         await init({ keepStateNo: true, keepBoostCheckbox: true });
         stop();
     }
@@ -658,7 +660,6 @@ async function loop(timestamp) {
         stop();
     }
 
-    // --- テキスト行の描画 ---
     drawCharStateTextLines();
 
     if (isPaused != true) {
