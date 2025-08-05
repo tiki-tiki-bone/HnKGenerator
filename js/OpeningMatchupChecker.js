@@ -169,6 +169,7 @@ const players = [
         selectedStateNo: "stand",
         whiffedStateNo: null, // 空振り技記録
         startFrame: 0,
+        armorBlocked: false,
     },
     {
         char: 0,
@@ -202,6 +203,7 @@ const players = [
         selectedStateNo: "stand",
         whiffedStateNo: null, // 空振り技記録
         startFrame: 0,
+        armorBlocked: false,
     },
 ];
 var stageImg;
@@ -361,17 +363,16 @@ function drawImages() {
         ) {
             p.armorHigh = false;
             p.armorLow = false;
-            p.armorBlockedAttackIds = [];
+            p.armorBlocked = false;
         }
 
-        // アーマー付与時にarmorBlockedAttackIdsをリセット
         if (p.char == 0 && p.stateNo == "6b" && p.timeNo == 0) {
             p.armorHigh = true;
-            p.armorBlockedAttackIds = [];
+            p.armorBlocked = false;
         } else if (p.char == 8 && (p.stateNo == "bd" || p.stateNo == "2d") && p.timeNo == 0) {
             p.armorHigh = true;
             p.armorLow = true;
-            p.armorBlockedAttackIds = [];
+            p.armorBlocked = false;
         }
     }
 
@@ -465,9 +466,10 @@ async function loop(timestamp) {
             stateNo === "crouch"
         ) {
             players[idx]._motionEnded = true;
+            const flag = stateNo.includes("j") || stateNo == "e";
             idx === 0
-                ? jQuery("#1P_M").attr("disabled", false)
-                : jQuery("#2P_M").attr("disabled", false);
+                ? jQuery("#1P_M").attr("disabled", flag)
+                : jQuery("#2P_M").attr("disabled", flag);
         } else {
             idx === 0
                 ? jQuery("#1P_M").attr("disabled", true)
@@ -1073,8 +1075,7 @@ async function init(options = {}) {
         } else {
             players[idx].boostNo = -1;
         }
-        // armorBlockedAttackIdsもリセット
-        players[idx].armorBlockedAttackIds = [];
+        players[idx].armorBlocked = false;
     }
     time = 0;
     await loadImage();
@@ -1097,14 +1098,6 @@ function collisionCheck() {
     context.lineWidth = 2;
     context.font =
         "18px system-ui, -apple-system, 'Meiryo', 'Hiragino Kaku Gothic ProN', 'Segoe UI', Arial, sans-serif";
-
-    // --- アーマーで防いだ攻撃ID記録用 ---
-    // 各プレイヤーに armorBlockedAttackIds を初期化（攻撃側で管理するため防御側は不要）
-    for (let idx = 0; idx < 2; idx++) {
-        if (!players[idx].armorBlockedAttackIds) {
-            players[idx].armorBlockedAttackIds = [];
-        }
-    }
 
     //データ分別
     for (let idx = 0; idx < 2; idx++) {
@@ -1184,7 +1177,6 @@ function collisionCheck() {
                     if (!(isArmorBreak && players[defenderIdx].y < 984)) {
                         // 攻撃属性判定: 下段かどうか
                         let isLow = false;
-                        // 下段判定: 2a, 2b, 2c, 2d, 2c_1, 2d_1 など
                         const state = players[attackerIdx].stateNo;
                         if (
                             state == "2b" ||
@@ -1196,16 +1188,22 @@ function collisionCheck() {
                             isLow = true;
                         }
 
-                        // 攻撃ID生成: stateNo + elemNo で一意とする
-                        const attackId =
-                            players[attackerIdx].stateNo + ":" + players[attackerIdx].elemNo;
-
-                        // 既にアーマーで防いだ攻撃IDなら無効（攻撃側で管理）
-                        if (players[attackerIdx].armorBlockedAttackIds.includes(attackId)) {
+                        if (
+                            (players[attackerIdx].char == 4 &&
+                                players[attackerIdx].stateNo == "5c" &&
+                                players[attackerIdx].elemNo == 5 &&
+                                players[attackerIdx].elemTime == 0) ||
+                            (players[attackerIdx].char == 9 &&
+                                (players[attackerIdx].stateNo == "5d" ||
+                                    players[attackerIdx].stateNo == "2d" ||
+                                    players[attackerIdx].stateNo == "6a"))
+                        ) {
+                            players[attackerIdx].armorBlocked = false;
+                        }
+                        // 既にアーマーで防いでいたら無効
+                        if (players[attackerIdx].armorBlocked) {
                             continue;
                         }
-                        let x = defenderIdx === 0 ? 10 : 630;
-                        const aligns = ["left", "right"];
 
                         // アーマー判定: 下段はarmorLow、その他はarmorHigh
                         if (isLow && players[defenderIdx].armorLow && !isArmorBreak) {
@@ -1214,8 +1212,7 @@ function collisionCheck() {
                             if (!isPaused) {
                                 pauseFrames = 30;
                             }
-                            // この攻撃IDを記録（攻撃側で管理）
-                            players[attackerIdx].armorBlockedAttackIds.push(attackId);
+                            players[attackerIdx].armorBlocked = true;
                             addCharStateTextLine({
                                 context,
                                 pIdx: defenderIdx,
@@ -1230,7 +1227,7 @@ function collisionCheck() {
                             if (!isPaused) {
                                 pauseFrames = 30;
                             }
-                            players[attackerIdx].armorBlockedAttackIds.push(attackId);
+                            players[attackerIdx].armorBlocked = true;
                             addCharStateTextLine({
                                 context,
                                 pIdx: defenderIdx,
