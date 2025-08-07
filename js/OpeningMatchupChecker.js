@@ -481,6 +481,7 @@ async function loop(timestamp) {
         if (isPaused != true) {
             animId = window.requestAnimationFrame((ts) => loop(ts));
         }
+        isRunning = false;
         return;
     }
     time += 1;
@@ -709,6 +710,7 @@ function loadImageBoost() {
 
 function stop() {
     isPaused = true;
+    pauseFrames = 0;
 }
 
 function start() {
