@@ -709,8 +709,8 @@ function loadImageBoost() {
 }
 
 function stop() {
-    isPaused = true;
     pauseFrames = 0;
+    isPaused = true;
 }
 
 function start() {
@@ -721,6 +721,7 @@ function start() {
 }
 
 function next() {
+    pauseFrames = 0;
     if (isPaused == true && !isRunning) {
         animId = window.requestAnimationFrame((ts) => loop(ts));
     }
