@@ -30,14 +30,14 @@
                 position: relative;
             }
 
-            nav {
+            #navMenu {
                 display: flex;
                 justify-content: center;
                 gap: 1rem;
                 flex-wrap: nowrap;
             }
 
-            nav a {
+            #navMenu a {
                 color: white;
                 text-decoration: none;
                 font-weight: 600;
@@ -49,14 +49,22 @@
                 user-select: none;
             }
 
-            nav a:hover,
-            nav a:focus {
+            #navMenu a:hover,
+            #navMenu a:focus {
                 background-color: #ffb347;
                 color: #333;
                 border-color: #ffb347;
                 outline: none;
             }
+            #toc a {
+                text-decoration: none; /* 下線を消す */
+                color: #333; /* 自然な文字色 */
+                transition: color 0.2s; /* ホバー時に色変化 */
+            }
 
+            #toc a:hover {
+                color: #0077cc; /* ホバーで少し目立たせる */
+            }
             /* ハンバーガーボタン */
             .menu-toggle {
                 display: none;
@@ -81,7 +89,7 @@
 
             /* スマホ用 */
             @media (max-width: 600px) {
-                nav {
+                #navMenu {
                     position: absolute;
                     top: 100%;
                     left: 0;
@@ -94,14 +102,14 @@
                     padding: 0.5rem 0;
                 }
 
-                nav a {
+                #navMenu a {
                     padding: 1rem;
                     border: none;
                     text-align: center;
                     font-size: 1.2rem;
                 }
 
-                nav.show {
+                #navMenu.show {
                     display: flex;
                 }
 
@@ -127,6 +135,21 @@
                         display: block;
                         margin: 10px 0;
                     }
+                }
+                #toc {
+                    padding: 0.5em; /* 内側の余白を狭める */
+                }
+
+                #toc h2 {
+                    font-size: 1em; /* 見出しを少し小さく */
+                }
+
+                #toc li {
+                    margin: 0.1em 0; /* 行間をさらに狭く */
+                }
+
+                #toc a {
+                    font-size: 0.9em; /* リンク文字を小さく */
                 }
             }
 
@@ -206,6 +229,10 @@
             </nav>
         </header>
         <main>
+            <nav id="toc">
+                <h2>目次</h2>
+                <ul></ul>
+            </nav>
             <section>
                 <h2>トレモ数値をキャラより手前に表示する</h2>
                 <pre>1CBE6CEC 205428A5</pre>
@@ -347,6 +374,45 @@
                 <p>
                     <strong>備考:</strong> <br />・<a href="#randomGuard">ランダムガードチート</a
                     >とあわせて使用してください。
+                </p>
+            </section>
+            <section>
+                <h2>スタンディング設定有効時にランダムでガーキャンを出す</h2>
+                <pre>
+1C8600F4 0C5A90FE
+1C8A5DC8 1053B065
+1C8A61D8 1053B065
+1C9A7E28 619FE7BD
+1C9A7E2C 104E0049
+1C9A7E34 C896E7AD
+1C9A7E3C 2054E7CF
+1C9A7E40 909480A5
+1C9A7E44 C496E7B1
+1C9A7E4C 104CAF1D
+1C9A7E54 C496E7B5
+1C9A7E5C 91D468F5
+1C9A7E60 9094E7A1
+1C9A7E64 9A33E79B
+1C9A7E68 1454D7C0
+1C9A7E6C 1C94E7A6
+1C9A7E70 C874E79D
+1C9A7E78 104CED51
+1C9A7E80 385AE725
+1C9A7E84 149AE7B0
+1C9A7E88 145607B5
+1C9A7E8C C4D6E7A7
+1C9A7E90 3854E7A6
+1C9A7E94 3854E7A5
+1C9A7E98 419FE7BD
+1C9A7E9C 15F6E79D
+</pre
+                >
+                <p>
+                    <strong>備考:</strong>
+                    <br />・ガード設定が有効かつスタンディングがNORMAL以外の場合にランダムでガーキャンを出します。<br />
+                    ・ガーキャンを打つ頻度はコード復号後の19行目「200FFD58
+                    24040080」の末尾2桁を01~FFの値(16進数)に変更することで調整できます。値が大きいと頻度が減ります。<br />
+                    ・このチートを適用するとガード設定有効時にDUMMYの攻撃がガード不能になる不具合が修正されます。
                 </p>
             </section>
             <section>
@@ -583,8 +649,7 @@
                 >
                 <p>
                     <strong>備考:</strong>
-                    受け身設定を変えた後は一度ポジションリセットをしてください。<br />
-                    リベンジマークは表示されません。
+                    受け身設定を変えた後は一時ポジションリセットをしてください。
                 </p>
             </section>
             <script>
@@ -601,6 +666,25 @@
                         e.preventDefault();
                         toggleMenu();
                     }
+                });
+                const tocList = document.querySelector("#toc ul");
+                const headings = document.querySelectorAll("section > h2");
+
+                headings.forEach((h2, i) => {
+                    // 親セクションにIDを自動付与
+                    let id = h2.parentElement.id;
+                    if (!id) {
+                        id = "sec" + (i + 1);
+                        h2.parentElement.id = id;
+                    }
+
+                    // 目次に追加
+                    const li = document.createElement("li");
+                    const a = document.createElement("a");
+                    a.href = "#" + id;
+                    a.textContent = h2.textContent;
+                    li.appendChild(a);
+                    tocList.appendChild(li);
                 });
             </script>
         </main>
