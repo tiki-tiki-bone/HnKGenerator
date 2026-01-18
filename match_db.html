@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AC北斗 対戦動画DB</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                background-color: #f9f9f9;
+                color: #333;
+                margin: 0;
+                padding: 0;
+            }
+
+            header {
+                background-color: #333;
+                color: white;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            #navMenu {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            #navMenu a {
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 6px;
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            #navMenu a:hover,
+            #navMenu a:focus {
+                background-color: #ffb347;
+                color: #333;
+                border-color: #ffb347;
+                outline: none;
+            }
+            #toc a {
+                text-decoration: none; /* 下線を消す */
+                color: #333; /* 自然な文字色 */
+                transition: color 0.2s; /* ホバー時に色変化 */
+            }
+
+            #toc a:hover {
+                color: #0077cc; /* ホバーで少し目立たせる */
+            }
+            /* ハンバーガーボタン */
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: white;
+                border-radius: 2px;
+            }
+
+            /* スマホ用 */
+            @media (max-width: 600px) {
+                #navMenu {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none;
+                    /* 初期は非表示 */
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+
+                #navMenu a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.2rem;
+                }
+
+                #navMenu.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+
+                h1 {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+
+                main {
+                    max-width: 800px;
+                    margin: 2rem auto;
+                    padding: 1rem;
+                    background: white;
+                    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+                }
+
+                @media (max-width: 600px) {
+                    nav a {
+                        display: block;
+                        margin: 10px 0;
+                    }
+                }
+                #toc {
+                    padding: 0.5em; /* 内側の余白を狭める */
+                }
+
+                #toc h2 {
+                    font-size: 1em; /* 見出しを少し小さく */
+                }
+
+                #toc li {
+                    margin: 0.1em 0; /* 行間をさらに狭く */
+                }
+
+                #toc a {
+                    font-size: 0.9em; /* リンク文字を小さく */
+                }
+            }
+
+            main {
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 1rem;
+                background: white;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 0.5rem;
+            }
+
+            pre {
+                background: #f0f0f0;
+                padding: 1rem;
+                overflow-x: auto;
+            }
+
+            .footer {
+                text-align: center;
+                color: #666;
+                margin-top: 2rem;
+                font-size: 0.9rem;
+            }
+
+            #annotation {
+                position: fixed;
+                bottom: 1rem;
+                right: 1rem;
+                background: #fff8dc;
+                border: 1px solid #ccc;
+                padding: 1rem 2rem 1rem 1rem;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-size: 0.9rem;
+                max-width: 300px;
+                border-radius: 0.5rem;
+            }
+
+            #annotation-close {
+                position: absolute;
+                top: 4px;
+                right: 8px;
+                background: none;
+                border: none;
+                font-weight: bold;
+                font-size: 1rem;
+                cursor: pointer;
+                color: #666;
+            }
+        
+
+            /* ===== 対戦動画DB（検索） 追加スタイル ===== */
+            .panel {
+                background: #f0f0f0;
+                padding: 1rem;
+                border-radius: 10px;
+            }
+
+            .form-row {
+                display: flex;
+                gap: 0.8rem;
+                align-items: center;
+                flex-wrap: wrap;
+                margin-bottom: 0.8rem;
+            }
+
+            .form-row label {
+                min-width: 110px;
+                font-weight: 600;
+            }
+
+            .form-row input,
+            .form-row select {
+                padding: 0.5rem 0.6rem;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                font-size: 1rem;
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .form-row .small {
+                min-width: 120px;
+                max-width: 180px;
+                flex: 0 0 auto;
+            }
+
+            .radio-group {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .radio-group label {
+                min-width: auto;
+                font-weight: 500;
+            }
+
+            .actions {
+                display: flex;
+                gap: 0.6rem;
+                flex-wrap: wrap;
+                margin-top: 0.6rem;
+            }
+
+            button.primary {
+                background-color: #333;
+                color: white;
+                border: none;
+                padding: 0.55rem 1rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+
+            button.secondary {
+                background-color: white;
+                color: #333;
+                border: 1px solid #aaa;
+                padding: 0.55rem 1rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+
+            button.primary:disabled,
+            button.secondary:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .status {
+                margin-top: 0.8rem;
+                color: #444;
+                font-size: 0.95rem;
+            }
+
+            .error {
+                margin-top: 0.8rem;
+                background: #fff0f0;
+                border: 1px solid #ffb3b3;
+                padding: 0.8rem;
+                border-radius: 10px;
+                color: #8a1f1f;
+                display: none;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 0.5rem;
+            }
+
+            th,
+            td {
+                border-bottom: 1px solid #ddd;
+                padding: 0.55rem 0.5rem;
+                text-align: left;
+                vertical-align: top;
+                white-space: nowrap;
+            }
+
+            th {
+                background: #f7f7f7;
+                font-weight: 700;
+            }
+
+            td.wrap {
+                white-space: normal;
+            }
+
+            .pager {
+                display: flex;
+                gap: 0.6rem;
+                align-items: center;
+                flex-wrap: wrap;
+                margin-top: 0.8rem;
+            }
+
+            .pager input {
+                padding: 0.45rem 0.6rem;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                width: 90px;
+            }
+
+            .note {
+                font-size: 0.95rem;
+                color: #555;
+            }
+
+            @media (max-width: 600px) {
+                .form-row label {
+                    min-width: 100px;
+                }
+                th,
+                td {
+                    font-size: 0.95rem;
+                }
+            }
+</style>
+    </head>
+
+<body>
+
+        <header>
+            <h1>AC北斗 対戦動画DB</h1>
+            <div
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="メニュー開閉"
+                role="button"
+                tabindex="0"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="navMenu">
+                <a href="codes.html">チートコード一覧</a>
+                <a href="index.html">チートコードジェネレータ</a>
+                <a href="iad_frame.html">低ダ攻撃発生Fデータ</a>
+                <a href="opening_matchup.html">開幕行動チェッカー</a>
+                <a href="match_db.html">対戦動画DB</a>
+            </nav>
+        </header>
+
+        <main>
+            <section>
+                <h2>検索</h2>
+                <div class="panel">
+                    <div class="form-row">
+                        <label for="apiBase">API Base</label>
+                        <input id="apiBase" type="text" placeholder="https://<worker名>.<サブドメイン>.workers.dev" />
+                        <button id="saveApi" class="secondary" type="button">保存</button>
+                    </div>
+
+                    <div class="form-row">
+                        <label>検索モード</label>
+                        <div class="radio-group" role="radiogroup" aria-label="検索モード">
+                            <label><input type="radio" name="mode" value="any" checked /> プレイヤー（どちら側でも）</label>
+                            <label><input type="radio" name="mode" value="vs" /> 対戦カード（2人）</label>
+                        </div>
+                    </div>
+
+                    <datalist id="playersList"></datalist>
+
+                    <div id="modeAny">
+                        <div class="form-row">
+                            <label for="player">プレイヤー</label>
+                            <input id="player" type="text" list="playersList" placeholder="正規名 または alias" />
+                        </div>
+                    </div>
+
+                    <div id="modeVs" style="display:none;">
+                        <div class="form-row">
+                            <label for="player1">プレイヤー1</label>
+                            <input id="player1" type="text" list="playersList" placeholder="正規名 または alias" />
+                        </div>
+                        <div class="form-row">
+                            <label for="player2">プレイヤー2</label>
+                            <input id="player2" type="text" list="playersList" placeholder="正規名 または alias" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="video">動画ID</label>
+                        <input id="video" type="text" placeholder="例: eQjK9E292ME" />
+                    </div>
+
+                    <div class="form-row">
+                        <label for="char">キャラ</label>
+                        <input id="char" type="text" placeholder="例: RAOH（完全一致）" />
+                    </div>
+
+                    <div class="form-row">
+                        <label for="pageSize">表示件数</label>
+                        <select id="pageSize" class="small">
+                            <option value="25">25</option>
+                            <option value="50" selected>50</option>
+                            <option value="100">100</option>
+                            <option value="200">200</option>
+                        </select>
+                    </div>
+
+                    <div class="actions">
+                        <button id="searchBtn" class="primary" type="button">検索</button>
+                        <button id="sampleBtn" class="secondary" type="button">サンプル検索</button>
+                        <button id="clearBtn" class="secondary" type="button">クリア</button>
+                    </div>
+
+                    <div id="status" class="status"></div>
+                    <div id="error" class="error"></div>
+                </div>
+            </section>
+
+            <section>
+                <h2>結果</h2>
+                <div class="table-wrap">
+                    <table aria-label="検索結果">
+                        <thead>
+                            <tr>
+                                <th>動画</th>
+                                <th>開始</th>
+                                <th>終了</th>
+                                <th class="wrap">P1</th>
+                                <th class="wrap">P2</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="pager">
+                    <button id="prevBtn" class="secondary" type="button">前へ</button>
+                    <button id="nextBtn" class="secondary" type="button">次へ</button>
+                    <span class="note">ページ</span>
+                    <input id="page" type="number" min="1" value="1" />
+                    <button id="goBtn" class="secondary" type="button">移動</button>
+                </div>
+            </section>
+
+            <section>
+                <h2>メモ</h2>
+                <div class="note">
+                    <ul>
+                        <li>このページは Cloudflare Workers の <code>/api/matches</code> / <code>/api/players</code> を呼び出して検索します。</li>
+                        <li>GitHub Pages から叩くため、Workers 側で CORS（<code>ALLOWED_ORIGINS</code>）が設定されている必要があります。</li>
+                        <li>キャラ検索は API 仕様上「完全一致」です（大文字小文字や表記揺れを吸収したい場合は API 側で拡張します）。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <script>
+                // ====== header menu ======
+                const menuToggle = document.getElementById("menuToggle");
+                const navMenu = document.getElementById("navMenu");
+                function toggleMenu() { navMenu.classList.toggle("show"); }
+                menuToggle.addEventListener("click", toggleMenu);
+                menuToggle.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleMenu();
+                    }
+                });
+
+                // ====== app ======
+                const LS_KEY = "hnk_match_db_api_base";
+
+                const apiBaseEl = document.getElementById("apiBase");
+                const saveApiBtn = document.getElementById("saveApi");
+                const statusEl = document.getElementById("status");
+                const errorEl = document.getElementById("error");
+                const resultBody = document.getElementById("resultBody");
+
+                const modeAnyEl = document.getElementById("modeAny");
+                const modeVsEl = document.getElementById("modeVs");
+
+                const playerEl = document.getElementById("player");
+                const player1El = document.getElementById("player1");
+                const player2El = document.getElementById("player2");
+
+                const videoEl = document.getElementById("video");
+                const charEl = document.getElementById("char");
+                const pageSizeEl = document.getElementById("pageSize");
+                const pageEl = document.getElementById("page");
+
+                const searchBtn = document.getElementById("searchBtn");
+                const sampleBtn = document.getElementById("sampleBtn");
+                const clearBtn = document.getElementById("clearBtn");
+
+                const prevBtn = document.getElementById("prevBtn");
+                const nextBtn = document.getElementById("nextBtn");
+                const goBtn = document.getElementById("goBtn");
+
+                function setError(msg) {
+                    if (!msg) {
+                        errorEl.style.display = "none";
+                        errorEl.textContent = "";
+                        return;
+                    }
+                    errorEl.style.display = "block";
+                    errorEl.textContent = msg;
+                }
+
+                function setStatus(msg) {
+                    statusEl.textContent = msg || "";
+                }
+
+                function normBaseUrl(s) {
+                    return (s || "").trim().replace(/\/+$/, "");
+                }
+
+                function getMode() {
+                    const r = document.querySelector('input[name="mode"]:checked');
+                    return r ? r.value : "any";
+                }
+
+                function fmtSec(sec) {
+                    const n = Number(sec);
+                    if (!Number.isFinite(n)) return "";
+                    const s = Math.max(0, Math.trunc(n));
+                    const h = Math.floor(s / 3600);
+                    const m = Math.floor((s % 3600) / 60);
+                    const ss = s % 60;
+                    const pad2 = (x) => String(x).padStart(2, "0");
+                    if (h > 0) return `${h}:${pad2(m)}:${pad2(ss)}`;
+                    return `${m}:${pad2(ss)}`;
+                }
+
+                function ytUrl(videoId, startSec) {
+                    const t = Math.max(0, Math.trunc(Number(startSec) || 0));
+                    return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&t=${t}s`;
+                }
+
+                function clearTable() {
+                    while (resultBody.firstChild) resultBody.removeChild(resultBody.firstChild);
+                }
+
+                function renderRows(items) {
+                    clearTable();
+                    for (const it of items) {
+                        const tr = document.createElement("tr");
+
+                        const tdVideo = document.createElement("td");
+                        const a = document.createElement("a");
+                        a.href = ytUrl(it.video_id, it.start_sec);
+                        a.target = "_blank";
+                        a.rel = "noopener";
+                        a.textContent = it.video_id;
+                        tdVideo.appendChild(a);
+
+                        const tdStart = document.createElement("td");
+                        tdStart.textContent = fmtSec(it.start_sec);
+
+                        const tdEnd = document.createElement("td");
+                        tdEnd.textContent = fmtSec(it.end_sec);
+
+                        const tdP1 = document.createElement("td");
+                        tdP1.className = "wrap";
+                        tdP1.textContent = `${it.p1_player} / ${it.p1_char}`;
+
+                        const tdP2 = document.createElement("td");
+                        tdP2.className = "wrap";
+                        tdP2.textContent = `${it.p2_player} / ${it.p2_char}`;
+
+                        tr.appendChild(tdVideo);
+                        tr.appendChild(tdStart);
+                        tr.appendChild(tdEnd);
+                        tr.appendChild(tdP1);
+                        tr.appendChild(tdP2);
+                        resultBody.appendChild(tr);
+                    }
+                }
+
+                let lastTotal = 0;
+                let lastPage = 1;
+                let lastPageSize = 50;
+
+                function updatePager(page, pageSize, total) {
+                    lastTotal = total;
+                    lastPage = page;
+                    lastPageSize = pageSize;
+                    pageEl.value = String(page);
+
+                    prevBtn.disabled = page <= 1;
+                    nextBtn.disabled = page * pageSize >= total;
+                }
+
+                async function loadPlayers(base) {
+                    const list = document.getElementById("playersList");
+                    list.innerHTML = "";
+                    if (!base) return;
+
+                    try {
+                        const url = `${base}/api/players?limit=200`;
+                        const res = await fetch(url);
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        const items = Array.isArray(data.items) ? data.items : [];
+                        for (const p of items) {
+                            const opt = document.createElement("option");
+                            opt.value = p.canonical_name;
+                            list.appendChild(opt);
+                        }
+                    } catch {
+                        // ignore
+                    }
+                }
+
+                async function doSearch(pageOverride) {
+                    const base = normBaseUrl(apiBaseEl.value);
+                    if (!base) {
+                        setError("API Base を入力してください（例: https://<worker名>.<サブドメイン>.workers.dev）。");
+                        return;
+                    }
+
+                    setError("");
+                    const mode = getMode();
+
+                    const params = new URLSearchParams();
+
+                    const pageSize = Math.max(1, Math.min(200, parseInt(pageSizeEl.value || "50", 10) || 50));
+                    const page = Math.max(1, pageOverride || parseInt(pageEl.value || "1", 10) || 1);
+
+                    if (mode === "any") {
+                        const player = (playerEl.value || "").trim();
+                        if (player) params.set("player", player);
+                    } else {
+                        const p1 = (player1El.value || "").trim();
+                        const p2 = (player2El.value || "").trim();
+                        if (!p1 || !p2) {
+                            setError("対戦カード検索では、プレイヤー1 と プレイヤー2 の両方を入力してください。");
+                            return;
+                        }
+                        params.set("player1", p1);
+                        params.set("player2", p2);
+                    }
+
+                    const video = (videoEl.value || "").trim();
+                    const ch = (charEl.value || "").trim();
+                    if (video) params.set("video", video);
+                    if (ch) params.set("char", ch);
+
+                    params.set("page", String(page));
+                    params.set("pageSize", String(pageSize));
+
+                    const url = `${base}/api/matches?${params.toString()}`;
+
+                    searchBtn.disabled = true;
+                    setStatus("検索中…");
+
+                    try {
+                        const res = await fetch(url);
+                        const isJson = (res.headers.get("content-type") || "").includes("application/json");
+                        const payload = isJson ? await res.json() : { error: await res.text() };
+
+                        if (!res.ok) {
+                            const msg = payload && payload.error ? String(payload.error) : `HTTP ${res.status}`;
+                            setError(msg);
+                            setStatus("");
+                            renderRows([]);
+                            updatePager(1, pageSize, 0);
+                            return;
+                        }
+
+                        const items = Array.isArray(payload.items) ? payload.items : [];
+                        const total = Number(payload.total) || 0;
+                        const rp = Number(payload.page) || page;
+                        const rps = Number(payload.pageSize) || pageSize;
+
+                        renderRows(items);
+                        updatePager(rp, rps, total);
+                        setStatus(`件数: ${total} / 表示: ${items.length} / ページ: ${rp}`);
+                    } catch (e) {
+                        setError(String(e || "fetch error"));
+                        setStatus("");
+                        renderRows([]);
+                        updatePager(1, pageSize, 0);
+                    } finally {
+                        searchBtn.disabled = false;
+                    }
+                }
+
+                function setMode(mode) {
+                    if (mode === "vs") {
+                        modeAnyEl.style.display = "none";
+                        modeVsEl.style.display = "block";
+                    } else {
+                        modeAnyEl.style.display = "block";
+                        modeVsEl.style.display = "none";
+                    }
+                }
+
+                document.querySelectorAll('input[name="mode"]').forEach((r) => {
+                    r.addEventListener("change", () => {
+                        setMode(getMode());
+                        setError("");
+                    });
+                });
+
+                saveApiBtn.addEventListener("click", async () => {
+                    const base = normBaseUrl(apiBaseEl.value);
+                    if (!base) {
+                        setError("API Base を入力してください。");
+                        return;
+                    }
+                    localStorage.setItem(LS_KEY, base);
+                    setError("");
+                    setStatus("API Base を保存しました。");
+                    await loadPlayers(base);
+                });
+
+                searchBtn.addEventListener("click", () => doSearch());
+                goBtn.addEventListener("click", () => doSearch(Math.max(1, parseInt(pageEl.value || "1", 10) || 1)));
+                prevBtn.addEventListener("click", () => doSearch(Math.max(1, lastPage - 1)));
+                nextBtn.addEventListener("click", () => doSearch(lastPage + 1));
+
+                sampleBtn.addEventListener("click", async () => {
+                    if (!videoEl.value) videoEl.value = "eQjK9E292ME";
+                    if (!apiBaseEl.value) {
+                        const stored = localStorage.getItem(LS_KEY) || "";
+                        if (stored) apiBaseEl.value = stored;
+                    }
+                    await doSearch(1);
+                });
+
+                clearBtn.addEventListener("click", () => {
+                    playerEl.value = "";
+                    player1El.value = "";
+                    player2El.value = "";
+                    videoEl.value = "";
+                    charEl.value = "";
+                    pageEl.value = "1";
+                    setError("");
+                    setStatus("");
+                    renderRows([]);
+                    updatePager(1, parseInt(pageSizeEl.value || "50", 10) || 50, 0);
+                });
+
+                // Enter で検索
+                [playerEl, player1El, player2El, videoEl, charEl, pageEl].forEach((el) => {
+                    if (!el) return;
+                    el.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            doSearch();
+                        }
+                    });
+                });
+
+                // init
+                (async () => {
+                    // api= で共有できるようにする
+                    const qp = new URLSearchParams(location.search);
+                    const apiFromQuery = normBaseUrl(qp.get("api") || "");
+                    const stored = normBaseUrl(localStorage.getItem(LS_KEY) || "");
+                    apiBaseEl.value = apiFromQuery || stored || "";
+
+                    setMode(getMode());
+                    updatePager(1, parseInt(pageSizeEl.value || "50", 10) || 50, 0);
+
+                    const base = normBaseUrl(apiBaseEl.value);
+                    if (base) await loadPlayers(base);
+                })();
+            </script>
+        </main>
+
+<div class="footer">
+            ご意見・ご要望などありましたら、<a
+                href="https://twitter.com/tiki_tiki_bone"
+                target="_blank"
+                >@tiki_tiki_bone</a
+            >
+            までお知らせください。
+        </div>
+        
+</body>
+</html>
