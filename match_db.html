@@ -236,6 +236,20 @@
                 min-width: 220px;
             }
 
+            .fixed-api {
+                padding: 0.5rem 0.6rem;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                font-size: 1rem;
+                flex: 1;
+                min-width: 220px;
+                background: #fafafa;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
             .form-row .small {
                 min-width: 120px;
                 max-width: 180px;
@@ -391,12 +405,6 @@
                 <h2>検索</h2>
                 <div class="panel">
                     <div class="form-row">
-                        <label for="apiBase">API Base</label>
-                        <input id="apiBase" type="text" placeholder="https://<worker名>.<サブドメイン>.workers.dev" />
-                        <button id="saveApi" class="secondary" type="button">保存</button>
-                    </div>
-
-                    <div class="form-row">
                         <label>検索モード</label>
                         <div class="radio-group" role="radiogroup" aria-label="検索モード">
                             <label><input type="radio" name="mode" value="any" checked /> プレイヤー（どちら側でも）</label>
@@ -506,10 +514,8 @@
                 });
 
                 // ====== app ======
-                const LS_KEY = "hnk_match_db_api_base";
+                const API_BASE = \"https://hnk-match-db-api.tikibone.workers.dev\";
 
-                const apiBaseEl = document.getElementById("apiBase");
-                const saveApiBtn = document.getElementById("saveApi");
                 const statusEl = document.getElementById("status");
                 const errorEl = document.getElementById("error");
                 const resultBody = document.getElementById("resultBody");
@@ -627,7 +633,6 @@
                     prevBtn.disabled = page <= 1;
                     nextBtn.disabled = page * pageSize >= total;
                 }
-
                 async function loadPlayers(base) {
                     const list = document.getElementById("playersList");
                     list.innerHTML = "";
@@ -648,14 +653,8 @@
                         // ignore
                     }
                 }
-
                 async function doSearch(pageOverride) {
-                    const base = normBaseUrl(apiBaseEl.value);
-                    if (!base) {
-                        setError("API Base を入力してください（例: https://<worker名>.<サブドメイン>.workers.dev）。");
-                        return;
-                    }
-
+                    const base = API_BASE;
                     setError("");
                     const mode = getMode();
 
@@ -740,18 +739,6 @@
                     });
                 });
 
-                saveApiBtn.addEventListener("click", async () => {
-                    const base = normBaseUrl(apiBaseEl.value);
-                    if (!base) {
-                        setError("API Base を入力してください。");
-                        return;
-                    }
-                    localStorage.setItem(LS_KEY, base);
-                    setError("");
-                    setStatus("API Base を保存しました。");
-                    await loadPlayers(base);
-                });
-
                 searchBtn.addEventListener("click", () => doSearch());
                 goBtn.addEventListener("click", () => doSearch(Math.max(1, parseInt(pageEl.value || "1", 10) || 1)));
                 prevBtn.addEventListener("click", () => doSearch(Math.max(1, lastPage - 1)));
@@ -759,10 +746,6 @@
 
                 sampleBtn.addEventListener("click", async () => {
                     if (!videoEl.value) videoEl.value = "eQjK9E292ME";
-                    if (!apiBaseEl.value) {
-                        const stored = localStorage.getItem(LS_KEY) || "";
-                        if (stored) apiBaseEl.value = stored;
-                    }
                     await doSearch(1);
                 });
 
@@ -792,18 +775,11 @@
 
                 // init
                 (async () => {
-                    // api= で共有できるようにする
-                    const qp = new URLSearchParams(location.search);
-                    const apiFromQuery = normBaseUrl(qp.get("api") || "");
-                    const stored = normBaseUrl(localStorage.getItem(LS_KEY) || "");
-                    apiBaseEl.value = apiFromQuery || stored || "";
-
                     setMode(getMode());
                     updatePager(1, parseInt(pageSizeEl.value || "50", 10) || 50, 0);
-
-                    const base = normBaseUrl(apiBaseEl.value);
-                    if (base) await loadPlayers(base);
+                    await loadPlayers(API_BASE);
                 })();
+
             </script>
         </main>
 
