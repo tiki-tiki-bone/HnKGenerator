@@ -1,0 +1,532 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <base href="../" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="../js/api-config.local.js"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>北斗の拳 対戦動画DB - 連続再生</title>
+        <style>
+            :root {
+                --ink: #222;
+                --muted: #6b6b6b;
+                --line: #d6d6d6;
+                --card: #ffffff;
+                --surface: #f7f7f7;
+                --accent: #ffb347;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: sans-serif;
+                color: var(--ink);
+                background-color: #f3f3f3;
+                margin: 0;
+                padding: 0;
+                touch-action: manipulation;
+            }
+
+            header {
+                background-color: #333;
+                color: #ffffff;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            header h1 {
+                margin: 0;
+                font-size: 1.6rem;
+                font-weight: 700;
+            }
+
+            #navMenu {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            #navMenu a {
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                transition:
+                    background-color 0.3s ease,
+                    border-color 0.3s ease,
+                    color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            #navMenu a:hover,
+            #navMenu a:focus {
+                background-color: var(--accent);
+                color: #333;
+                border-color: var(--accent);
+                outline: none;
+            }
+
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: #ffffff;
+                border-radius: 2px;
+            }
+
+            main {
+                max-width: 1000px;
+                margin: 2rem auto;
+                padding: 0.75rem;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            main h1 {
+                margin: 0 0 0.8rem;
+                font-size: 1.3rem;
+                background: var(--surface);
+                border-left: 6px solid var(--accent);
+                padding: 0.45rem 0.8rem;
+                border-radius: 6px;
+            }
+
+            .lead {
+                color: var(--muted);
+                margin: 0 0 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .player-wrap {
+                background: #000;
+                border-radius: 8px;
+                overflow: hidden;
+                aspect-ratio: 16 / 9;
+                width: 100%;
+            }
+
+            #player {
+                width: 100%;
+                height: 100%;
+            }
+
+            .controls {
+                margin-top: 0.9rem;
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .controls button {
+                background-color: #333;
+                color: #ffffff;
+                border: none;
+                padding: 0.55rem 1rem;
+                border-radius: 3px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+
+            .controls button.secondary {
+                background-color: #ffffff;
+                color: #333;
+                border: 1px solid #aaa;
+            }
+
+            .controls button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .controls-side {
+                flex: 1;
+                display: flex;
+            }
+
+            .controls-left {
+                justify-content: flex-start;
+            }
+
+            .controls-right {
+                justify-content: flex-end;
+            }
+
+            .controls-center {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .playlist {
+                margin-top: 1.4rem;
+                border-top: 1px solid var(--line);
+                padding-top: 1rem;
+            }
+
+            .playlist h2 {
+                font-size: 1rem;
+                margin: 0 0 0.6rem;
+            }
+
+            .playlist ol {
+                margin: 0;
+                padding-left: 0.8rem;
+                color: var(--muted);
+                max-height: 170px;
+                overflow-y: auto;
+                padding-right: 0.4rem;
+                list-style-position: inside;
+            }
+
+            .playlist li {
+                padding: 0.25rem 0.1rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .playlist li:hover {
+                cursor: pointer;
+            }
+
+            .playlist li.active {
+                color: #1b1b1b;
+                background: #e3e3e3;
+                border-radius: 0;
+                padding: 0.35rem 0.35rem;
+            }
+
+            .empty-state {
+                padding: 1rem;
+                border: 1px dashed var(--line);
+                border-radius: 6px;
+                color: var(--muted);
+                text-align: center;
+            }
+
+            @media (max-width: 700px) {
+                .player-wrap {
+                    border-radius: 0;
+                }
+                body {
+                    height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+
+                main {
+                    margin: 0;
+                    padding: 0 0 0.5rem;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 0;
+                    max-height: 100%;
+                    overflow: hidden;
+                    border-radius: 0;
+                }
+
+                .playlist {
+                    flex: 1;
+                    min-height: 0;
+                }
+
+                .playlist ol {
+                    max-height: none;
+                    height: 100%;
+                }
+
+                .controls-left {
+                    padding-left: 0.5rem;
+                }
+
+                .controls-right {
+                    padding-right: 0.5rem;
+                }
+
+                #navMenu {
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 0.5rem;
+                    background-color: #333;
+                    padding: 1rem;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    width: 100%;
+                    display: none;
+                }
+
+                #navMenu.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+            }
+        
+            </style>
+        <script src="/js/site-header.js" defer data-site-header></script>
+    </head>
+    <body>
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+        <main>
+            <div id="emptyState" class="empty-state" hidden>再生できる試合がありません。</div>
+
+            <div class="player-wrap" id="playerWrap" hidden>
+                <div id="player"></div>
+            </div>
+
+            <div class="controls" id="controls" hidden>
+                <div class="controls-side controls-left">
+                    <button id="prevBtn" class="secondary" type="button">前へ</button>
+                </div>
+                <div class="controls-center">
+                    <button id="back10Btn" class="secondary" type="button">-10</button>
+                    <button id="backBtn" class="secondary" type="button">-3</button>
+                    <button id="forwardBtn" class="secondary" type="button">+3</button>
+                    <button id="forward10Btn" class="secondary" type="button">+10</button>
+                </div>
+                <div class="controls-side controls-right">
+                    <button id="nextBtn" class="secondary" type="button">次へ</button>
+                </div>
+            </div>
+
+            <div class="playlist" id="playlist" hidden>
+                <ol id="playlistItems"></ol>
+            </div>
+        </main>
+
+        <script>
+            const emptyStateEl = document.getElementById("emptyState");
+            const playerWrapEl = document.getElementById("playerWrap");
+            const controlsEl = document.getElementById("controls");
+            const playlistEl = document.getElementById("playlist");
+            const playlistItemsEl = document.getElementById("playlistItems");
+            const back10Btn = document.getElementById("back10Btn");
+            const backBtn = document.getElementById("backBtn");
+            const forwardBtn = document.getElementById("forwardBtn");
+            const forward10Btn = document.getElementById("forward10Btn");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const params = new URLSearchParams(window.location.search);
+            const itemParams = params.getAll("item").filter(Boolean);
+            const rawItems = itemParams.length
+                ? itemParams
+                : (params.get("items") || "").trim().split(",").filter(Boolean);
+
+            const safeDecode = (value) => {
+                try {
+                    return decodeURIComponent(value || "");
+                } catch {
+                    return String(value || "");
+                }
+            };
+
+            function parseEntry(entry) {
+                const [core, labelPart = ""] = String(entry || "").split("~");
+                const [vidPart, timePart = ""] = core.split("@");
+                const vid = safeDecode(vidPart).trim();
+                if (!vid) return null;
+                const [startStr = "0", endStr = ""] = timePart.split(":");
+                const start = Math.max(0, Math.trunc(Number(startStr) || 0));
+                const endNum = Number(endStr);
+                const end = Number.isFinite(endNum) ? Math.max(0, Math.trunc(endNum)) : null;
+                const label = labelPart ? safeDecode(labelPart) : "";
+                return { videoId: vid, start, end, label };
+            }
+
+            let items = [];
+            try {
+                items = rawItems
+                    ? rawItems.map((entry) => parseEntry(entry)).filter(Boolean)
+                    : [];
+            } catch (err) {
+                console.warn("Failed to parse playlist items", err);
+                items = [];
+            }
+
+            let player = null;
+            let currentIndex = 0;
+
+            function updateList() {
+                if (!playlistItemsEl) return;
+                playlistItemsEl.innerHTML = "";
+                items.forEach((item, idx) => {
+                    const li = document.createElement("li");
+                    li.dataset.videoId = item.videoId;
+                    const label = item.label || item.videoId;
+                    li.textContent = `${label} (${formatTime(item.start)}${
+                        item.end != null ? `-${formatTime(item.end)}` : ""
+                    })`;
+                    li.tabIndex = 0;
+                    li.addEventListener("click", () => loadIndex(idx, true));
+                    li.addEventListener("keydown", (event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            loadIndex(idx, true);
+                        }
+                    });
+                    if (idx === currentIndex) li.classList.add("active");
+                    playlistItemsEl.appendChild(li);
+                });
+                const active = playlistItemsEl.querySelector("li.active");
+                if (active) {
+                    active.scrollIntoView({ block: "nearest" });
+                }
+            }
+
+            function formatTime(sec) {
+                const s = Math.max(0, Math.trunc(Number(sec) || 0));
+                const m = Math.floor(s / 60);
+                const ss = String(s % 60).padStart(2, "0");
+                return `${m}:${ss}`;
+            }
+
+            function showPlaybackUi() {
+                if (emptyStateEl) emptyStateEl.hidden = true;
+                if (playerWrapEl) playerWrapEl.hidden = false;
+                if (controlsEl) controlsEl.hidden = false;
+                if (playlistEl) playlistEl.hidden = false;
+            }
+
+            function showEmpty() {
+                if (emptyStateEl) emptyStateEl.hidden = false;
+                if (playerWrapEl) playerWrapEl.hidden = true;
+                if (controlsEl) controlsEl.hidden = true;
+                if (playlistEl) playlistEl.hidden = true;
+            }
+
+            function loadIndex(index, autoplay = true) {
+                if (!player || !items.length) return;
+                const item = items[index];
+                if (!item) return;
+                currentIndex = index;
+                updateList();
+                const payload = {
+                    videoId: item.videoId,
+                    startSeconds: item.start,
+                };
+                if (item.end != null && item.end > item.start) {
+                    payload.endSeconds = item.end;
+                }
+                if (autoplay) {
+                    player.loadVideoById(payload);
+                } else {
+                    player.cueVideoById(payload);
+                }
+                updateButtons();
+            }
+
+            function updateButtons() {
+                if (!prevBtn || !nextBtn) return;
+                prevBtn.disabled = currentIndex <= 0;
+                nextBtn.disabled = currentIndex >= items.length - 1;
+            }
+
+            function playNext() {
+                if (currentIndex >= items.length - 1) return;
+                loadIndex(currentIndex + 1, true);
+            }
+
+            function playPrev() {
+                if (currentIndex <= 0) return;
+                loadIndex(currentIndex - 1, true);
+            }
+
+            function seekRelative(delta) {
+                if (!player || typeof player.getCurrentTime !== "function") return;
+                const now = Number(player.getCurrentTime()) || 0;
+                const duration =
+                    typeof player.getDuration === "function" ? Number(player.getDuration()) : 0;
+                let next = now + delta;
+                if (Number.isFinite(duration) && duration > 0) {
+                    next = Math.min(Math.max(0, next), duration);
+                } else {
+                    next = Math.max(0, next);
+                }
+                player.seekTo(next, true);
+            }
+
+
+
+            if (!items.length) {
+                showEmpty();
+            } else {
+                showPlaybackUi();
+                updateList();
+                updateButtons();
+                if (back10Btn) back10Btn.addEventListener("click", () => seekRelative(-10));
+                if (backBtn) backBtn.addEventListener("click", () => seekRelative(-3));
+                if (forwardBtn) forwardBtn.addEventListener("click", () => seekRelative(3));
+                if (forward10Btn) forward10Btn.addEventListener("click", () => seekRelative(10));
+                if (prevBtn) prevBtn.addEventListener("click", playPrev);
+                if (nextBtn) nextBtn.addEventListener("click", playNext);
+            }
+
+            window.onYouTubeIframeAPIReady = () => {
+                if (!items.length) return;
+                player = new YT.Player("player", {
+                    width: "100%",
+                    height: "100%",
+                    playerVars: {
+                        autoplay: 1,
+                        rel: 0,
+                        modestbranding: 1,
+                        playsinline: 1,
+                    },
+                    events: {
+                        onReady: () => loadIndex(0, true),
+                        onStateChange: (event) => {
+                            if (event.data === YT.PlayerState.ENDED) {
+                                playNext();
+                            }
+                        },
+                    },
+                });
+            };
+        </script>
+        <script src="https://www.youtube.com/iframe_api"></script>
+    </body>
+</html>
+
+
+

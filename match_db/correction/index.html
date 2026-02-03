@@ -1,0 +1,802 @@
+﻿<!doctype html>
+
+<html lang="ja">
+
+    <head>
+        <base href="../" />
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+
+        <script>
+
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+
+                dataLayer.push(arguments);
+
+            }
+
+            gtag("js", new Date());
+
+            gtag("config", "G-NM6S92KNW1");
+
+        </script>
+
+        <meta charset="UTF-8" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>北斗の拳 対戦動画DB - 訂正提案</title>
+
+        <link rel="stylesheet" href="/css/match-cards.css" />
+
+        <style>
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #6b6b6b;
+
+                --line: #d6d6d6;
+
+                --card: #ffffff;
+
+                --surface: #f7f7f7;
+
+                --accent: #ffb347;
+
+            }
+
+
+
+            *,
+
+            *::before,
+
+            *::after {
+
+                box-sizing: border-box;
+
+            }
+
+
+
+            body {
+
+                font-family: sans-serif;
+
+                color: var(--ink);
+
+                background-color: #f3f3f3;
+
+                margin: 0;
+
+                padding: 0;
+
+                overflow-x: hidden;
+
+            }
+
+
+
+            header {
+
+                background-color: #333;
+
+                color: white;
+
+                padding: 2rem 1rem 1rem;
+
+                text-align: center;
+
+                position: relative;
+
+            }
+
+
+
+            #navMenu {
+
+                display: flex;
+
+                justify-content: center;
+
+                gap: 1rem;
+
+                flex-wrap: nowrap;
+
+            }
+
+
+
+            #navMenu a {
+
+                color: white;
+
+                text-decoration: none;
+
+                font-weight: 600;
+
+                padding: 0.4rem 1rem;
+
+                border: 2px solid transparent;
+
+                border-radius: 4px;
+
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+                font-size: 1rem;
+
+                user-select: none;
+
+            }
+
+
+
+            #navMenu a:hover,
+
+            #navMenu a:focus {
+
+                background-color: var(--accent);
+
+                color: #333;
+
+                border-color: var(--accent);
+
+                outline: none;
+
+            }
+
+
+
+            .menu-toggle {
+
+                display: none;
+
+                position: absolute;
+
+                top: 0.5rem;
+
+                right: 0.5rem;
+
+                width: 30px;
+
+                height: 22px;
+
+                cursor: pointer;
+
+                flex-direction: column;
+
+                justify-content: space-between;
+
+                user-select: none;
+
+                z-index: 10;
+
+            }
+
+
+
+            .menu-toggle span {
+
+                display: block;
+
+                height: 4px;
+
+                background: #ffffff;
+
+                border-radius: 2px;
+
+            }
+
+
+
+            @media (max-width: 600px) {
+
+                #navMenu {
+
+                    position: absolute;
+
+                    top: 100%;
+
+                    left: 0;
+
+                    right: 0;
+
+                    background-color: #333;
+
+                    flex-direction: column;
+
+                    display: none;
+
+                    margin: 0;
+
+                    padding: 0.5rem 0;
+
+                }
+
+
+
+                #navMenu a {
+
+                    padding: 1rem;
+
+                    border: none;
+
+                    text-align: center;
+
+                    font-size: 1.1rem;
+
+                }
+
+
+
+                #navMenu.show {
+
+                    display: flex;
+
+                }
+
+
+
+                .menu-toggle {
+
+                    display: flex;
+
+                }
+
+
+
+                h1 {
+
+                    font-size: 18px;
+
+                    margin-bottom: 10px;
+
+                }
+
+            }
+
+
+
+            main {
+
+
+
+                max-width: 900px;
+
+                margin: 2rem auto;
+
+                padding: 1.2rem;
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+
+                box-sizing: border-box;
+
+            }
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border: none;
+
+                background: var(--surface);
+
+                padding: 0.45rem 0.8rem;
+
+                border-left: 6px solid var(--accent);
+
+                border-radius: 6px;
+
+                margin: 0 0 1rem 0;
+
+            }
+
+
+
+            h3 {
+
+                margin: 0 0 0.8rem;
+
+                font-size: 1rem;
+
+                font-weight: 700;
+
+                color: var(--ink);
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                padding: 1rem;
+
+                border-radius: 8px;
+
+                border: 1px solid var(--line);
+
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+            }
+
+
+
+            .status {
+
+                background: #f8f4ea;
+
+                border: 1px solid #e4d1a6;
+
+                border-radius: 6px;
+
+                padding: 0.4rem 0.6rem;
+
+                display: inline-block;
+
+                font-size: 0.9rem;
+
+                margin-bottom: 0.6rem;
+
+            }
+
+
+
+            #correctionStatus {
+
+                margin-top: 0.6rem;
+
+            }
+
+
+
+            .status:empty {
+                display: none;
+            }
+
+            .match-status {
+                display: none;
+            }
+
+            .error {
+                background: #fff0f0;
+                border: 1px solid #f0c0c0;
+                border-radius: 6px;
+                padding: 0.4rem 0.6rem;
+                display: none;
+
+                color: #b34747;
+
+                font-size: 0.9rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .panel {
+                position: relative;
+            }
+
+            .correction-loading {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.6rem;
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 8px;
+                z-index: 3;
+            }
+
+
+            .form-row {
+
+                display: flex;
+
+                gap: 0.8rem;
+
+                align-items: center;
+
+                flex-wrap: nowrap;
+
+                margin-bottom: 0.8rem;
+
+            }
+
+
+
+            .form-row.duo {
+
+                display: grid;
+
+                grid-template-columns: 140px minmax(0, 1fr) 80px minmax(0, 0.6fr);
+
+                align-items: center;
+
+                column-gap: 0.8rem;
+
+                row-gap: 0.6rem;
+
+            }
+
+
+
+            .form-row.trio {
+
+                display: grid;
+
+                grid-template-columns: 140px minmax(0, 1fr) max-content minmax(0, 0.7fr) max-content minmax(0, 0.7fr);
+
+                align-items: center;
+
+                column-gap: 0.8rem;
+
+                row-gap: 0.6rem;
+
+            }
+
+
+
+            .form-row label {
+                min-width: 140px;
+                font-weight: 600;
+            }
+
+            .label-short {
+                display: none;
+            }
+
+            @media (min-width: 601px) {
+                .label-full {
+                    display: inline !important;
+                }
+
+                .label-short {
+                    display: none !important;
+                }
+            }
+
+            .form-row.duo label {
+                min-width: auto;
+            }
+
+
+            .form-row.trio label {
+
+                min-width: auto;
+
+            }
+
+
+
+            .form-row input,
+
+            .form-row select,
+
+            .form-row textarea {
+
+                padding: 0.5rem 0.6rem;
+
+                border: 1px solid #cfd3da;
+
+                border-radius: 6px;
+
+                font-size: 1rem;
+
+                flex: 1;
+
+                min-width: 220px;
+
+                background: #ffffff;
+
+            }
+
+
+
+            .form-row.duo input,
+
+            .form-row.duo select {
+
+                min-width: 0;
+
+                width: 100%;
+
+            }
+
+
+
+            .form-row.trio input,
+
+            .form-row.trio select {
+
+                min-width: 0;
+
+                width: 100%;
+
+            }
+
+
+
+            .actions {
+
+                display: flex;
+
+                gap: 0.6rem;
+
+                flex-wrap: nowrap;
+
+                margin-top: 0.6rem;
+
+            }
+
+
+
+            button.primary {
+
+                background-color: #2f2f2f;
+
+                color: #ffffff;
+
+                border: 1px solid #1d1d1d;
+
+                padding: 0.55rem 1rem;
+
+                border-radius: 6px;
+
+                cursor: pointer;
+
+                font-weight: 700;
+
+            }
+
+
+
+            button.primary:disabled {
+
+                opacity: 0.6;
+
+                cursor: not-allowed;
+
+            }
+
+            #matchSummary a {
+                pointer-events: none;
+                cursor: default;
+                text-decoration: none;
+                color: inherit;
+            }
+
+            #matchSummary .match-center-time a {
+                pointer-events: auto;
+                cursor: pointer;
+                text-decoration: none;
+            }
+
+            #matchSummary .match-center-time a:hover {
+                text-decoration: underline;
+            }
+
+
+            @media (max-width: 600px) {
+                .form-row {
+                    display: grid;
+                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr);
+                    column-gap: 0.5rem;
+                    row-gap: 0.45rem;
+                    align-items: center;
+                }
+
+                .form-row.duo {
+                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr) minmax(0, 40px) minmax(
+                            0,
+                            1fr
+                        );
+                }
+
+                .form-row.trio {
+                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr) minmax(0, 40px) minmax(
+                            0,
+                            1fr
+                        );
+                    align-items: start;
+                }
+
+                .form-row label {
+                    min-width: 0;
+                    margin: 0;
+                    font-size: 0.85rem;
+                    align-self: center;
+                    display: block;
+                    width: 100%;
+                    justify-self: stretch;
+                    white-space: nowrap;
+                }
+
+                .label-full {
+                    display: none !important;
+                }
+
+                .label-short {
+                    display: block;
+                    width: 100%;
+                }
+
+                .form-row label span {
+                    width: 100%;
+                }
+
+                .form-row input,
+                .form-row select,
+                .form-row textarea {
+                    min-width: 0;
+                    width: 100%;
+                    justify-self: stretch;
+                }
+
+                .form-row:not(.duo) input,
+                .form-row:not(.duo) select,
+                .form-row:not(.duo) textarea {
+                    max-width: calc((100% - 0.5rem - 40px) / 2);
+                    justify-self: start;
+                }
+
+
+            }
+        
+            </style>
+
+            <script src="/js/site-header.js" defer data-site-header></script>
+
+    </head>
+
+    <body>
+
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+
+
+                <main>
+            <section>
+                <h2>訂正提案</h2>
+                <h3>試合詳細</h3>
+                <div id="matchStatus" class="status match-status"></div>
+                <div id="matchError" class="error"></div>
+                <div id="matchSummary" class="match-cards" role="list"></div>
+            </section>
+
+            <section>
+                <h3>訂正内容</h3>
+                <form id="correctionForm" class="panel">
+                    <div class="form-row duo">
+                        <label for="p1Id">
+                            <span class="label-full">P1</span>
+                            <span class="label-short">P1</span>
+                        </label>
+                        <input id="p1Id" type="text" />
+                        <label for="p1CharId">
+                            <span class="label-full">キャラ</span>
+                            <span class="label-short">キャラ</span>
+                        </label>
+                        <select id="p1CharId"></select>
+                    </div>
+                    <div class="form-row duo">
+                        <label for="p2Id">
+                            <span class="label-full">P2</span>
+                            <span class="label-short">P2</span>
+                        </label>
+                        <input id="p2Id" type="text" />
+                        <label for="p2CharId">
+                            <span class="label-full">キャラ</span>
+                            <span class="label-short">キャラ</span>
+                        </label>
+                        <select id="p2CharId"></select>
+                    </div>
+                    <div class="form-row">
+                        <label for="winner">
+                            <span class="label-full">勝敗</span>
+                            <span class="label-short">勝敗</span>
+                        </label>
+                        <select id="winner">
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
+                        </select>
+                    </div>
+                    <div class="form-row duo">
+                        <label for="tStart">
+                            <span class="label-full">開始</span>
+                            <span class="label-short">開始</span>
+                        </label>
+                        <input id="tStart" type="text" pattern="\d{2}:\d{2}(:\d{2})?" title="hh:mm:ss または mm:ss" />
+                        <label for="tEnd">
+                            <span class="label-full">終了</span>
+                            <span class="label-short">終了</span>
+                        </label>
+                        <input id="tEnd" type="text" pattern="\d{2}:\d{2}(:\d{2})?" title="hh:mm:ss または mm:ss" />
+                    </div>
+                    <div class="form-row">
+                        <label for="reason">
+                            <span class="label-full">理由</span>
+                            <span class="label-short">理由</span>
+                        </label>
+                        <textarea id="reason" rows="3"></textarea>
+                    </div>
+                    <div class="actions">
+                        <button id="submitBtn" class="primary" type="submit">訂正提案を送信</button>
+                    </div>
+                    <div id="correctionStatus" class="status"></div>
+                    <div id="correctionError" class="error"></div>
+                </form>
+            </section>
+        </main>
+
+
+
+        <div class="footer">ご意見・ご要望などありましたら、<a href="https://twitter.com/tiki_tiki_bone" target="_blank">@tiki_tiki_bone</a>までお知らせください。</div>
+        <script src="../js/api-config.local.js"></script>
+
+        <script src="/js/match-cards.js"></script>
+        <script src="/js/correction.js?v=20260201"></script>
+    </body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

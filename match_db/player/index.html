@@ -1,0 +1,3505 @@
+﻿
+
+<!doctype html>
+
+<html lang="ja">
+
+    <head>
+        <base href="../" />
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="../js/api-config.local.js"></script>
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+
+                dataLayer.push(arguments);
+
+            }
+
+            gtag("js", new Date());
+
+            gtag("config", "G-NM6S92KNW1");
+
+        </script>
+
+        <meta charset="UTF-8" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>北斗の拳 対戦動画DB - プレイヤー</title>
+        <link rel="stylesheet" href="/css/match-cards.css" />
+
+        <style>
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #6b6b6b;
+
+                --line: #d6d6d6;
+
+                --card: #ffffff;
+
+                --surface: #f7f7f7;
+
+                --accent: #ffb347;
+
+                --p1: #c64b4b;
+
+                --p2: #2f6edc;
+
+            }
+
+
+
+            *,
+
+            *::before,
+
+            *::after {
+
+                box-sizing: border-box;
+
+            }
+
+
+
+            body {
+
+                font-family: sans-serif;
+
+                color: var(--ink);
+
+                background-color: #f3f3f3;
+
+                margin: 0;
+
+                padding: 0;
+
+                overflow-x: hidden;
+
+            }
+
+
+
+            header {
+
+                background-color: #333;
+
+                color: #ffffff;
+
+                padding: 2rem 1rem 1rem;
+
+                text-align: center;
+
+                position: relative;
+
+            }
+
+
+
+            #navMenu {
+
+                display: flex;
+
+                justify-content: center;
+
+                gap: 1rem;
+
+                flex-wrap: nowrap;
+                position: relative;
+                z-index: 50;
+
+            }
+
+
+
+            #navMenu a {
+
+                color: #ffffff;
+
+                text-decoration: none;
+
+                font-weight: 600;
+
+                padding: 0.4rem 1rem;
+
+                border: 2px solid transparent;
+
+                border-radius: 4px;
+
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+                font-size: 1rem;
+
+                user-select: none;
+
+            }
+
+
+
+            #navMenu a:hover,
+
+            #navMenu a:focus {
+
+                background-color: var(--accent);
+
+                color: #333;
+
+                border-color: var(--accent);
+
+                outline: none;
+
+            }
+
+
+
+            .menu-toggle {
+
+                display: none;
+
+                position: absolute;
+
+                top: 0.5rem;
+
+                right: 0.5rem;
+
+                width: 30px;
+
+                height: 22px;
+
+                cursor: pointer;
+
+                flex-direction: column;
+
+                justify-content: space-between;
+
+                user-select: none;
+
+                z-index: 10;
+
+            }
+
+
+
+            .menu-toggle span {
+
+                display: block;
+
+                height: 4px;
+
+                background: #ffffff;
+
+                border-radius: 2px;
+
+            }
+
+            @media (max-width: 600px) {
+
+                #navMenu {
+
+                    position: absolute;
+
+                    top: 100%;
+
+                    left: 0;
+
+                    right: 0;
+
+                    background-color: #333;
+
+                    flex-direction: column;
+
+                    display: none;
+
+                    margin: 0;
+
+                    padding: 0.5rem 0;
+                    z-index: 100;
+
+                }
+
+
+
+                #navMenu a {
+
+                    padding: 1rem;
+
+                    border: none;
+
+                    text-align: center;
+
+                    font-size: 1.1rem;
+
+                }
+
+
+
+                #navMenu.show {
+
+                    display: flex;
+
+                }
+
+
+
+                .menu-toggle {
+
+                    display: flex;
+
+                }
+
+
+
+                h1 {
+
+                    font-size: 18px;
+
+                    margin-bottom: 10px;
+
+                }
+
+            }
+
+
+
+            main {
+
+
+
+                max-width: 900px;
+
+                margin: 2rem auto;
+
+                padding: 1.2rem;
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+
+                box-sizing: border-box;
+
+            }
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border: none;
+
+                background: var(--surface);
+
+                padding: 0.45rem 0.8rem;
+
+                border-left: 6px solid var(--accent);
+
+                border-radius: 6px;
+
+                font-size: 1.05rem;
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                padding: 1rem;
+
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+
+            }
+
+            .panel.is-muted {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .panel.is-muted::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: rgba(20, 20, 20, 0.6);
+                backdrop-filter: blur(3px);
+                z-index: 2;
+            }
+
+            .panel.is-muted::after {
+                content: "\975E\8868\793A";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 0.45rem 1.1rem;
+                background: rgba(255, 255, 255, 0.12);
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                border-radius: 999px;
+                color: #fff;
+                font-weight: 700;
+                font-size: 1.05rem;
+                letter-spacing: 0.2em;
+                text-indent: 0.2em;
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+                z-index: 3;
+            }
+
+            .panel.is-muted > * {
+                filter: blur(1.2px);
+                opacity: 0.45;
+            }
+
+
+
+            .error {
+
+                margin-top: 0.8rem;
+
+                background: #fff0f0;
+
+                border: 1px solid #ffb3b3;
+
+                padding: 0.8rem;
+
+                border-radius: 6px;
+
+                color: #8a1f1f;
+
+                display: none;
+
+            }
+
+
+
+            .profile-header {
+
+                display: grid;
+
+                gap: 0.8rem;
+
+            }
+
+
+
+            .profile-card {
+
+                position: relative;
+
+                overflow: hidden;
+
+            }
+
+            .profile-info-link {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                font-size: calc(0.85rem + 2px);
+                z-index: 2;
+            }
+
+
+
+            .profile-card::after {
+                content: "";
+                position: absolute;
+                right: 20px;
+                bottom: 0;
+                width: 260px;
+                height: 260px;
+                max-width: 45%;
+                max-height: 90%;
+                background-image: var(--profile-char-img);
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: bottom right;
+                transform: scaleX(-1);
+                opacity: 1;
+
+                pointer-events: none;
+
+                z-index: 0;
+
+            }
+
+
+
+            .profile-card .profile-header {
+
+                position: relative;
+
+                z-index: 1;
+
+            }
+
+
+
+            .profile-name {
+
+                font-size: 1.4rem;
+
+                font-weight: 800;
+
+                margin-bottom: 10px;
+
+            }
+
+
+
+            .alias-line {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 0.6rem;
+
+                flex-wrap: wrap;
+
+                font-size: 0.9rem;
+
+                color: var(--muted);
+
+            }
+
+
+
+            .alias-value {
+
+                color: var(--ink);
+
+                font-weight: 600;
+
+            }
+
+
+
+            .chip-group {
+
+                display: flex;
+
+                flex-wrap: wrap;
+
+                gap: 0.4rem;
+
+            }
+
+
+
+            .chip {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                padding: 0.2rem 0.6rem;
+
+                border-radius: 10px;
+
+                border: 1px solid #d0d0d0;
+
+                background: #f5f5f5;
+
+                font-size: 0.85rem;
+
+                color: #444;
+
+            }
+
+
+
+            .char-chip {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+                width: 40px;
+
+                height: 40px;
+
+                border-radius: 0;
+
+                border: 1px solid #d0d0d0;
+
+                background: #f5f5f5;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .char-chip.char-filter {
+
+                appearance: none;
+
+                cursor: pointer;
+
+                padding: 0;
+
+                font: inherit;
+
+                color: inherit;
+
+                opacity: 1;
+
+                filter: grayscale(1) brightness(0.55);
+
+                transition:
+
+                    opacity 0.2s ease,
+
+                    filter 0.2s ease,
+
+                    border-color 0.2s ease,
+
+                    box-shadow 0.2s ease,
+
+                    background-color 0.2s ease;
+
+            }
+
+
+
+            .char-chip.char-filter:focus-visible {
+
+                outline: 2px solid #2f2f2f;
+
+                outline-offset: 2px;
+
+            }
+
+
+
+            .char-chip.is-active {
+
+                border-color: #2f2f2f;
+
+                box-shadow: 0 0 0 2px rgba(47, 47, 47, 0.2);
+
+                background: #ffffff;
+
+            }
+
+
+
+            .char-chip.char-filter.is-active {
+
+                opacity: 1;
+
+                filter: none;
+
+            }
+
+
+
+            .char-portrait {
+
+                display: block;
+
+                width: 100%;
+
+                height: 100%;
+
+                object-fit: cover;
+
+            }
+
+
+
+            .table-portrait {
+
+                position: absolute;
+
+                inset: 0;
+
+                width: 100%;
+
+                height: 100%;
+
+                object-fit: cover;
+
+                display: block;
+
+            }
+
+
+
+            .char-usage-table .table-portrait {
+
+                object-fit: contain;
+
+                object-position: left center;
+
+            }
+
+
+
+            .filter-row {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 0.6rem;
+
+                margin-bottom: 0.6rem;
+
+                flex-wrap: wrap;
+
+            }
+
+
+
+            .filter-label {
+
+                font-weight: 600;
+
+                font-size: 0.85rem;
+
+                color: #444;
+
+            }
+
+
+
+            .char-filter-group {
+
+                gap: 0;
+
+            }
+
+
+
+            .stat-grid {
+
+                display: grid;
+
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+                gap: 0.6rem;
+
+            }
+
+
+
+            .stat-card {
+
+                background: var(--surface);
+
+                border: 1px solid var(--line);
+
+                border-radius: 6px;
+
+                padding: 0.6rem 0.8rem;
+                position: relative;
+
+            }
+
+
+
+            .stat-bar {
+
+                margin-top: 0.45rem;
+
+                height: 6px;
+
+                background: #e5e5e5;
+
+                border-radius: 4px;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .stat-bar-fill {
+
+                height: 100%;
+
+                width: 0%;
+
+                background: #2d2d2d;
+
+                border-radius: 4px;
+
+                transition: width 0.25s ease;
+
+            }
+
+
+
+            .rate-bar {
+
+                margin-top: 0.3rem;
+
+                height: 4px;
+
+                background: #e6e6e6;
+
+                border-radius: 10px;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .rate-bar-fill {
+
+                height: 100%;
+
+                width: 0%;
+
+                background: #2d2d2d;
+
+                border-radius: 10px;
+
+            }
+
+
+
+            .stat-card-link {
+
+                display: block;
+
+                color: inherit;
+
+                text-decoration: none;
+
+                cursor: pointer;
+
+            }
+
+
+
+            .stat-card-link:hover,
+
+            .stat-card-link:focus {
+
+                border-color: #2d2d2d;
+
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+                text-decoration: none;
+
+                outline: none;
+
+            }
+
+
+
+            .stat-title {
+
+                font-size: 0.8rem;
+
+                color: var(--muted);
+
+                margin-bottom: 0.2rem;
+
+            }
+
+
+
+            .stat-value {
+
+                font-size: 1.1rem;
+
+                font-weight: 700;
+
+            }
+
+            .stat-rank {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                padding: 0.1rem 0.45rem;
+                font-size: 0.72rem;
+                color: var(--muted);
+                background: #f3f3f3;
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                line-height: 1.2;
+            }
+
+
+
+            .table-wrap {
+
+                overflow-x: auto;
+
+            }
+
+
+
+            table {
+
+                width: 100%;
+
+                border-collapse: collapse;
+
+                margin-top: 0.6rem;
+
+            }
+
+
+
+            th,
+
+            td {
+
+                padding: 0.6rem 0.7rem;
+
+                text-align: left;
+
+                vertical-align: middle;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            th.icon-col,
+
+            td.icon-col {
+
+                width: 48px;
+
+                padding: 0;
+
+            }
+
+
+
+            td.icon-col {
+
+                position: relative;
+
+            }
+
+
+
+            .char-usage-table th.icon-col,
+
+            .char-usage-table td.icon-col {
+
+                --char-row-height: 60px;
+
+                --char-max-ratio: 4.16;
+
+                width: calc(var(--char-row-height) * var(--char-max-ratio));
+
+                min-width: calc(var(--char-row-height) * var(--char-max-ratio));
+
+            }
+
+
+
+            .char-usage-table th.icon-col {
+
+                text-align: left;
+
+                padding-left: 0.6rem;
+
+            }
+
+
+
+            .char-usage-table td.icon-col {
+
+                height: var(--char-row-height);
+
+            }
+
+
+
+            .char-usage-table tbody td {
+
+                height: var(--char-row-height);
+
+                vertical-align: middle;
+
+            }
+
+
+
+            .num {
+
+                text-align: right;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            .row-link {
+
+                cursor: pointer;
+
+                transition:
+
+                    box-shadow 0.18s ease,
+
+                    transform 0.18s ease,
+
+                    background 0.18s ease;
+
+            }
+
+
+
+            .row-link:hover,
+
+            .row-link:focus-within {
+
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+                transform: translateY(-1px);
+
+            }
+
+
+
+            .row-link:hover td,
+
+            .row-link:focus-within td {
+
+                background: #f9f9f9;
+
+                box-shadow: none;
+
+            }
+
+
+
+            .row-link:hover,
+
+            .row-link:focus-within {
+
+                box-shadow:
+
+                    0 2px 6px rgba(0, 0, 0, 0.06),
+
+                    inset 0 1px 0 #cfcfcf,
+
+                    inset 0 -1px 0 #cfcfcf,
+
+                    inset 1px 0 0 #cfcfcf,
+
+                    inset -1px 0 0 #cfcfcf;
+
+            }
+
+
+
+            thead th {
+
+                background: #2f2f2f;
+
+                color: #ffffff;
+
+                font-size: 0.85rem;
+
+                letter-spacing: 0.04em;
+
+                border: none;
+
+            }
+
+
+
+            tbody td {
+
+                background: #ffffff;
+
+                border-bottom: 1px solid var(--line);
+
+            }
+
+
+
+            tbody tr:nth-child(even) td {
+
+                background: #fafafa;
+
+            }
+
+
+
+            td.wrap {
+
+                white-space: normal;
+
+            }
+
+
+
+            .result-win {
+
+                color: #a12d2d;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .result-lose {
+
+                color: #23458e;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .result-unknown {
+
+                color: var(--muted);
+
+            }
+
+
+
+            .empty-state {
+                padding: 1rem;
+                border: 1px dashed var(--line);
+                border-radius: 6px;
+                color: var(--muted);
+                text-align: center;
+            }
+
+
+            @media (max-width: 600px) {
+                .char-usage-table th.icon-col,
+                .char-usage-table td.icon-col {
+                    --char-row-height: 60px;
+                    --char-max-ratio: 1.9;
+                    width: calc(var(--char-row-height) * var(--char-max-ratio));
+                }
+
+                .char-usage-table td.icon-col {
+                    overflow: hidden;
+                }
+
+                .char-usage-table .table-portrait {
+                    object-fit: cover;
+                    object-position: left bottom;
+                }
+
+                .profile-name {
+                    font-size: 1.2rem;
+                }
+
+                .profile-card::after {
+                    width: 156px;
+                    height: 156px;
+                    max-width: 45%;
+                    max-height: 90%;
+                    right: 10px;
+                }
+
+                .stat-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+                    gap: 0.5rem;
+                }
+
+
+                .stat-card {
+                    padding: 0.45rem 0.6rem;
+                }
+
+
+                .stat-title {
+
+                    font-size: 0.75rem;
+
+                }
+
+
+
+                .stat-value {
+
+                    font-size: 1rem;
+
+                }
+
+
+
+            }
+
+
+            main a {
+
+                color: #1f4d99;
+
+                text-decoration: none;
+
+            }
+
+
+
+            main a:hover,
+
+            main a:focus {
+
+                color: #0f244d;
+
+                text-decoration: underline;
+
+            }
+
+        
+            </style>
+
+            <script src="/js/site-header.js" defer data-site-header></script>
+
+    </head>
+
+
+
+    <body>
+
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+
+        <main>
+
+            <section>
+
+                <h2>プレイヤー</h2>
+
+                <div id="profileError" class="error"></div>
+
+                <div class="panel profile-card" id="profileCard">
+                    <a
+                        class="profile-info-link"
+                        href="about/#qa1"
+                        aria-label="記載の情報について"
+                    >⚠</a>
+
+                    <div class="profile-header">
+
+                        <div>
+
+                            <div id="playerName" class="profile-name">-</div>
+
+                            <div class="alias-line">
+
+                                <span>別名</span>
+
+                                <div id="aliasList" class="chip-group"></div>
+
+                            </div>
+
+                            <div class="alias-line">
+
+                                <span>よく使う場所</span>
+
+                                <div id="favoriteLocate" class="alias-value">-</div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="summaryStats" class="stat-grid"></div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section>
+
+                <h2>使用キャラ</h2>
+
+                <div class="panel">
+
+                    <div class="table-wrap">
+
+                        <table aria-label="使用キャラ" class="char-usage-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th class="icon-col">キャラ</th>
+
+                                    <th class="num">使用率</th>
+
+                                    <th class="num">対戦数</th>
+
+                                    <th class="num">勝率</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="charTableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section>
+
+                <h2>相手キャラ別勝率</h2>
+
+                <div class="panel" id="opponentPanel">
+
+                    <div class="filter-row">
+
+                        <span class="filter-label">使用キャラ</span>
+
+                        <div id="opponentFilter" class="chip-group char-filter-group"></div>
+
+                    </div>
+
+                    <div class="table-wrap">
+
+                        <table aria-label="相手キャラ別勝率" class="char-usage-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th class="icon-col">キャラ</th>
+
+                                    <th class="num">対戦数</th>
+
+                                    <th class="num">勝率</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="opponentCharBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section>
+
+                <h2>試合一覧</h2>
+
+                <div id="matchBody" class="match-cards" role="list"></div>
+
+            </section>
+
+        </main>
+
+
+
+        <script src="/js/match-cards.js"></script>
+
+        <script>
+
+const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
+                const IMAGE_BASE = "/images/";
+                const IS_MOBILE = window.matchMedia("(max-width: 600px)").matches;
+            const DB_ERROR_MSG =
+
+                "DB\u3078\u306e\u554f\u3044\u5408\u308f\u305b\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002\u7ba1\u7406\u8005\u306b\u304a\u554f\u3044\u5408\u308f\u305b\u304f\u3060\u3055\u3044\u3002";
+
+            const DATE_PREFIX = "\u6295\u7A3F\u65E5\uFF1A";
+
+            const NO_ALIAS_TEXT = "\u306a\u3057";
+
+            const LIST_LIMIT = 5;
+            const PAGE_LIMIT = 200;
+
+            const MAX_PAGES = 50;
+
+
+
+            const profileErrorEl = document.getElementById("profileError");
+
+            const playerNameEl = document.getElementById("playerName");
+
+            const aliasListEl = document.getElementById("aliasList");
+
+            const favoriteLocateEl = document.getElementById("favoriteLocate");
+
+            const summaryStatsEl = document.getElementById("summaryStats");
+
+            const profileCardEl = document.getElementById("profileCard");
+
+            const charTableBody = document.getElementById("charTableBody");
+
+            const opponentCharBody = document.getElementById("opponentCharBody");
+
+            const opponentFilterEl = document.getElementById("opponentFilter");
+
+            const opponentPanelEl = document.getElementById("opponentPanel");
+
+            const matchBody = document.getElementById("matchBody");
+
+
+
+            const videoInfoCache = new Map();
+
+            const videoInfoPending = new Set();
+
+            const charNameMap = new Map();
+
+            const charNameToId = new Map();
+
+            const charSortIndex = new Map();
+
+            const locateIdToName = new Map();
+
+
+
+            let opponentFilterCharId = "";
+
+            let opponentBySelfMap = new Map();
+
+            let opponentAllRows = [];
+
+            let currentPlayerId = "";
+
+            let statsPublicFlag = 1;
+
+
+
+            function setError(msg) {
+
+                if (!msg) {
+
+                    profileErrorEl.style.display = "none";
+
+                    profileErrorEl.textContent = "";
+
+                    return;
+
+                }
+
+                profileErrorEl.style.display = "block";
+
+                profileErrorEl.textContent = msg;
+
+            }
+
+
+
+            function normalizeKey(value) {
+
+                return String(value || "")
+
+                    .trim()
+
+                    .toLowerCase();
+
+            }
+
+
+
+            function fmtPercent(val) {
+
+                const n = Number(val);
+
+                if (!Number.isFinite(n)) return "-";
+
+                return `${(n * 100).toFixed(1)}%`;
+
+            }
+
+
+
+            function createRateBar(rate, label) {
+
+                const n = Number(rate);
+
+                if (!Number.isFinite(n)) return null;
+
+                const clamped = Math.max(0, Math.min(1, n));
+
+                const percent = Math.round(clamped * 1000) / 10;
+
+                const bar = document.createElement("div");
+
+                bar.className = "rate-bar";
+
+                bar.setAttribute("role", "progressbar");
+
+                bar.setAttribute("aria-valuemin", "0");
+
+                bar.setAttribute("aria-valuemax", "100");
+
+                bar.setAttribute("aria-valuenow", String(percent));
+
+                if (label) bar.setAttribute("aria-label", label);
+
+                const fill = document.createElement("div");
+
+                fill.className = "rate-bar-fill";
+
+                fill.style.width = `${percent}%`;
+
+                bar.appendChild(fill);
+
+                return bar;
+
+            }
+
+
+
+            function fmtSec(sec) {
+
+                const n = Number(sec);
+
+                if (!Number.isFinite(n)) return "";
+
+                const s = Math.max(0, Math.trunc(n));
+
+                const h = Math.floor(s / 3600);
+
+                const m = Math.floor((s % 3600) / 60);
+
+                const ss = s % 60;
+
+                const pad2 = (x) => String(x).padStart(2, "0");
+
+                if (h > 0) return `${h}:${pad2(m)}:${pad2(ss)}`;
+
+                return `${m}:${pad2(ss)}`;
+
+            }
+
+
+
+            function fmtRange(startSec, endSec) {
+
+                const start = fmtSec(startSec);
+
+                const end = fmtSec(endSec);
+
+                if (start && end) return `${start} - ${end}`;
+
+                return start || end || "";
+
+            }
+
+
+
+            function fmtDuration(startSec, endSec) {
+
+                const start = Number(startSec);
+
+                const end = Number(endSec);
+
+                if (!Number.isFinite(start) || !Number.isFinite(end)) return "";
+
+                const diff = Math.max(0, Math.trunc(end - start));
+
+                if (!diff) return "";
+
+                return fmtSec(diff);
+
+            }
+
+
+
+            function ytUrl(videoId, startSec) {
+
+                const t = Math.max(0, Math.trunc(Number(startSec) || 0));
+
+                return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&t=${t}s`;
+
+            }
+
+
+
+            function buildCharImage(charId, charName) {
+
+                const cleanId = String(charId || "").trim();
+
+                const img = document.createElement("img");
+
+                img.className = "match-char-img";
+
+                img.decoding = "async";
+
+                img.loading = "lazy";
+
+                if (!cleanId) {
+
+                    img.classList.add("empty");
+
+                    img.alt = "";
+
+                    return img;
+
+                }
+
+                const portraitPrefix = "match_card";
+                img.src = `${IMAGE_BASE}${portraitPrefix}_${encodeURIComponent(cleanId)}.png`;
+                img.alt = charName ? String(charName) : cleanId;
+
+                img.addEventListener("error", () => {
+
+                    img.classList.add("empty");
+
+                    img.removeAttribute("src");
+
+                });
+
+                return img;
+
+            }
+
+
+
+            function resolvePlayerName(name, id) {
+
+                const raw = String(name || "").trim();
+
+                if (raw && raw !== "-") return raw;
+
+                const fallback = String(id || "").trim();
+
+                return fallback || "-";
+
+            }
+
+
+
+            function createTextLink(text, href, className) {
+
+                const hasLink = Boolean(href);
+
+                const el = document.createElement(hasLink ? "a" : "div");
+
+                if (className) el.className = className;
+
+                if (hasLink) {
+
+                    el.href = href;
+
+                    el.classList.add("match-link");
+
+                }
+
+                if (text) {
+
+                    el.textContent = text;
+
+                    el.title = text;
+
+                }
+
+                return el;
+
+            }
+
+
+
+            function isInteractiveTarget(target) {
+
+                return Boolean(
+
+                    target && target.closest("a, button, input, select, textarea, label"),
+
+                );
+
+            }
+
+
+
+            function normalizeMatch(it) {
+
+                const p1 = it.p1 || {};
+
+                const p2 = it.p2 || {};
+
+                return {
+
+                    id: it.match_id ?? it.id,
+
+                    videoId: it.video_id || it.videoId || it.video || "",
+
+                    videoTitle:
+
+                        it.video_title || it.videoTitle || it.video_name || it.videoName || "",
+
+                    videoUploadedAt:
+
+                        it.video_uploaded_at ||
+
+                        it.display_uploaded_at ||
+
+                        it.displayUploadedAt ||
+
+                        "",
+
+                    tStart: it.t_start ?? it.start_sec ?? it.start ?? "",
+
+                    tEnd: it.t_end ?? it.end_sec ?? it.end ?? "",
+
+                    p1Id: it.p1_player_id ?? it.p1_id ?? p1.player_id ?? p1.id ?? "",
+                    p1Name:
+
+                        it.p1_player ||
+
+                        p1.player_name ||
+
+                        p1.name ||
+
+                        p1.display_name ||
+
+                        it.p1_name ||
+
+                        p1.player_raw ||
+
+                        "",
+
+                    p1CharId: it.p1_char_id || p1.char_id || "",
+
+                    p1Char: it.p1_char || p1.char_name || p1.char || p1.char_raw || "",
+
+                    p2Id: it.p2_player_id ?? it.p2_id ?? p2.player_id ?? p2.id ?? "",
+                    p2Name:
+
+                        it.p2_player ||
+
+                        p2.player_name ||
+
+                        p2.name ||
+
+                        p2.display_name ||
+
+                        it.p2_name ||
+
+                        p2.player_raw ||
+
+                        "",
+
+                    p2CharId: it.p2_char_id || p2.char_id || "",
+
+                    p2Char: it.p2_char || p2.char_name || p2.char || p2.char_raw || "",
+
+                    winner: it.winner || it.result || it.win || "",
+
+                };
+
+            }
+
+
+
+            function normalizeWinnerSide(raw) {
+
+                const v = String(raw ?? "")
+
+                    .trim()
+
+                    .toLowerCase();
+
+                if (v === "p1" || v === "player1" || v === "1" || v === "left") return "p1";
+
+                if (v === "p2" || v === "player2" || v === "2" || v === "right") return "p2";
+
+                return "";
+
+            }
+
+
+
+            async function fetchJson(url) {
+
+                const res = await fetch(url);
+
+                const isJson = (res.headers.get("content-type") || "").includes("application/json");
+
+                const payload = isJson ? await res.json() : { error: await res.text() };
+
+                if (!res.ok) {
+
+                    throw new Error("fetch error");
+
+                }
+
+                return payload;
+
+            }
+
+
+
+            async function fetchPlayerAliases(playerId) {
+
+                const url = `${API_BASE}/api/player_aliases?player_id=${encodeURIComponent(
+
+                    playerId,
+
+                )}`;
+
+                const data = await fetchJson(url);
+
+                const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+
+                return items.map((it) => ({
+
+                    alias: String(it.alias || "").trim(),
+
+                    playerName: String(it.player_name || "").trim(),
+
+                }));
+
+            }
+
+
+
+            async function fetchPlayerInfo(playerId) {
+
+                const url = `${API_BASE}/api/players?pid=${encodeURIComponent(playerId)}`;
+
+                const data = await fetchJson(url);
+
+                const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+
+                const exact = items.find((it) => String(it.player_id || "") === String(playerId));
+
+                if (exact) {
+                    return {
+                        name: String(exact.display_name || exact.canonical_name || playerId),
+                        statsPublic: Number(exact.stats_public ?? 1),
+                    };
+                }
+
+                const fallback = items[0];
+
+                if (fallback) {
+                    return {
+                        name: String(fallback.display_name || fallback.canonical_name || playerId),
+                        statsPublic: Number(fallback.stats_public ?? 1),
+                    };
+                }
+
+                return { name: playerId, statsPublic: 1 };
+
+            }
+
+            async function fetchTopPlayerRank(playerId) {
+                const cleanId = String(playerId || "").trim();
+                if (!cleanId) return null;
+                const data = await fetchJson(`${API_BASE}/api/stats/top_players`);
+                const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+                for (let i = 0; i < items.length; i += 1) {
+                    const row = items[i] || {};
+                    const rowId = String(row.player_id || row.playerId || row.id || "").trim();
+                    if (!rowId || rowId !== cleanId) continue;
+                    const rankRaw = Number(row.rank);
+                    return Number.isFinite(rankRaw) && rankRaw > 0 ? rankRaw : i + 1;
+                }
+                return null;
+            }
+
+
+
+            async function loadCharacters() {
+
+                const url = `${API_BASE}/api/characters?limit=200`;
+
+                const data = await fetchJson(url);
+
+                const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+
+                charNameMap.clear();
+
+                charNameToId.clear();
+
+                charSortIndex.clear();
+
+                for (const it of items) {
+
+                    const id = String(it.char_id || "").trim();
+
+                    const name = String(it.char_disp_name || it.display_name || id || "").trim();
+
+                    const sortIndexRaw = Number(it.sort_index ?? it.sortIndex);
+
+                    const sortIndex = Number.isFinite(sortIndexRaw)
+
+                        ? sortIndexRaw
+
+                        : Number.POSITIVE_INFINITY;
+
+                    if (isUnknownCharacter(name, id)) continue;
+
+                    if (id) {
+
+                        charNameMap.set(id, name || id);
+
+                        charNameToId.set(normalizeKey(id), id);
+
+                        charSortIndex.set(id, sortIndex);
+
+                    }
+
+                    if (name) {
+
+                        charNameToId.set(normalizeKey(name), id || name);
+
+                        charSortIndex.set(normalizeKey(name), sortIndex);
+
+                    }
+
+                }
+
+            }
+
+
+
+            async function loadLocates() {
+
+                locateIdToName.clear();
+
+                const url = `${API_BASE}/api/locates`;
+
+                try {
+
+                    const data = await fetchJson(url);
+
+                    const items = Array.isArray(data.items)
+
+                        ? data.items
+
+                        : Array.isArray(data)
+
+                          ? data
+
+                          : [];
+
+                    for (const it of items) {
+
+                        const id = String(it.locate_id || it.id || "").trim();
+
+                        const name = String(it.locate_name || it.name || "").trim();
+
+                        if (id && name) {
+
+                            locateIdToName.set(id, name);
+
+                        }
+
+                    }
+
+                } catch {
+
+                    // ignore
+
+                }
+
+            }
+
+
+
+            function resolveCharName(charId, charName) {
+
+                const id = String(charId || "").trim();
+
+                const name = String(charName || "").trim();
+
+                if (id && charNameMap.has(id)) return charNameMap.get(id);
+
+                return name || id || "";
+
+            }
+
+
+
+            function resolveCharacterInput(raw) {
+
+                const key = normalizeKey(raw);
+
+                if (!key) return "";
+
+                return charNameToId.get(key) || String(raw || "").trim();
+
+            }
+
+
+
+            function isUnknownCharacter(name, id) {
+
+                const n = normalizeKey(name);
+
+                const i = normalizeKey(id);
+
+                return (
+
+                    n === "??" ||
+
+                    n === "unknown" ||
+
+                    n === "??" ||
+
+                    i === "unknown" ||
+
+                    i === "??"
+
+                );
+
+            }
+
+
+
+            function getCharSortIndex(entry) {
+
+                const id = String(entry.id || "").trim();
+
+                if (id && charSortIndex.has(id)) return charSortIndex.get(id);
+
+                const nameKey = normalizeKey(entry.name || "");
+
+                if (nameKey && charSortIndex.has(nameKey)) return charSortIndex.get(nameKey);
+
+                return Number.POSITIVE_INFINITY;
+
+            }
+
+
+
+            function resolveLocateName(locateId, locateName) {
+
+                const name = String(locateName || "").trim();
+
+                if (name) return name;
+
+                const id = String(locateId || "").trim();
+
+                if (id && locateIdToName.has(id)) return locateIdToName.get(id);
+
+                return "";
+
+            }
+
+
+
+            function getMatchVideoId(match) {
+
+                return String(match.video_id || match.videoId || match.video || "").trim();
+
+            }
+
+
+
+            function normalizeWinner(raw) {
+
+                const v = String(raw ?? "").trim().toLowerCase();
+
+                if (v === "1" || v === "p1" || v === "player1") return 1;
+
+                if (v === "2" || v === "p2" || v === "player2") return 2;
+
+                if (v === "0" || v === "unknown") return 0;
+
+                const n = Number(raw);
+
+                return Number.isFinite(n) ? n : 0;
+
+            }
+
+
+
+            function getPlayerSide(match, playerId, aliasKeys) {
+
+                const p1 = match.p1 || {};
+
+                const p2 = match.p2 || {};
+
+                const p1Id = String(p1.player_id || "");
+
+                const p2Id = String(p2.player_id || "");
+
+                if (p1Id && p1Id === String(playerId)) return "p1";
+
+                if (p2Id && p2Id === String(playerId)) return "p2";
+
+                const p1Name = normalizeKey(p1.player_name || p1.player_raw || "");
+
+                const p2Name = normalizeKey(p2.player_name || p2.player_raw || "");
+
+                if (p1Name && aliasKeys.has(p1Name)) return "p1";
+
+                if (p2Name && aliasKeys.has(p2Name)) return "p2";
+
+                return "";
+
+            }
+
+
+
+            function createChip(text, href) {
+
+                const hasLink = Boolean(href);
+
+                const el = document.createElement(hasLink ? "a" : "span");
+
+                el.className = "chip";
+
+                if (hasLink) {
+
+                    el.href = href;
+
+                    el.classList.add("match-link");
+
+                }
+
+                el.textContent = text;
+
+                return el;
+
+            }
+
+
+
+            function buildPortraitImage(charId, charName, extraClass, sizePrefix) {
+                const cleanId = String(charId || "").trim();
+                const img = document.createElement("img");
+                img.className = extraClass ? `char-portrait ${extraClass}` : "char-portrait";
+                img.decoding = "async";
+                img.loading = "lazy";
+                if (!cleanId) {
+                    img.classList.add("empty");
+                    img.alt = "";
+                    return img;
+                }
+                const prefix = sizePrefix || "small";
+                const filePrefix =
+                    prefix === "medium" && IS_MOBILE ? "medium_portrait_mobile" : `${prefix}_portrait`;
+                img.src = `${IMAGE_BASE}${filePrefix}_${encodeURIComponent(cleanId)}.png`;
+                img.alt = charName ? String(charName) : cleanId;
+                img.addEventListener("error", () => {
+                    img.classList.add("empty");
+                    img.removeAttribute("src");
+                });
+                return img;
+
+            }
+
+
+
+            function updateOpponentFilterActive() {
+
+                if (!opponentFilterEl) return;
+
+                opponentFilterEl.querySelectorAll(".char-filter").forEach((btn) => {
+
+                    const isActive = btn.dataset.charId === opponentFilterCharId;
+
+                    btn.classList.toggle("is-active", isActive);
+
+                    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+
+                });
+
+            }
+
+
+
+            function renderOpponentFilters(charList) {
+
+                if (!opponentFilterEl) return;
+
+                opponentFilterEl.innerHTML = "";
+
+                if (!charList.length) {
+
+                    opponentFilterCharId = "";
+
+                    return;
+
+                }
+
+                const ids = new Set();
+
+                for (const row of charList) {
+
+                    const charValue = resolveCharacterInput(row.id || row.name);
+
+                    if (!charValue || ids.has(charValue)) continue;
+
+                    ids.add(charValue);
+
+                    const btn = document.createElement("button");
+
+                    btn.type = "button";
+
+                    btn.className = "char-chip char-filter";
+
+                    btn.dataset.charId = charValue;
+
+                    btn.setAttribute("aria-pressed", "false");
+
+                    const img = buildPortraitImage(charValue, row.name, "", "small");
+
+                    if (img.classList.contains("empty")) {
+
+                        btn.textContent = row.name || charValue;
+
+                    } else {
+
+                        btn.appendChild(img);
+
+                    }
+
+                    btn.addEventListener("click", () => {
+
+                        opponentFilterCharId =
+
+                            opponentFilterCharId === charValue ? "" : charValue;
+
+                        updateOpponentFilterActive();
+
+                        renderOpponentCharStats(opponentAllRows, currentPlayerId);
+
+                    });
+
+                    opponentFilterEl.appendChild(btn);
+
+                }
+
+                if (!opponentFilterCharId || !ids.has(opponentFilterCharId)) {
+
+                    const firstId = ids.values().next().value;
+
+                    opponentFilterCharId = firstId || "";
+
+                }
+
+                updateOpponentFilterActive();
+
+            }
+
+
+
+            function buildPlayerCharSearchUrl(playerId, charValue) {
+
+                const cleanPlayer = String(playerId || "").trim();
+
+                const cleanChar = String(charValue || "").trim();
+
+                if (!cleanPlayer || !cleanChar) return "";
+
+                const params = new URLSearchParams();
+
+                params.set("mode", "player");
+
+                params.set("p", cleanPlayer);
+
+                params.set("ch", cleanChar);
+
+                return `./?${params.toString()}`;
+
+            }
+
+
+
+            function buildOpponentCharSearchUrl(playerId, charValue, selfCharValue) {
+
+                const cleanPlayer = String(playerId || "").trim();
+
+                const cleanChar = String(charValue || "").trim();
+
+                const cleanSelf = String(selfCharValue || "").trim();
+
+                if (!cleanPlayer || !cleanChar) return "";
+
+                const params = new URLSearchParams();
+
+                params.set("mode", "card");
+
+                params.set("p1", cleanPlayer);
+
+                if (cleanSelf) params.set("ch1", cleanSelf);
+
+                params.set("ch2", cleanChar);
+
+                return `./?${params.toString()}`;
+
+            }
+
+
+
+            function renderAliases(aliases) {
+
+                aliasListEl.innerHTML = "";
+
+                if (!aliases.length) {
+
+                    aliasListEl.appendChild(createChip(NO_ALIAS_TEXT));
+
+                    return;
+
+                }
+
+                for (const alias of aliases) {
+
+                    aliasListEl.appendChild(createChip(alias));
+
+                }
+
+            }
+
+
+
+            function buildPlayerSearchUrl(playerId, winnerValue) {
+
+                const cleanPlayer = String(playerId || "").trim();
+
+                if (!cleanPlayer) return "";
+
+                const params = new URLSearchParams();
+
+                params.set("mode", "player");
+
+                params.set("p", cleanPlayer);
+
+                if (winnerValue) params.set("w", winnerValue);
+
+                return `./?${params.toString()}`;
+
+            }
+
+
+
+            function renderSummary(stats, playerId, statsPublic, winRateRank) {
+
+                summaryStatsEl.innerHTML = "";
+                const isPublic = Number(statsPublic) !== 0;
+
+                const winRateRaw = Number(stats.winRate);
+
+                const winRateRatio = Number.isFinite(winRateRaw)
+
+                    ? Math.max(0, Math.min(1, winRateRaw))
+
+                    : null;
+                const rankValue =
+                    isPublic && Number.isFinite(winRateRank) && winRateRank > 0
+                        ? winRateRank
+                        : null;
+
+                const cards = [
+
+                    {
+
+                        label: "\u8A66\u5408\u6570",
+
+                        value: stats.matches,
+
+                        href: buildPlayerSearchUrl(playerId, ""),
+
+                    },
+
+                    {
+
+                        label: "\u52DD\u7387",
+
+                        value: isPublic ? fmtPercent(stats.winRate) : "\u975E\u8868\u793A",
+                        bar: isPublic ? winRateRatio : null,
+                        rank: rankValue,
+
+                    },
+
+                    {
+
+                        label: "\u52DD\u3061",
+
+                        value: isPublic ? stats.wins : "\u975E\u8868\u793A",
+                        href: isPublic ? buildPlayerSearchUrl(playerId, "p1") : "",
+
+                    },
+
+                    {
+
+                        label: "\u8CA0\u3051",
+
+                        value: isPublic ? stats.losses : "\u975E\u8868\u793A",
+                        href: isPublic ? buildPlayerSearchUrl(playerId, "p2") : "",
+
+                    },
+
+                                    ];
+
+                for (const card of cards) {
+
+                    const el = document.createElement(card.href ? "a" : "div");
+
+                    el.className = card.href ? "stat-card stat-card-link" : "stat-card";
+
+                    if (card.href) {
+
+                        el.href = card.href;
+
+                    }
+
+                    el.innerHTML = `
+
+                        <div class="stat-title">${card.label}</div>
+
+                        <div class="stat-value">${card.value}</div>
+
+                    `;
+
+                    if (card.bar !== null && card.bar !== undefined) {
+
+                        const bar = document.createElement("div");
+
+                        bar.className = "stat-bar";
+
+                        bar.setAttribute("role", "progressbar");
+
+                        bar.setAttribute("aria-valuemin", "0");
+
+                        bar.setAttribute("aria-valuemax", "100");
+
+                        const percent = Math.round(card.bar * 1000) / 10;
+
+                        bar.setAttribute("aria-valuenow", String(percent));
+
+                        bar.setAttribute("aria-label", "\u52DD\u7387");
+
+                        const fill = document.createElement("div");
+
+                        fill.className = "stat-bar-fill";
+
+                        fill.style.width = `${percent}%`;
+
+                        bar.appendChild(fill);
+
+                        el.appendChild(bar);
+
+                    }
+                    if (card.rank) {
+                        const rankEl = document.createElement("div");
+                        rankEl.className = "stat-rank";
+                        rankEl.textContent = `${card.rank}位`;
+                        el.appendChild(rankEl);
+                    }
+
+                    summaryStatsEl.appendChild(el);
+
+                }
+
+            }
+
+            function renderCharStats(charStats, totalMatches, playerId) {
+
+                charTableBody.innerHTML = "";
+                const isPublic = Number(statsPublicFlag) !== 0;
+
+                if (profileCardEl) {
+
+                    profileCardEl.style.setProperty("--profile-char-img", "");
+
+                }
+
+
+
+                if (!charStats.length) {
+
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+
+                        <td class="icon-col">-</td>
+
+                        <td class="num">0</td>
+
+                        <td class="num">-</td>
+
+                        <td class="num">-</td>
+
+                    `;
+
+                    charTableBody.appendChild(tr);
+
+                    return;
+
+                }
+
+
+
+                const topChar = charStats.reduce((best, current) => {
+
+                    if (!best) return current;
+
+                    if (current.matches !== best.matches) {
+
+                        return current.matches > best.matches ? current : best;
+
+                    }
+
+                    return best;
+
+                }, null);
+
+                if (profileCardEl && topChar) {
+
+                    const topCharId = resolveCharacterInput(topChar.id || topChar.name);
+
+                    if (topCharId) {
+
+                        profileCardEl.style.setProperty(
+
+                            "--profile-char-img",
+
+                            `url(\"/images/match_card_${encodeURIComponent(topCharId)}.png\")`,
+
+                        );
+
+                    }
+
+                }
+
+
+
+                for (const row of charStats) {
+
+                    const usage = totalMatches ? row.matches / totalMatches : 0;
+
+                    const winRate = row.wins + row.losses ? row.wins / (row.wins + row.losses) : NaN;
+
+                    const tr = document.createElement("tr");
+
+                    const iconCell = document.createElement("td");
+
+                    iconCell.className = "icon-col";
+
+                    const iconValue = resolveCharacterInput(row.id || row.name);
+
+                    const iconImg = buildPortraitImage(
+
+                        iconValue,
+
+                        row.name,
+
+                        "table-portrait",
+
+                        "medium",
+
+                    );
+
+                    if (iconImg.classList.contains("empty")) {
+
+                        iconCell.textContent = "-";
+
+                    } else {
+
+                        iconCell.appendChild(iconImg);
+
+                    }
+
+                    const charValue = resolveCharacterInput(row.id || row.name);
+
+                    const link = buildPlayerCharSearchUrl(playerId, charValue);
+
+                    if (link) {
+
+                        tr.classList.add("row-link");
+
+                        tr.addEventListener("click", (e) => {
+
+                            if (e.target.closest("a")) return;
+
+                            window.location.href = link;
+
+                        });
+
+                    }
+
+                    const usageCell = document.createElement("td");
+
+                    usageCell.className = "num";
+
+                    usageCell.textContent = fmtPercent(usage);
+
+                    const usageBar = createRateBar(usage, "\u4f7f\u7528\u7387");
+
+                    if (usageBar) usageCell.appendChild(usageBar);
+
+                    const matchesCell = document.createElement("td");
+
+                    matchesCell.className = "num";
+
+                    matchesCell.textContent = String(row.matches);
+
+                    const winRateCell = document.createElement("td");
+
+                    winRateCell.className = "num";
+
+                    winRateCell.textContent = isPublic ? fmtPercent(winRate) : "\u975E\u8868\u793A";
+
+                    tr.append(iconCell, usageCell, matchesCell, winRateCell);
+
+                    charTableBody.appendChild(tr);
+
+                }
+
+            }
+
+
+
+            function renderOpponentCharStats(items, playerId) {
+
+                opponentCharBody.innerHTML = "";
+                const isPublic = Number(statsPublicFlag) !== 0;
+
+                opponentAllRows = Array.isArray(items) ? items : [];
+
+                if (playerId) currentPlayerId = playerId;
+
+                const filterKey = opponentFilterCharId;
+
+                const filteredItems = filterKey
+
+                    ? opponentBySelfMap.has(filterKey)
+
+                        ? Array.from(opponentBySelfMap.get(filterKey).values())
+
+                        : []
+
+                    : opponentAllRows;
+
+                const itemMap = new Map(
+
+                    filteredItems
+
+                        .filter((row) => !isUnknownCharacter(row.name, row.id))
+
+                        .map((row) => [
+
+                            resolveCharacterInput(row.id || row.name) || row.name,
+
+                            row,
+
+                        ]),
+
+                );
+
+                const keys = Array.from(charNameMap.keys()).filter(
+
+                    (id) => !isUnknownCharacter(charNameMap.get(id), id),
+
+                );
+
+                keys.sort((a, b) => {
+
+                    const aSort = charSortIndex.has(a) ? charSortIndex.get(a) : Number.POSITIVE_INFINITY;
+
+                    const bSort = charSortIndex.has(b) ? charSortIndex.get(b) : Number.POSITIVE_INFINITY;
+
+                    if (aSort !== bSort) return aSort - bSort;
+
+                    return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+
+                });
+
+                const rows = keys.length
+
+                    ? keys.map((id) => {
+
+                          const name = charNameMap.get(id) || id;
+
+                          const existing = itemMap.get(id);
+
+                          return (
+
+                              existing || {
+
+                                  id,
+
+                                  name,
+
+                                  matches: 0,
+
+                                  wins: 0,
+
+                                  losses: 0,
+
+                              }
+
+                          );
+
+                      })
+
+                    : filteredItems;
+
+                if (!rows.length) {
+
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+
+                        <td class="icon-col">-</td>
+
+                        <td class="num">0</td>
+
+                        <td class="num">-</td>
+
+                    `;
+
+                    opponentCharBody.appendChild(tr);
+
+                    return;
+
+                }
+
+                for (const row of rows) {
+
+                    const winRate = row.wins + row.losses ? row.wins / (row.wins + row.losses) : NaN;
+
+                    const tr = document.createElement("tr");
+
+                    const iconCell = document.createElement("td");
+
+                    iconCell.className = "icon-col";
+
+                    const iconValue = resolveCharacterInput(row.id || row.name);
+
+                    const iconImg = buildPortraitImage(
+
+                        iconValue,
+
+                        row.name,
+
+                        "table-portrait",
+
+                        "medium",
+
+                    );
+
+                    if (iconImg.classList.contains("empty")) {
+
+                        iconCell.textContent = "-";
+
+                    } else {
+
+                        iconCell.appendChild(iconImg);
+
+                    }
+
+                    const charValue = resolveCharacterInput(row.id || row.name);
+
+                    const link = buildOpponentCharSearchUrl(
+
+                        playerId,
+
+                        charValue,
+
+                        opponentFilterCharId,
+
+                    );
+
+                    if (link) {
+
+                        tr.classList.add("row-link");
+
+                        tr.addEventListener("click", (e) => {
+
+                            if (e.target.closest("a")) return;
+
+                            window.location.href = link;
+
+                        });
+
+                    }
+
+                    const matchesCell = document.createElement("td");
+
+                    matchesCell.className = "num";
+
+                    matchesCell.textContent = String(row.matches);
+
+                    const winRateCell = document.createElement("td");
+
+                    winRateCell.className = "num";
+
+                    winRateCell.textContent = isPublic ? fmtPercent(winRate) : "\u975E\u8868\u793A";
+                    if (isPublic) {
+                        const winRateBar = createRateBar(winRate, "\u52dd\u7387");
+                        if (winRateBar) winRateCell.appendChild(winRateBar);
+                    }
+
+                    tr.append(iconCell, matchesCell, winRateCell);
+
+                    opponentCharBody.appendChild(tr);
+
+                }
+
+            }
+
+
+
+            async function updateFavoriteLocate(matches) {
+
+                if (!favoriteLocateEl) return;
+
+                const videoIds = matches.map((match) => getMatchVideoId(match)).filter(Boolean);
+
+                if (!videoIds.length) {
+
+                    favoriteLocateEl.textContent = "-";
+
+                    return;
+
+                }
+
+                await hydrateVideoMeta(videoIds);
+
+                const counts = new Map();
+
+                for (const match of matches) {
+
+                    const videoId = getMatchVideoId(match);
+
+                    if (!videoId) continue;
+
+                    const info = videoInfoCache.get(videoId);
+
+                    if (!info) continue;
+
+                    const locateName = resolveLocateName(info.locateId, info.locateName);
+
+                    if (!locateName) continue;
+
+                    counts.set(locateName, (counts.get(locateName) || 0) + 1);
+
+                }
+
+                if (!counts.size) {
+
+                    favoriteLocateEl.textContent = "-";
+
+                    return;
+
+                }
+
+                const sorted = Array.from(counts.entries()).sort((a, b) => {
+
+                    if (b[1] !== a[1]) return b[1] - a[1];
+
+                    return a[0].localeCompare(b[0], undefined, { sensitivity: "base" });
+
+                });
+
+                favoriteLocateEl.textContent = sorted[0][0];
+
+            }
+
+
+
+            function renderMatches(matches) {
+
+                renderMatchCards({
+
+                    items: matches,
+
+                    container: matchBody,
+
+                    emptyText: "\u6761\u4ef6\u306b\u8a72\u5f53\u3059\u308b\u8a66\u5408\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f\u3002",
+
+                    normalizeMatch,
+
+                    normalizeWinnerSide,
+
+                    ytUrl,
+
+                    fmtRange,
+
+                    fmtSec,
+
+                    fmtDuration,
+
+                    datePrefix: DATE_PREFIX,
+
+                    videoLabel: "\u52d5\u753b",
+
+                    correctionLabel: "\u60c5\u5831\u8a02\u6b63",
+
+                    getCorrectionHref: (row) =>
+
+                        row && row.id ? `correction/?id=${encodeURIComponent(row.id)}` : "",
+
+                    hydrateVideoInfo,
+
+                    isInteractiveTarget,
+
+                    createTextLink,
+
+                    buildCharImage,
+
+                    resolvePlayerName,
+
+                    resolvePlayerLinkId: (display, id) => {
+                        const clean = String(id || "").trim();
+                        if (!clean || clean === "0") return "";
+                        return clean;
+                    },
+                    resolveCharacterId: (charId, charName) =>
+
+                        charId || resolveCharacterInput(charName),
+
+                    resolveCharacterName: (charId, charName) => resolveCharName(charId, charName),
+
+                    getVideoLinkHref: (videoId) =>
+                        `video/?vid=${encodeURIComponent(videoId)}`,
+                    getCharacterLinkHref: (charId) =>
+                        `character/?c=${encodeURIComponent(charId)}`,
+                    getPlayerLinkHref: (playerId) =>
+
+                        `player/?p=${encodeURIComponent(playerId)}`,
+
+                });
+
+            }
+
+
+
+            async function fetchVideoInfo(videoId) {
+
+                const cleanId = String(videoId || "").trim();
+
+                if (!cleanId) return;
+
+                if (videoInfoCache.has(cleanId) || videoInfoPending.has(cleanId)) return;
+
+                videoInfoPending.add(cleanId);
+
+                try {
+
+                    const url = `${API_BASE}/api/videos?vid=${encodeURIComponent(cleanId)}&limit=5`;
+
+                    const data = await fetchJson(url);
+
+                    const items = Array.isArray(data.items)
+
+                        ? data.items
+
+                        : Array.isArray(data)
+
+                          ? data
+
+                          : [];
+
+                    const exact = items.find((it) => String(it.video_id) === cleanId);
+
+                    const picked = exact || items[0];
+
+                    if (!picked) return;
+
+                    const title = picked.title ? String(picked.title) : "";
+                    const locateId = String(picked.locate_id ?? picked.locateId ?? "").trim();
+                    const locateName = String(picked.locate_name ?? picked.locateName ?? "").trim();
+                    let dateText = "";
+                    const displayDate = picked.display_uploaded_at || picked.displayUploadedAt || "";
+                    if (displayDate) {
+                        dateText = String(displayDate);
+                    } else {
+                        const epoch = Number(picked.uploaded_at ?? picked.uploadedAt);
+                        if (Number.isFinite(epoch) && epoch > 0) {
+
+                            const d = new Date(epoch * 1000);
+
+                            const y = d.getFullYear();
+
+                            const m = String(d.getMonth() + 1).padStart(2, "0");
+
+                            const day = String(d.getDate()).padStart(2, "0");
+
+                            dateText = `${y}-${m}-${day}`;
+
+                        }
+
+                    }
+
+                    if (title || dateText || locateId || locateName) {
+
+                        const info = videoInfoCache.get(cleanId) || {};
+
+                        if (title) info.title = title;
+
+                        if (dateText) info.date = dateText;
+
+                        if (locateId) info.locateId = locateId;
+
+                        if (locateName) info.locateName = locateName;
+
+                        if (locateId && !info.locateName) {
+
+                            info.locateName = resolveLocateName(locateId, "");
+
+                        }
+
+                        videoInfoCache.set(cleanId, info);
+
+                    }
+
+                } catch {
+
+                    // ignore
+
+                } finally {
+
+                    videoInfoPending.delete(cleanId);
+
+                }
+
+            }
+
+
+
+            function updateVideoInfoElements() {
+
+                document.querySelectorAll("[data-video-id]").forEach((el) => {
+
+                    const id = el.getAttribute("data-video-id") || "";
+
+                    if (!id) return;
+
+                    const info = videoInfoCache.get(id);
+
+                    if (info && info.title) {
+
+                        el.textContent = info.title;
+
+                        el.title = info.title;
+
+                    }
+
+                });
+
+                document.querySelectorAll("[data-video-date-id]").forEach((el) => {
+
+                    const id = el.getAttribute("data-video-date-id") || "";
+
+                    if (!id) return;
+
+                    const info = videoInfoCache.get(id);
+
+                    if (info && info.date) {
+
+                        el.textContent = `${DATE_PREFIX}${info.date}`;
+
+                        el.title = `${DATE_PREFIX}${info.date}`;
+
+                    }
+
+                });
+
+            }
+
+
+
+            async function hydrateVideoMeta(videoIds) {
+
+                const unique = Array.from(new Set(videoIds.filter(Boolean)));
+
+                if (!unique.length) return;
+
+                const chunkSize = 20;
+
+                for (let i = 0; i < unique.length; i += chunkSize) {
+
+                    const chunk = unique.slice(i, i + chunkSize);
+
+                    await Promise.all(chunk.map((id) => fetchVideoInfo(id)));
+
+                }
+
+            }
+
+
+
+            async function hydrateVideoInfo(videoIds) {
+
+                await hydrateVideoMeta(videoIds);
+
+                updateVideoInfoElements();
+
+            }
+
+
+
+            async function fetchAllMatches(playerId) {
+
+                const all = [];
+
+                let page = 1;
+
+                let total = 0;
+
+                let hasNext = true;
+
+                while (hasNext && page <= MAX_PAGES) {
+
+                    const url = `${API_BASE}/api/matches?mode=player&p=${encodeURIComponent(
+
+                        playerId,
+
+                    )}&sort=recent&expand=names&limit=${PAGE_LIMIT}&page=${page}&no_total=1`;
+
+                    const payload = await fetchJson(url);
+
+                    const items = Array.isArray(payload.items) ? payload.items : [];
+
+                    all.push(...items);
+
+                    total = Number(payload.total || total || items.length);
+
+                    hasNext = payload.has_next === true || (total && all.length < total);
+
+                    if (!items.length) break;
+
+                    page += 1;
+
+                }
+
+                return { items: all, total };
+
+            }
+
+            function computeStats(matches, playerId, aliasKeys) {
+
+                const stats = {
+
+                    matches: 0,
+
+                    wins: 0,
+
+                    losses: 0,
+
+                    unknown: 0,
+
+                    winRate: NaN,
+
+                };
+
+                const charStats = new Map();
+
+                const opponentCharStats = new Map();
+
+                const opponentBySelf = new Map();
+
+
+
+                for (const match of matches) {
+
+                    const side = getPlayerSide(match, playerId, aliasKeys);
+
+                    if (!side) continue;
+
+                    stats.matches += 1;
+
+                    const winner = normalizeWinner(match.winner);
+
+                    if (winner === 1 || winner === 2) {
+
+                        const isWin = (winner === 1 && side === "p1") || (winner === 2 && side === "p2");
+
+                        if (isWin) stats.wins += 1;
+
+                        else stats.losses += 1;
+
+                    } else {
+
+                        stats.unknown += 1;
+
+                    }
+
+
+
+                    const player = side === "p1" ? match.p1 || {} : match.p2 || {};
+
+                    const rawCharId = String(player.char_id || "").trim();
+
+                    const rawCharName = resolveCharName(
+
+                        rawCharId,
+
+                        player.char_name || player.char_raw || "",
+
+                    );
+
+                    if (isUnknownCharacter(rawCharName, rawCharId)) continue;
+
+                    const resolvedCharId =
+
+                        resolveCharacterInput(rawCharId || rawCharName) || rawCharId || rawCharName;
+
+                    if (!resolvedCharId) continue;
+
+
+
+                    if (!charStats.has(resolvedCharId)) {
+
+                        charStats.set(resolvedCharId, {
+
+                            id: resolvedCharId,
+
+                            name: rawCharName || resolvedCharId,
+
+                            matches: 0,
+
+                            wins: 0,
+
+                            losses: 0,
+
+                        });
+
+                    }
+
+                    const entry = charStats.get(resolvedCharId);
+
+                    entry.matches += 1;
+
+                    if (winner === 1 || winner === 2) {
+
+                        const isWin = (winner === 1 && side === "p1") || (winner === 2 && side === "p2");
+
+                        if (isWin) entry.wins += 1;
+
+                        else entry.losses += 1;
+
+                    }
+
+
+
+                    const opponent = side === "p1" ? match.p2 || {} : match.p1 || {};
+
+                    const oppCharId = String(opponent.char_id || "").trim();
+
+                    const oppCharName = resolveCharName(
+
+                        oppCharId,
+
+                        opponent.char_name || opponent.char_raw || "",
+
+                    );
+
+                    if (isUnknownCharacter(oppCharName, oppCharId)) continue;
+
+                    const resolvedOppId =
+
+                        resolveCharacterInput(oppCharId || oppCharName) || oppCharId || oppCharName;
+
+                    if (resolvedOppId) {
+
+                        if (!opponentCharStats.has(resolvedOppId)) {
+
+                            opponentCharStats.set(resolvedOppId, {
+
+                                id: resolvedOppId,
+
+                                name: oppCharName || resolvedOppId,
+
+                                matches: 0,
+
+                                wins: 0,
+
+                                losses: 0,
+
+                            });
+
+                        }
+
+                        const oppEntry = opponentCharStats.get(resolvedOppId);
+
+                        oppEntry.matches += 1;
+
+                        if (winner === 1 || winner === 2) {
+
+                            const isWin =
+
+                                (winner === 1 && side === "p1") || (winner === 2 && side === "p2");
+
+                            if (isWin) oppEntry.wins += 1;
+
+                            else oppEntry.losses += 1;
+
+                        }
+
+                        if (!opponentBySelf.has(resolvedCharId)) {
+
+                            opponentBySelf.set(resolvedCharId, new Map());
+
+                        }
+
+                        const selfMap = opponentBySelf.get(resolvedCharId);
+
+                        if (!selfMap.has(resolvedOppId)) {
+
+                            selfMap.set(resolvedOppId, {
+
+                                id: resolvedOppId,
+
+                                name: oppCharName || resolvedOppId,
+
+                                matches: 0,
+
+                                wins: 0,
+
+                                losses: 0,
+
+                            });
+
+                        }
+
+                        const selfEntry = selfMap.get(resolvedOppId);
+
+                        selfEntry.matches += 1;
+
+                        if (winner === 1 || winner === 2) {
+
+                            const isWin =
+
+                                (winner === 1 && side === "p1") || (winner === 2 && side === "p2");
+
+                            if (isWin) selfEntry.wins += 1;
+
+                            else selfEntry.losses += 1;
+
+                        }
+
+                    }
+
+                }
+
+
+
+                if (stats.wins + stats.losses > 0) {
+
+                    stats.winRate = stats.wins / (stats.wins + stats.losses);
+
+                }
+
+
+
+                const charList = Array.from(charStats.values()).sort((a, b) => {
+
+                    if (b.matches !== a.matches) return b.matches - a.matches;
+
+                    const aSort = getCharSortIndex(a);
+
+                    const bSort = getCharSortIndex(b);
+
+                    if (aSort !== bSort) return aSort - bSort;
+
+                    return a.name.localeCompare(b.name, undefined, {
+
+                        numeric: true,
+
+                        sensitivity: "base",
+
+                    });
+
+                });
+
+                const opponentCharList = Array.from(opponentCharStats.values()).sort((a, b) => {
+
+                    const aSort = getCharSortIndex(a);
+
+                    const bSort = getCharSortIndex(b);
+
+                    if (aSort !== bSort) return aSort - bSort;
+
+                    return a.name.localeCompare(b.name, undefined, {
+
+                        numeric: true,
+
+                        sensitivity: "base",
+
+                    });
+
+                });
+
+                return { stats, charList, opponentCharList, opponentBySelf };
+
+            }
+
+
+
+            async function init() {
+
+                const params = new URLSearchParams(window.location.search);
+
+                const playerId = (params.get("p") || "").trim();
+
+                if (!playerId) {
+
+                    setError("player/?p=<player_id> \u3092\u6307\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044\u3002");
+
+                    return;
+
+                }
+
+
+
+                setError("");
+
+                playerNameEl.textContent = "\u8AAD\u307F\u8FBC\u307F\u4E2D\u2026";
+
+                if (favoriteLocateEl) {
+
+                    favoriteLocateEl.textContent = "\u8AAD\u307F\u8FBC\u307F\u4E2D\u2026";
+
+                }
+
+
+
+                try {
+
+                    const [aliasItems, playerInfo, topRank] = await Promise.all([
+
+                        fetchPlayerAliases(playerId),
+
+                        fetchPlayerInfo(playerId),
+                        fetchTopPlayerRank(playerId),
+
+                        loadCharacters(),
+
+                        loadLocates(),
+
+                    ]);
+                    statsPublicFlag = playerInfo.statsPublic;
+                    if (opponentPanelEl) {
+                        opponentPanelEl.classList.toggle(
+                            "is-muted",
+                            Number(statsPublicFlag) === 0,
+                        );
+                    }
+
+
+
+                    const aliasNames = aliasItems
+
+                        .map((it) => it.alias)
+
+                        .filter((alias) => alias && normalizeKey(alias) !== normalizeKey(playerId));
+
+                    const aliasKeys = new Set(
+
+                        [playerInfo.name, playerId, ...aliasNames]
+
+                            .map((name) => normalizeKey(name))
+
+                            .filter(Boolean),
+
+                    );
+
+
+
+                    const displayName =
+
+                        aliasItems.find((it) => it.playerName)?.playerName ||
+                        playerInfo.name ||
+                        playerId;
+
+
+
+                    playerNameEl.textContent = displayName;
+
+                    renderAliases(aliasNames);
+
+
+
+                    const allMatchesPayload = await fetchAllMatches(playerId);
+
+                    const allMatches = allMatchesPayload.items || [];
+
+                    const listMatches = allMatches.slice(0, LIST_LIMIT);
+
+
+
+                    const computed = computeStats(allMatches, playerId, aliasKeys);
+
+                    renderSummary(computed.stats, playerId, playerInfo.statsPublic, topRank);
+
+                    renderCharStats(computed.charList, computed.stats.matches, playerId);
+
+                    opponentBySelfMap = computed.opponentBySelf || new Map();
+
+                    renderOpponentFilters(computed.charList);
+
+                    renderOpponentCharStats(computed.opponentCharList, playerId);
+
+                    await updateFavoriteLocate(allMatches);
+
+                    renderMatches(listMatches);
+
+                } catch (e) {
+
+                    setError(DB_ERROR_MSG);
+
+                }
+
+            }
+
+
+
+            init();
+
+        </script>
+
+    </body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

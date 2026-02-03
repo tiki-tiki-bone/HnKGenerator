@@ -1,0 +1,2838 @@
+﻿
+
+<!doctype html>
+
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8" />
+
+        <base href="../" />
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="../js/api-config.local.js"></script>
+
+
+        <script>
+
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+
+                dataLayer.push(arguments);
+
+            }
+
+            gtag("js", new Date());
+
+            gtag("config", "G-NM6S92KNW1");
+
+        </script>
+
+        
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>北斗の拳 対戦動画DB - キャラクター</title>
+
+        <link rel="stylesheet" href="/css/match-cards.css" />
+
+        <style>
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #6b6b6b;
+
+                --line: #d6d6d6;
+
+                --card: #ffffff;
+
+                --surface: #f7f7f7;
+
+                --accent: #ffb347;
+
+                --p1: #c64b4b;
+
+                --p2: #2f6edc;
+
+            }
+
+
+
+            *,
+
+            *::before,
+
+            *::after {
+
+                box-sizing: border-box;
+
+            }
+
+
+
+            body {
+
+                font-family: sans-serif;
+
+                color: var(--ink);
+
+                background-color: #f3f3f3;
+
+                margin: 0;
+
+                padding: 0;
+
+                overflow-x: hidden;
+
+            }
+
+
+
+            header {
+
+                background-color: #333;
+
+                color: #ffffff;
+
+                padding: 2rem 1rem 1rem;
+
+                text-align: center;
+
+                position: relative;
+
+            }
+
+
+
+            #navMenu {
+
+                display: flex;
+
+                justify-content: center;
+
+                gap: 1rem;
+
+                flex-wrap: nowrap;
+
+            }
+
+
+
+            #navMenu a {
+
+                color: #ffffff;
+
+                text-decoration: none;
+
+                font-weight: 600;
+
+                padding: 0.4rem 1rem;
+
+                border: 2px solid transparent;
+
+                border-radius: 4px;
+
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+                font-size: 1rem;
+
+                user-select: none;
+
+            }
+
+
+
+            #navMenu a:hover,
+
+            #navMenu a:focus {
+
+                background-color: var(--accent);
+
+                color: #333;
+
+                border-color: var(--accent);
+
+                outline: none;
+
+            }
+
+
+
+            .menu-toggle {
+
+                display: none;
+
+                position: absolute;
+
+                top: 0.5rem;
+
+                right: 0.5rem;
+
+                width: 30px;
+
+                height: 22px;
+
+                cursor: pointer;
+
+                flex-direction: column;
+
+                justify-content: space-between;
+
+                user-select: none;
+
+                z-index: 10;
+
+            }
+
+
+
+            .menu-toggle span {
+
+                display: block;
+
+                height: 4px;
+
+                background: #ffffff;
+
+                border-radius: 2px;
+
+            }
+
+            @media (max-width: 600px) {
+
+                #navMenu {
+
+                    position: absolute;
+
+                    top: 100%;
+
+                    left: 0;
+
+                    right: 0;
+
+                    background-color: #333;
+
+                    flex-direction: column;
+
+                    display: none;
+
+                    margin: 0;
+
+                    padding: 0.5rem 0;
+
+                }
+
+
+
+                #navMenu a {
+
+                    padding: 1rem;
+
+                    border: none;
+
+                    text-align: center;
+
+                    font-size: 1.1rem;
+
+                }
+
+
+
+                #navMenu.show {
+
+                    display: flex;
+
+                }
+
+
+
+                .menu-toggle {
+
+                    display: flex;
+
+                }
+
+
+
+                h1 {
+
+                    font-size: 18px;
+
+                    margin-bottom: 10px;
+
+                }
+
+            }
+
+
+
+            main {
+
+
+
+                max-width: 900px;
+
+                margin: 2rem auto;
+
+                padding: 1.2rem;
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+
+                box-sizing: border-box;
+
+            }
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border: none;
+
+                background: var(--surface);
+
+                padding: 0.45rem 0.8rem;
+
+                border-left: 6px solid var(--accent);
+
+                border-radius: 6px;
+
+                font-size: 1.05rem;
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                padding: 1rem;
+
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+
+            }
+
+
+
+            .error {
+
+                margin-top: 0.8rem;
+
+                background: #fff0f0;
+
+                border: 1px solid #ffb3b3;
+
+                padding: 0.8rem;
+
+                border-radius: 6px;
+
+                color: #8a1f1f;
+
+                display: none;
+
+            }
+
+
+
+            .profile-header {
+
+                display: grid;
+
+                gap: 0.8rem;
+
+            }
+
+
+
+            .profile-card {
+
+                position: relative;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .profile-card::after {
+
+                content: "";
+
+                position: absolute;
+
+                right: 20px;
+
+                bottom: 0;
+
+                width: 260px;
+
+                height: 260px;
+
+                max-width: 45%;
+
+                max-height: 90%;
+
+                background-image: var(--profile-char-img);
+
+                background-repeat: no-repeat;
+
+                background-size: contain;
+
+                background-position: bottom right;
+
+                transform: scaleX(-1);
+
+                opacity: 1;
+
+                pointer-events: none;
+
+                z-index: 0;
+
+            }
+
+
+
+            .profile-card .profile-header {
+
+                position: relative;
+
+                z-index: 1;
+
+            }
+
+
+
+            .profile-card .stat-grid {
+
+                position: relative;
+
+                z-index: 1;
+
+            }
+
+
+
+            .profile-name {
+
+                font-size: 1.4rem;
+
+                font-weight: 800;
+
+                margin-bottom: 10px;
+
+            }
+
+            .loading-inline {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .loading-spinner {
+                width: 16px;
+                height: 16px;
+                border: 2px solid #d6d6d6;
+                border-top-color: #555;
+                border-radius: 50%;
+                animation: spin 0.9s linear infinite;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+
+
+            .alias-line {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 0.6rem;
+
+                flex-wrap: wrap;
+
+                font-size: 0.9rem;
+
+                color: var(--muted);
+
+            }
+
+
+
+            .alias-value {
+
+                color: var(--ink);
+
+                font-weight: 600;
+
+            }
+
+
+
+            .chip-group {
+
+                display: flex;
+
+                flex-wrap: wrap;
+
+                gap: 0.4rem;
+
+            }
+
+
+
+            .chip {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                padding: 0.2rem 0.6rem;
+
+                border-radius: 10px;
+
+                border: 1px solid #d0d0d0;
+
+                background: #f5f5f5;
+
+                font-size: 0.85rem;
+
+                color: #444;
+
+            }
+
+
+
+            .char-chip {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+                width: 40px;
+
+                height: 40px;
+
+                border-radius: 0;
+
+                border: 1px solid #d0d0d0;
+
+                background: #f5f5f5;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .char-chip.char-filter {
+
+                appearance: none;
+
+                cursor: pointer;
+
+                padding: 0;
+
+                font: inherit;
+
+                color: inherit;
+
+                opacity: 1;
+
+                filter: grayscale(1) brightness(0.55);
+
+                transition:
+
+                    opacity 0.2s ease,
+
+                    filter 0.2s ease,
+
+                    border-color 0.2s ease,
+
+                    box-shadow 0.2s ease,
+
+                    background-color 0.2s ease;
+
+            }
+
+
+
+            .char-chip.char-filter:focus-visible {
+
+                outline: 2px solid #2f2f2f;
+
+                outline-offset: 2px;
+
+            }
+
+
+
+            .char-chip.is-active {
+
+                border-color: #2f2f2f;
+
+                box-shadow: 0 0 0 2px rgba(47, 47, 47, 0.2);
+
+                background: #ffffff;
+
+            }
+
+
+
+            .char-chip.char-filter.is-active {
+
+                opacity: 1;
+
+                filter: none;
+
+            }
+
+
+
+            .char-portrait {
+
+                display: block;
+
+                width: 100%;
+
+                height: 100%;
+
+                object-fit: cover;
+
+            }
+
+
+
+            .table-portrait {
+
+                position: absolute;
+
+                inset: 0;
+
+                width: 100%;
+
+                height: 100%;
+
+                object-fit: cover;
+
+                display: block;
+
+            }
+
+
+
+            .char-usage-table .table-portrait {
+
+                object-fit: contain;
+
+                object-position: left center;
+
+            }
+
+
+
+            .filter-row {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 0.6rem;
+
+                margin-bottom: 0.6rem;
+
+                flex-wrap: wrap;
+
+            }
+
+
+
+            .filter-label {
+
+                font-weight: 600;
+
+                font-size: 0.85rem;
+
+                color: #444;
+
+            }
+
+
+
+            .char-filter-group {
+
+                gap: 0;
+
+            }
+
+
+
+            .stat-grid {
+
+                display: grid;
+
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+                gap: 0.6rem;
+
+            }
+
+
+
+            .stat-card {
+
+                background: var(--surface);
+
+                border: 1px solid var(--line);
+
+                border-radius: 6px;
+
+                padding: 0.6rem 0.8rem;
+
+            }
+
+
+
+            .stat-bar {
+
+                margin-top: 0.45rem;
+
+                height: 6px;
+
+                background: #e5e5e5;
+
+                border-radius: 4px;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .stat-bar-fill {
+
+                height: 100%;
+
+                width: 0%;
+
+                background: #2d2d2d;
+
+                border-radius: 4px;
+
+                transition: width 0.25s ease;
+
+            }
+
+
+
+            .rate-bar {
+
+                margin-top: 0.3rem;
+
+                height: 4px;
+
+                background: #e6e6e6;
+
+                border-radius: 10px;
+
+                overflow: hidden;
+
+            }
+
+
+
+            .rate-bar-fill {
+
+                height: 100%;
+
+                width: 0%;
+
+                background: #2d2d2d;
+
+                border-radius: 10px;
+
+            }
+
+
+
+            .stat-card-link {
+
+                display: block;
+
+                color: inherit;
+
+                text-decoration: none;
+
+                cursor: pointer;
+
+            }
+
+
+
+            .stat-card-link:hover,
+
+            .stat-card-link:focus {
+
+                border-color: #2d2d2d;
+
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+                text-decoration: none;
+
+                outline: none;
+
+            }
+
+
+
+            .stat-title {
+
+                font-size: 0.8rem;
+
+                color: var(--muted);
+
+                margin-bottom: 0.2rem;
+
+            }
+
+
+
+            .stat-value {
+
+                font-size: 1.1rem;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .table-wrap {
+
+                overflow-x: auto;
+
+            }
+
+
+
+            table {
+
+                width: 100%;
+
+                border-collapse: collapse;
+
+                margin-top: 0.6rem;
+
+            }
+
+
+
+            th,
+
+            td {
+
+                padding: 0.6rem 0.7rem;
+
+                text-align: left;
+
+                vertical-align: middle;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            th.icon-col,
+
+            td.icon-col {
+
+                width: 48px;
+
+                padding: 0;
+
+            }
+
+
+
+            td.icon-col {
+
+                position: relative;
+
+            }
+
+
+
+            .char-usage-table th.icon-col,
+
+            .char-usage-table td.icon-col {
+
+                --char-row-height: 60px;
+
+                --char-max-ratio: 4.16;
+
+                width: calc(var(--char-row-height) * var(--char-max-ratio));
+
+                min-width: calc(var(--char-row-height) * var(--char-max-ratio));
+
+            }
+
+
+
+            .char-usage-table th.icon-col {
+
+                text-align: left;
+
+                padding-left: 0.6rem;
+
+            }
+
+
+
+            .char-usage-table td.icon-col {
+
+                height: var(--char-row-height);
+
+            }
+
+
+
+            .char-usage-table tbody td {
+
+                height: var(--char-row-height);
+
+                vertical-align: middle;
+
+            }
+
+
+
+            .num {
+
+                text-align: right;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            .row-link {
+
+                cursor: pointer;
+
+                transition:
+
+                    box-shadow 0.18s ease,
+
+                    transform 0.18s ease,
+
+                    background 0.18s ease;
+
+            }
+
+
+
+            .row-link:hover,
+
+            .row-link:focus-within {
+
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+                transform: translateY(-1px);
+
+            }
+
+
+
+            .row-link:hover td,
+
+            .row-link:focus-within td {
+
+                background: #f9f9f9;
+
+                box-shadow: none;
+
+            }
+
+
+
+            .row-link:hover,
+
+            .row-link:focus-within {
+
+                box-shadow:
+
+                    0 2px 6px rgba(0, 0, 0, 0.06),
+
+                    inset 0 1px 0 #cfcfcf,
+
+                    inset 0 -1px 0 #cfcfcf,
+
+                    inset 1px 0 0 #cfcfcf,
+
+                    inset -1px 0 0 #cfcfcf;
+
+            }
+
+
+
+            thead th {
+
+                background: #2f2f2f;
+
+                color: #ffffff;
+
+                font-size: 0.85rem;
+
+                letter-spacing: 0.04em;
+
+                border: none;
+
+            }
+
+
+
+            tbody td {
+
+                background: #ffffff;
+
+                border-bottom: 1px solid var(--line);
+
+            }
+
+
+
+            tbody tr:nth-child(even) td {
+
+                background: #fafafa;
+
+            }
+
+
+
+            td.wrap {
+
+                white-space: normal;
+
+            }
+
+
+
+            .result-win {
+
+                color: #a12d2d;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .result-lose {
+
+                color: #23458e;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .result-unknown {
+
+                color: var(--muted);
+
+            }
+
+
+
+            .empty-state {
+
+                padding: 1rem;
+
+                border: 1px dashed var(--line);
+
+                border-radius: 6px;
+
+                color: var(--muted);
+
+                text-align: center;
+
+            }
+
+
+
+            @media (max-width: 600px) {
+
+                .char-usage-table th.icon-col,
+
+                .char-usage-table td.icon-col {
+
+                    --char-row-height: 60px;
+
+                    --char-max-ratio: 1.9;
+
+                    width: calc(var(--char-row-height) * var(--char-max-ratio));
+
+                }
+
+                .char-usage-table td.icon-col {
+                    overflow: hidden;
+                }
+
+                .char-usage-table .table-portrait {
+                    object-fit: cover;
+                    object-position: left bottom;
+                }
+
+
+
+                .profile-name {
+
+                    font-size: 1.2rem;
+
+                }
+
+
+
+                .profile-card::after {
+
+                    width: 156px;
+
+                    height: 156px;
+
+                    max-width: 45%;
+
+                    max-height: 90%;
+
+                    right: 10px;
+
+                }
+
+
+
+                .stat-grid {
+
+                    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+
+                    gap: 0.5rem;
+
+                }
+
+
+
+                .stat-card {
+
+                    padding: 0.45rem 0.6rem;
+
+                }
+
+
+
+                .stat-title {
+
+                    font-size: 0.75rem;
+
+                }
+
+
+
+                .stat-value {
+
+                    font-size: 1rem;
+
+                }
+
+
+
+            }
+
+
+
+            main a {
+
+                color: #1f4d99;
+
+                text-decoration: none;
+
+            }
+
+
+
+            main a:hover,
+
+            main a:focus {
+
+                color: #0f244d;
+
+                text-decoration: underline;
+
+            }
+
+        
+            </style>
+
+            <script src="/js/site-header.js" defer data-site-header></script>
+
+    </head>
+
+
+
+    <body>
+
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+
+
+        <main>
+
+            <section>
+
+                <h2>キャラクター</h2>
+
+                <div class="panel profile-card" id="profileCard">
+
+                    <div class="profile-header">
+
+                        <div class="profile-name" id="charName">-</div>
+
+                    </div>
+
+                    <div class="stat-grid" id="summaryStats"></div>
+
+                </div>
+
+                <div id="profileError" class="error"></div>
+
+            </section>
+
+
+
+            <section>
+
+                <h2>得意/苦手キャラ</h2>
+
+                <div class="grid-2">
+
+                    <div class="panel">
+
+                        <div class="table-wrap">
+
+                            <table aria-label="得意キャラ" class="char-usage-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th class="icon-col">キャラ</th>
+
+                                        <th class="num">勝率</th>
+
+                                        <th class="num">対戦数</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="strongBody"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    <div class="panel">
+
+                        <div class="table-wrap">
+
+                            <table aria-label="苦手キャラ" class="char-usage-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th class="icon-col">キャラ</th>
+
+                                        <th class="num">勝率</th>
+
+                                        <th class="num">対戦数</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="weakBody"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section>
+
+                <h2>代表プレイヤー</h2>
+
+                <div class="panel">
+
+                    <div class="table-wrap">
+
+                        <table aria-label="代表プレイヤー" class="char-usage-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>プレイヤー</th>
+
+                                    <th class="num">勝率</th>
+
+                                    <th class="num">対戦数</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="playerBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section>
+
+                <h2>直近の試合</h2>
+
+                <div id="matchBody" class="match-cards" role="list"></div>
+
+            </section>
+
+        </main>
+
+
+
+        <script src="/js/match-cards.js"></script>
+
+<script>
+
+            const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
+
+            const IMAGE_BASE = "/images/";
+
+            const IS_MOBILE = window.matchMedia("(max-width: 600px)").matches;
+
+            const DATE_PREFIX = "\u6295\u7a3f\u65e5\uff1a";
+
+            const LIST_LIMIT = 5;
+
+            const DB_ERROR_MSG = "\u0044\u0042\u3078\u306e\u554f\u3044\u5408\u308f\u305b\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002\u7ba1\u7406\u8005\u306b\u304a\u554f\u3044\u5408\u308f\u305b\u304f\u3060\u3055\u3044\u3002";
+
+
+
+            const profileErrorEl = document.getElementById("profileError");
+
+            const charNameEl = document.getElementById("charName");
+
+            const summaryStatsEl = document.getElementById("summaryStats");
+
+            const profileCardEl = document.getElementById("profileCard");
+
+            const strongBody = document.getElementById("strongBody");
+
+            const weakBody = document.getElementById("weakBody");
+
+            const playerBody = document.getElementById("playerBody");
+
+            const matchBody = document.getElementById("matchBody");
+
+
+
+            const videoInfoCache = new Map();
+
+            const videoInfoPending = new Set();
+
+            const characterNameCache = new Map();
+
+            const characterNamePending = new Set();
+
+            const playerNameCache = new Map();
+
+            const playerNamePending = new Set();
+
+            let currentCharId = "";
+            let mirrorMatchCount = null;
+
+
+
+            function setError(msg) {
+
+                if (!profileErrorEl) return;
+
+                if (!msg) {
+
+                    profileErrorEl.style.display = "none";
+
+                    profileErrorEl.textContent = "";
+
+                    return;
+
+                }
+
+                profileErrorEl.style.display = "block";
+
+                profileErrorEl.textContent = msg;
+
+            }
+
+
+
+            async function fetchJson(url) {
+
+                const res = await fetch(url);
+
+                const isJson = (res.headers.get("content-type") || "").includes("application/json");
+
+                const payload = isJson ? await res.json() : { error: await res.text() };
+
+                if (!res.ok) {
+
+                    throw new Error(payload && payload.error ? String(payload.error) : "fetch error");
+
+                }
+
+                return payload;
+
+            }
+
+
+
+            function fmtPercent(rate) {
+
+                if (!Number.isFinite(rate)) return "-";
+
+                return `${(rate * 100).toFixed(1)}%`;
+
+            }
+
+
+
+            function toNumber(value) {
+
+                const num = Number(value);
+
+                return Number.isFinite(num) ? num : 0;
+
+            }
+
+
+
+            function normalizeId(value) {
+
+                return String(value || "").trim();
+
+            }
+
+
+
+            function normalizeIdKey(value) {
+
+                return normalizeId(value).toUpperCase();
+
+            }
+
+
+
+            async function fetchCharacterName(charId) {
+
+                const key = normalizeIdKey(charId);
+
+                if (!key) return "";
+
+                if (characterNameCache.has(key) || characterNamePending.has(key)) {
+
+                    return characterNameCache.get(key) || "";
+
+                }
+
+                characterNamePending.add(key);
+
+                try {
+
+                const url = `${API_BASE}/api/characters?cid=${encodeURIComponent(charId)}`;
+
+                    const data = await fetchJson(url);
+
+                    const items = data && Array.isArray(data.items) ? data.items : [];
+
+                    const hit =
+
+                        items.find((item) => normalizeIdKey(item.char_id) === key) || items[0] || null;
+
+                    const display = hit
+
+                        ? String(hit.char_disp_name || hit.display_name || hit.char_id || charId || "")
+
+                              .trim()
+
+                        : normalizeId(charId);
+
+                    if (display) {
+
+                        characterNameCache.set(key, display);
+
+                    }
+
+                    return display || "";
+
+                } finally {
+
+                    characterNamePending.delete(key);
+
+                }
+
+            }
+
+
+
+            function getCharacterDisplayName(charId) {
+
+                const key = normalizeIdKey(charId);
+
+                return characterNameCache.get(key) || normalizeId(charId);
+
+            }
+
+
+
+            async function hydrateCharacterNames(ids) {
+
+                const unique = Array.from(
+
+                    new Set(ids.map((id) => normalizeId(id)).filter((id) => id)),
+
+                );
+
+                if (!unique.length) return;
+
+                await Promise.all(unique.map((id) => fetchCharacterName(id)));
+
+            }
+
+
+
+            async function fetchPlayerName(playerId) {
+
+                const key = normalizeIdKey(playerId);
+
+                if (!key) return "";
+
+                if (playerNameCache.has(key) || playerNamePending.has(key)) {
+
+                    return playerNameCache.get(key) || "";
+
+                }
+
+                playerNamePending.add(key);
+
+                try {
+
+                const url = `${API_BASE}/api/players?pid=${encodeURIComponent(playerId)}`;
+
+                    const data = await fetchJson(url);
+
+                    const items = data && Array.isArray(data.items) ? data.items : [];
+
+                    const hit =
+
+                        items.find((item) => normalizeIdKey(item.player_id) === key) || items[0] || null;
+
+                    const display = hit
+
+                        ? String(hit.display_name || hit.canonical_name || hit.player_id || playerId || "")
+
+                              .trim()
+
+                        : normalizeId(playerId);
+
+                    if (display) {
+
+                        playerNameCache.set(key, display);
+
+                    }
+
+                    return display || "";
+
+                } finally {
+
+                    playerNamePending.delete(key);
+
+                }
+
+            }
+
+
+
+            function getPlayerDisplayName(playerId) {
+
+                const key = normalizeIdKey(playerId);
+
+                return playerNameCache.get(key) || normalizeId(playerId);
+
+            }
+
+
+
+            async function hydratePlayerNames(ids) {
+
+                const unique = Array.from(
+
+                    new Set(ids.map((id) => normalizeId(id)).filter((id) => id)),
+
+                );
+
+                if (!unique.length) return;
+
+                await Promise.all(unique.map((id) => fetchPlayerName(id)));
+
+            }
+
+
+
+            function setSummary(summary) {
+
+                if (!summaryStatsEl) return;
+
+                summaryStatsEl.innerHTML = "";
+
+                const rawMatches = toNumber(summary.matches ?? summary.total ?? summary.count);
+                const mirror = Number.isFinite(mirrorMatchCount) ? mirrorMatchCount : 0;
+                const matches = Math.max(0, rawMatches - mirror);
+
+                const wins = toNumber(summary.wins);
+
+                const losses = toNumber(summary.losses);
+
+                const winRateRaw = Number(summary.win_rate ?? summary.winRate);
+
+                const winRate = Number.isFinite(winRateRaw)
+
+                    ? winRateRaw
+
+                    : wins + losses
+
+                      ? wins / (wins + losses)
+
+                      : NaN;
+
+                const usageRaw = Number(summary.usage_rate ?? summary.usageRate ?? summary.usage ?? summary.rate);
+
+                const usage = Number.isFinite(usageRaw) ? usageRaw : NaN;
+
+
+
+                const cards = [
+
+                    { title: "\u8a66\u5408\u6570", value: matches.toLocaleString(), w: "all" },
+
+                    { title: "\u52dd\u3061", value: wins.toLocaleString(), w: "p1" },
+
+                    { title: "\u8ca0\u3051", value: losses.toLocaleString(), w: "p2" },
+
+                    { title: "\u52dd\u7387", value: fmtPercent(winRate) },
+
+                    { title: "\u4f7f\u7528\u7387", value: Number.isFinite(usage) ? fmtPercent(usage) : "-" },
+
+                ];
+
+
+
+                for (const card of cards) {
+
+                    const hasLink = Boolean(card.w);
+                    const wrap = document.createElement(hasLink ? "a" : "div");
+
+                    wrap.className = hasLink ? "stat-card stat-card-link" : "stat-card";
+                    if (hasLink && currentCharId) {
+                        const params = new URLSearchParams();
+                        params.set("mode", "card");
+                        params.set("ch1", currentCharId);
+                        if (card.w !== "all") params.set("w", card.w);
+                        wrap.href = `./?${params.toString()}`;
+                    }
+
+                    const title = document.createElement("div");
+
+                    title.className = "stat-title";
+
+                    title.textContent = card.title;
+
+                    const value = document.createElement("div");
+
+                    value.className = "stat-value";
+
+                    value.textContent = card.value;
+
+                    wrap.appendChild(title);
+
+                    wrap.appendChild(value);
+
+                    summaryStatsEl.appendChild(wrap);
+
+                }
+
+            }
+
+
+
+            function buildSummaryFromUsage(data, charId) {
+
+                const items = data && Array.isArray(data.items) ? data.items : [];
+
+                const key = normalizeIdKey(charId);
+
+                if (!key) return {};
+
+                const hit = items.find((item) => normalizeIdKey(item.char_id) === key);
+
+                if (!hit) return {};
+
+                return {
+
+                    matches: hit.matches,
+
+                    wins: hit.wins,
+
+                    losses: hit.losses,
+
+                    win_rate: hit.win_rate,
+
+                    usage_rate: hit.usage_rate,
+
+                };
+
+            }
+
+            async function fetchMirrorCount(charId) {
+                const cleanId = String(charId || "").trim();
+                if (!cleanId) return 0;
+                const params = new URLSearchParams();
+                params.set("mode", "card");
+                params.set("ch1", cleanId);
+                params.set("ch2", cleanId);
+                params.set("expand", "none");
+                params.set("limit", "1");
+                params.set("page", "1");
+                const url = `${API_BASE}/api/matches?${params.toString()}`;
+                const data = await fetchJson(url);
+                const totalNum = Number(data.total);
+                return Number.isFinite(totalNum) ? totalNum : 0;
+            }
+
+
+
+            function buildSmallPortrait(charId, charName) {
+
+                const cleanId = String(charId || "").trim();
+
+                const img = document.createElement("img");
+
+                img.className = "table-portrait";
+
+                img.alt = charName || cleanId || "";
+
+                img.loading = "lazy";
+
+                if (!cleanId) {
+
+                    img.classList.add("empty");
+
+                    img.alt = "";
+
+                    return img;
+
+                }
+
+                const portraitPrefix = IS_MOBILE ? "medium_portrait_mobile" : "medium_portrait";
+
+                img.src = `${IMAGE_BASE}${portraitPrefix}_${encodeURIComponent(cleanId)}.png`;
+
+                img.addEventListener("error", () => {
+
+                    img.classList.add("empty");
+
+                    img.removeAttribute("src");
+
+                    img.alt = "";
+
+                });
+
+                return img;
+
+            }
+
+
+
+            function buildCharRow(row) {
+
+                const tr = document.createElement("tr");
+
+                const displayName =
+
+                    row.charName || getCharacterDisplayName(row.charId) || row.charId || "-";
+
+                const cell = document.createElement("td");
+
+                cell.className = "icon-col";
+
+                const img = buildSmallPortrait(row.charId, displayName);
+
+                const link = document.createElement("a");
+
+                link.className = "char-link";
+
+                if (currentCharId && row.charId) {
+                    const target = new URL("../", window.location.href);
+                    target.searchParams.set("mode", "card");
+                    target.searchParams.set("ch1", currentCharId);
+                    target.searchParams.set("ch2", row.charId);
+                    link.href = target.toString();
+                } else {
+                    link.href = `character/?c=${encodeURIComponent(row.charId)}`;
+                }
+
+                link.title = displayName;
+
+                if (img.classList.contains("empty")) {
+
+                    link.textContent = displayName;
+
+                } else {
+
+                    link.appendChild(img);
+
+                }
+
+                cell.appendChild(link);
+
+
+
+                const winCell = document.createElement("td");
+
+                winCell.className = "num";
+
+                winCell.textContent = fmtPercent(row.winRate);
+
+
+
+                const matchesCell = document.createElement("td");
+
+                matchesCell.className = "num";
+
+                matchesCell.textContent = String(row.matches);
+
+
+
+                tr.append(cell, winCell, matchesCell);
+
+                if (currentCharId && row.charId) {
+                    const target = new URL("../", window.location.href);
+                    target.searchParams.set("mode", "card");
+                    target.searchParams.set("ch1", currentCharId);
+                    target.searchParams.set("ch2", row.charId);
+                    tr.classList.add("row-link");
+                    tr.addEventListener("click", (e) => {
+                        if (e.target.closest("a")) return;
+                        window.location.href = target.toString();
+                    });
+                }
+
+                return tr;
+
+            }
+
+
+
+            function buildPlayerRow(row) {
+
+                const tr = document.createElement("tr");
+
+                const nameCell = document.createElement("td");
+
+                const wrap = document.createElement("div");
+
+                wrap.className = "player-cell";
+
+                const link = document.createElement("a");
+
+                link.className = "player-link";
+
+                link.href = `player/?p=${encodeURIComponent(row.playerId)}`;
+
+                const resolvedName = getPlayerDisplayName(row.playerId) || row.playerId || "";
+
+                link.textContent =
+
+                    row.playerName && row.playerName !== row.playerId ? row.playerName : resolvedName || "-";
+
+                wrap.appendChild(link);
+
+                nameCell.appendChild(wrap);
+
+
+
+                const winCell = document.createElement("td");
+
+                winCell.className = "num";
+
+                winCell.textContent = fmtPercent(row.winRate);
+
+
+
+                const matchesCell = document.createElement("td");
+
+                matchesCell.className = "num";
+
+                matchesCell.textContent = String(row.matches);
+
+
+
+                tr.append(nameCell, winCell, matchesCell);
+
+                return tr;
+
+            }
+
+
+
+            function normalizeOpponents(list) {
+
+                return list
+
+                    .map((item) => {
+
+                        const charId = String(
+
+                            item.char_id ?? item.charId ?? item.opponent_char_id ?? item.id ?? "",
+
+                        ).trim();
+
+                        const charName = String(item.char_name ?? item.char ?? item.name ?? "").trim();
+
+                        if (!charId && !charName) return null;
+
+                        const matches = toNumber(item.matches ?? item.total ?? item.count);
+
+                        const winRateRaw = Number(item.win_rate ?? item.winRate);
+
+                        const winRate = Number.isFinite(winRateRaw)
+
+                            ? winRateRaw
+
+                            : Number(item.wins) + Number(item.losses)
+
+                              ? Number(item.wins) / (Number(item.wins) + Number(item.losses))
+
+                              : NaN;
+
+                        return { charId: charId || charName, charName: charName || charId, matches, winRate };
+
+                    })
+
+                    .filter(Boolean);
+
+            }
+
+
+
+            function buildOpponentsFromDiagram(items, charId) {
+
+                const key = normalizeIdKey(charId);
+
+                if (!key) return [];
+
+                return (Array.isArray(items) ? items : [])
+
+                    .map((item) => {
+
+                        const char1 = normalizeId(item.char_1 ?? item.char1 ?? "");
+
+                        const char2 = normalizeId(item.char_2 ?? item.char2 ?? "");
+
+                        if (!char1 || !char2) return null;
+
+                        const key1 = normalizeIdKey(char1);
+
+                        const key2 = normalizeIdKey(char2);
+
+                        if (key1 !== key && key2 !== key) return null;
+
+                        const isChar1 = key1 === key;
+
+                        const opponentId = isChar1 ? char2 : char1;
+
+                        const winRateRaw = Number(
+
+                            isChar1 ? item.win_rate_1 ?? item.winRate1 : item.win_rate_2 ?? item.winRate2,
+
+                        );
+
+                        const wins = toNumber(isChar1 ? item.wins_1 : item.wins_2);
+
+                        const losses = toNumber(isChar1 ? item.wins_2 : item.wins_1);
+
+                        const winRate = Number.isFinite(winRateRaw)
+
+                            ? winRateRaw
+
+                            : wins + losses
+
+                              ? wins / (wins + losses)
+
+                              : NaN;
+
+                        const matches = toNumber(item.matches ?? item.total ?? item.count);
+
+                        return { charId: opponentId, charName: "", matches, winRate };
+
+                    })
+
+                    .filter(Boolean);
+
+            }
+
+
+
+            function normalizePlayers(list) {
+
+                return list
+
+                    .map((item) => {
+
+                        const playerId = String(item.player_id ?? item.playerId ?? item.id ?? "").trim();
+
+                        const playerName = String(
+
+                            item.player_name ?? item.name ?? item.display_name ?? playerId,
+
+                        ).trim();
+
+                        if (!playerId && !playerName) return null;
+                        if (String(playerId) === "0") return null;
+
+                        const matches = toNumber(item.matches ?? item.total ?? item.count);
+
+                        const winRateRaw = Number(item.win_rate ?? item.winRate);
+
+                        const winRate = Number.isFinite(winRateRaw)
+
+                            ? winRateRaw
+
+                            : Number(item.wins) + Number(item.losses)
+
+                              ? Number(item.wins) / (Number(item.wins) + Number(item.losses))
+
+                              : NaN;
+                        if (matches < 20) return null;
+                        if (Number.isFinite(winRate) && winRate < 0.3) return null;
+                        return { playerId: playerId || playerName, playerName, matches, winRate };
+
+                    })
+
+                    .filter(Boolean);
+
+            }
+
+
+
+            async function renderOpponentTables(opponents) {
+
+                strongBody.innerHTML = "";
+
+                weakBody.innerHTML = "";
+
+                if (!opponents.length) {
+
+                    const empty = document.createElement("tr");
+
+                    empty.innerHTML =
+
+                        "<td class=\"icon-col\">-</td><td class=\"num\">-</td><td class=\"num\">-</td>";
+
+                    strongBody.appendChild(empty.cloneNode(true));
+
+                    weakBody.appendChild(empty);
+
+                    return;
+
+                }
+
+                const sorted = [...opponents].sort((a, b) => (b.winRate || 0) - (a.winRate || 0));
+
+                const strong = sorted.slice(0, 5);
+
+                const weak = [...sorted].reverse().slice(0, 5);
+
+                const ids = new Set();
+
+                strong.forEach((row) => ids.add(row.charId));
+
+                weak.forEach((row) => ids.add(row.charId));
+
+                await hydrateCharacterNames(Array.from(ids));
+
+                strong.forEach((row) => strongBody.appendChild(buildCharRow(row)));
+
+                weak.forEach((row) => weakBody.appendChild(buildCharRow(row)));
+
+            }
+
+
+
+            async function renderPlayers(rows) {
+
+                playerBody.innerHTML = "";
+
+                if (!rows.length) {
+
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = "<td>-</td><td class=\"num\">-</td><td class=\"num\">-</td>";
+
+                    playerBody.appendChild(tr);
+
+                    return;
+
+                }
+
+                await hydratePlayerNames(rows.map((row) => row.playerId));
+
+                rows.slice(0, 3).forEach((row) => playerBody.appendChild(buildPlayerRow(row)));
+
+            }
+
+
+
+            function createTextLink(text, href, className) {
+
+                const hasLink = Boolean(href);
+
+                const el = document.createElement(hasLink ? "a" : "div");
+
+                if (className) el.className = className;
+
+                if (hasLink) {
+
+                    el.href = href;
+
+                    el.classList.add("match-link");
+
+                }
+
+                if (text) {
+
+                    el.textContent = text;
+
+                    el.title = text;
+
+                }
+
+                return el;
+
+            }
+
+
+
+            function isInteractiveTarget(target) {
+
+                return Boolean(target && target.closest("a, button, input, select, textarea, label"));
+
+            }
+
+
+
+            function normalizeWinner(raw) {
+
+                const v = String(raw ?? "").trim().toLowerCase();
+
+                if (v === "p1" || v === "player1" || v === "1" || v === "left") return 1;
+
+                if (v === "p2" || v === "player2" || v === "2" || v === "right") return 2;
+
+                return 0;
+
+            }
+
+
+
+            function normalizeWinnerSide(raw) {
+
+                const v = normalizeWinner(raw);
+
+                if (v === 1) return "p1";
+
+                if (v === 2) return "p2";
+
+                return "";
+
+            }
+
+
+
+            function fmtSec(sec) {
+
+                const n = Number(sec);
+
+                if (!Number.isFinite(n)) return "";
+
+                const s = Math.max(0, Math.trunc(n));
+
+                const h = Math.floor(s / 3600);
+
+                const m = Math.floor((s % 3600) / 60);
+
+                const ss = s % 60;
+
+                const pad2 = (x) => String(x).padStart(2, "0");
+
+                if (h > 0) return `${h}:${pad2(m)}:${pad2(ss)}`;
+
+                return `${m}:${pad2(ss)}`;
+
+            }
+
+
+
+            function fmtRange(start, end) {
+
+                const a = fmtSec(start);
+
+                const b = fmtSec(end);
+
+                if (!a && !b) return "";
+
+                if (a && b) return `${a} - ${b}`;
+
+                return a || b;
+
+            }
+
+
+
+            function fmtDuration(start, end) {
+
+                const s = Number(start);
+
+                const e = Number(end);
+
+                if (!Number.isFinite(s) || !Number.isFinite(e)) return "";
+
+                if (e <= s) return "";
+
+                return fmtSec(e - s);
+
+            }
+
+
+
+            function buildCharImage(charId, charName) {
+
+                const cleanId = String(charId || "").trim();
+
+                const img = document.createElement("img");
+
+                img.className = "match-char-img";
+
+                img.decoding = "async";
+
+                img.loading = "lazy";
+
+                if (!cleanId) {
+
+                    img.classList.add("empty");
+
+                    img.alt = "";
+
+                    return img;
+
+                }
+
+                const portraitPrefix = "match_card";
+
+                img.src = `${IMAGE_BASE}${portraitPrefix}_${encodeURIComponent(cleanId)}.png`;
+
+                img.alt = charName ? String(charName) : cleanId;
+
+                img.addEventListener("error", () => {
+
+                    img.classList.add("empty");
+
+                    img.removeAttribute("src");
+
+                });
+
+                return img;
+
+            }
+
+
+
+            function resolvePlayerName(name, id) {
+
+                const raw = String(name || "").trim();
+
+                if (raw && raw !== "-") return raw;
+
+                const fallback = String(id || "").trim();
+
+                return getPlayerDisplayName(fallback) || fallback || "-";
+
+            }
+
+
+
+            function normalizeMatch(row) {
+
+                const p1 = row.p1 || row.player1 || row.left || {};
+
+                const p2 = row.p2 || row.player2 || row.right || {};
+
+                return {
+
+                    id: row.id || row.match_id || row.matchId || "",
+
+                    videoId: row.video_id || row.videoId || row.vid || "",
+
+                    videoTitle: row.video_title || row.videoTitle || "",
+
+                    videoUploadedAt: row.video_uploaded_at || row.videoUploadedAt || row.uploaded_at || "",
+
+                    tStart: row.t_start ?? row.tStart ?? row.start ?? row.start_sec,
+
+                    tEnd: row.t_end ?? row.tEnd ?? row.end ?? row.end_sec,
+
+                    winner: row.winner || row.result || row.win || "",
+
+                    p1Id: p1.player_id ?? p1.id ?? row.p1_player_id ?? row.p1_id ?? "",
+
+                    p1Name: p1.player_name || p1.name || row.p1_name || row.p1_player_name || "",
+
+                    p1CharId: p1.char_id || row.p1_char_id || "",
+
+                    p1Char: p1.char || row.p1_char || "",
+
+                    p2Id: p2.player_id ?? p2.id ?? row.p2_player_id ?? row.p2_id ?? "",
+
+                    p2Name: p2.player_name || p2.name || row.p2_name || row.p2_player_name || "",
+
+                    p2CharId: p2.char_id || row.p2_char_id || "",
+
+                    p2Char: p2.char || row.p2_char || "",
+
+                };
+
+            }
+
+
+
+            function ytUrl(videoId, tSec) {
+
+                if (!videoId) return "";
+
+                const t = Number(tSec);
+
+                const start = Number.isFinite(t) && t > 0 ? `&t=${Math.floor(t)}s` : "";
+
+                return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}${start}`;
+
+            }
+
+
+
+            function formatUploadedAt(value, displayValue) {
+
+                const display = String(displayValue || "").trim();
+
+                if (display) return display;
+
+                const raw = Number(value);
+
+                if (!Number.isFinite(raw) || raw <= 0) return "";
+
+                const d = new Date(raw * 1000);
+
+                const y = d.getFullYear();
+
+                const m = String(d.getMonth() + 1).padStart(2, "0");
+
+                const day = String(d.getDate()).padStart(2, "0");
+
+                return `${y}-${m}-${day}`;
+
+            }
+
+
+
+            async function fetchVideoInfo(videoId) {
+
+                const cleanId = String(videoId || "").trim();
+
+                if (!cleanId) return;
+
+                if (videoInfoCache.has(cleanId) || videoInfoPending.has(cleanId)) return;
+
+                videoInfoPending.add(cleanId);
+
+                try {
+
+                    const url = `${API_BASE}/api/videos?vid=${encodeURIComponent(cleanId)}&limit=5`;
+
+                    const data = await fetchJson(url);
+
+                    const items = Array.isArray(data.items)
+
+                        ? data.items
+
+                        : Array.isArray(data)
+
+                          ? data
+
+                          : [];
+
+                    const hit = items.find((it) => String(it.video_id || "") === cleanId) || items[0];
+
+                    if (hit) {
+
+                        const dateText = formatUploadedAt(
+
+                            hit.uploaded_at || hit.uploadedAt || "",
+
+                            hit.display_uploaded_at || hit.displayUploadedAt || "",
+
+                        );
+
+                        videoInfoCache.set(cleanId, {
+
+                            title: String(hit.title || "").trim(),
+
+                            date: dateText,
+
+                        });
+
+                    }
+
+                } finally {
+
+                    videoInfoPending.delete(cleanId);
+
+                }
+
+            }
+
+
+
+            function updateVideoInfoElements() {
+
+                document.querySelectorAll("[data-video-id]").forEach((el) => {
+
+                    const id = el.getAttribute("data-video-id") || "";
+
+                    if (!id) return;
+
+                    const info = videoInfoCache.get(id);
+
+                    if (info && info.title) {
+
+                        el.textContent = info.title;
+
+                        el.title = info.title;
+
+                    }
+
+                });
+
+                document.querySelectorAll("[data-video-date-id]").forEach((el) => {
+
+                    const id = el.getAttribute("data-video-date-id") || "";
+
+                    if (!id) return;
+
+                    const info = videoInfoCache.get(id);
+
+                    if (info && info.date) {
+
+                        el.textContent = `${DATE_PREFIX}${info.date}`;
+
+                        el.title = `${DATE_PREFIX}${info.date}`;
+
+                    }
+
+                });
+
+            }
+
+
+
+            async function hydrateVideoMeta(videoIds) {
+
+                const unique = Array.from(new Set(videoIds.filter(Boolean)));
+
+                if (!unique.length) return;
+
+                const chunkSize = 20;
+
+                for (let i = 0; i < unique.length; i += chunkSize) {
+
+                    const chunk = unique.slice(i, i + chunkSize);
+
+                    await Promise.all(chunk.map((id) => fetchVideoInfo(id)));
+
+                }
+
+            }
+
+
+
+            async function hydrateVideoInfo(videoIds) {
+
+                await hydrateVideoMeta(videoIds);
+
+                updateVideoInfoElements();
+
+            }
+
+
+
+            function renderMatches(matches) {
+
+                renderMatchCards({
+
+                    items: matches,
+
+                    container: matchBody,
+
+                    emptyText: "\u6761\u4ef6\u306b\u8a72\u5f53\u3059\u308b\u8a66\u5408\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f\u3002",
+
+                    normalizeMatch,
+
+                    normalizeWinnerSide,
+
+                    ytUrl,
+
+                    fmtRange,
+
+                    fmtSec,
+
+                    fmtDuration,
+
+                    datePrefix: DATE_PREFIX,
+
+                    videoLabel: "\u52d5\u753b",
+
+                    correctionLabel: "\u60c5\u5831\u8a02\u6b63",
+
+                    getCorrectionHref: (row) =>
+
+                        row && row.id ? `correction/?id=${encodeURIComponent(row.id)}` : "",
+
+                    hydrateVideoInfo,
+
+                    isInteractiveTarget,
+
+                    createTextLink,
+
+                    buildCharImage,
+
+                    resolvePlayerName,
+
+                    resolvePlayerLinkId: (display, id) => {
+
+                        const clean = String(id || "").trim();
+
+                        if (!clean || clean === "0") return "";
+
+                        return clean;
+
+                    },
+
+                    resolveCharacterId: (charId, charName) => charId || String(charName || "").trim(),
+
+                    resolveCharacterName: (charId, charName) =>
+                        getCharacterDisplayName(charId) || String(charName || charId || ""),
+
+                    getVideoLinkHref: (videoId) => `video/?vid=${encodeURIComponent(videoId)}`,
+
+                    getCharacterLinkHref: (charId) => {
+                        const key = normalizeIdKey(charId);
+                        if (key && key === normalizeIdKey(currentCharId)) return "";
+                        return `character/?c=${encodeURIComponent(charId)}`;
+                    },
+
+                    getPlayerLinkHref: (playerId) => `player/?p=${encodeURIComponent(playerId)}`,
+
+                });
+
+            }
+
+
+
+            async function fetchCharacterUsage() {
+
+                const url = `${API_BASE}/api/stats/character_usage`;
+
+                return fetchJson(url);
+
+            }
+
+
+
+            async function fetchDiagram() {
+
+                const url = `${API_BASE}/api/stats/diagram`;
+
+                return fetchJson(url);
+
+            }
+
+
+
+            async function fetchMatchesForChar(charId) {
+
+                const url = `${API_BASE}/api/matches?ch=${encodeURIComponent(charId)}&sort=recent&limit=${LIST_LIMIT}&no_total=1`;
+
+                return fetchJson(url);
+
+            }
+
+
+
+            async function fetchTopPlayersByChar(charId) {
+
+                const url = `${API_BASE}/api/stats/top_players_by_char?char_id=${encodeURIComponent(charId)}`;
+
+                return fetchJson(url);
+
+            }
+
+
+
+            async function init() {
+
+                const params = new URLSearchParams(window.location.search);
+
+                const charId = (params.get("c") || "").trim();
+
+                if (!charId) {
+
+                    setError("character/?c=<char_id> \u3092\u6307\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044\u3002");
+
+                    return;
+
+                }
+
+
+
+                currentCharId = charId;
+                if (charNameEl) {
+                    charNameEl.innerHTML =
+                        '<span class="loading-inline"><span class="loading-spinner" aria-hidden="true"></span><span>隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</span></span>';
+                }
+
+                if (profileCardEl) {
+
+                    profileCardEl.style.setProperty(
+
+                        "--profile-char-img",
+
+                        `url("/images/match_card_${encodeURIComponent(charId)}.png")`,
+
+                    );
+
+                }
+
+
+
+                let hadError = false;
+
+                let usageData = null;
+
+                let diagramData = null;
+
+                let topPlayersData = null;
+
+                let matchesData = null;
+
+
+
+                await Promise.all([
+
+                    hydrateCharacterNames([charId]).catch(() => {
+
+                        hadError = true;
+
+                    }),
+
+                    fetchCharacterUsage()
+
+                        .then((data) => {
+
+                            usageData = data;
+
+                        })
+
+                        .catch(() => {
+
+                            hadError = true;
+
+                        }),
+
+                    fetchDiagram()
+
+                        .then((data) => {
+
+                            diagramData = data;
+
+                        })
+
+                        .catch(() => {
+
+                            hadError = true;
+
+                        }),
+
+                    fetchTopPlayersByChar(charId)
+
+                        .then((data) => {
+
+                            topPlayersData = data;
+
+                        })
+
+                        .catch(() => {
+
+                            hadError = true;
+
+                        }),
+                    fetchMirrorCount(charId)
+                        .then((count) => {
+                            mirrorMatchCount = count;
+                        })
+                        .catch(() => {
+                            hadError = true;
+                        }),
+
+                    fetchMatchesForChar(charId)
+
+                        .then((data) => {
+
+                            matchesData = data;
+
+                        })
+
+                        .catch(() => {
+
+                            hadError = true;
+
+                        }),
+
+                ]);
+
+
+
+                const displayName = getCharacterDisplayName(charId) || charId;
+
+                charNameEl.textContent = displayName;
+
+
+
+                const summary = buildSummaryFromUsage(usageData, charId);
+
+                setSummary(summary);
+
+
+
+                const diagramItems = diagramData && Array.isArray(diagramData.items) ? diagramData.items : [];
+
+                const opponents = buildOpponentsFromDiagram(diagramItems, charId);
+
+                await renderOpponentTables(opponents);
+
+
+
+                const playerItems =
+
+                    topPlayersData && Array.isArray(topPlayersData.items) ? topPlayersData.items : [];
+
+                const players = normalizePlayers(playerItems);
+
+                await renderPlayers(players);
+
+
+
+                const matchesRaw =
+
+                    matchesData && Array.isArray(matchesData.items) ? matchesData.items : [];
+
+                renderMatches(matchesRaw);
+
+
+
+                setError(hadError ? DB_ERROR_MSG : "");
+
+            }
+
+            init();
+
+        </script>
+
+
+
+        
+
+    </body>
+
+</html>
+
+
+
+
+
+

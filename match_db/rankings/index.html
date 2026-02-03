@@ -1,0 +1,625 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <base href="../" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>北斗の拳 対戦動画DB - 勝率ランキング</title>
+        <link rel="stylesheet" href="/css/match-cards.css" />
+        <style>
+            :root {
+                --ink: #222;
+                --muted: #6b6b6b;
+                --line: #d6d6d6;
+                --card: #ffffff;
+                --surface: #f7f7f7;
+                --accent: #ffb347;
+                --char-row-height: 56px;
+            }
+
+            body {
+                font-family: sans-serif;
+                background-color: #f9f9f9;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                overflow-y: scroll;
+            }
+
+            header {
+                background-color: #333;
+                color: #ffffff;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            #navMenu {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            #navMenu a {
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                transition:
+                    background-color 0.3s ease,
+                    border-color 0.3s ease,
+                    color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            #navMenu a:hover,
+            #navMenu a:focus {
+                background-color: var(--accent);
+                color: #333;
+                border-color: var(--accent);
+                outline: none;
+            }
+
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: #ffffff;
+                border-radius: 2px;
+            }
+
+            @media (max-width: 600px) {
+                #navMenu {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none;
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+
+                #navMenu a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.1rem;
+                }
+
+                #navMenu.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+
+                h1 {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+            }
+
+            main {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 1rem;
+                background: #ffffff;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            }
+
+            section + section {
+                margin-top: 1.6rem;
+            }
+
+            h2 {
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 0.5rem;
+                margin: 0 0 1rem;
+            }
+
+            .panel {
+                background: #f0f0f0;
+                padding: 1rem;
+                border-radius: 4px;
+            }
+
+            .note {
+                margin: 0 0 0.6rem;
+                font-size: 0.85rem;
+                color: var(--muted);
+            }
+
+            .error {
+                margin-top: 0.6rem;
+                color: #b00020;
+                font-size: 0.9rem;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 0.6rem;
+                table-layout: fixed;
+            }
+
+            th,
+            td {
+                padding: 0.35rem 0.4rem;
+                border-bottom: 1px solid var(--line);
+                text-align: left;
+                vertical-align: middle;
+                font-size: 0.9rem;
+            }
+
+            tbody td {
+                height: var(--char-row-height);
+                padding-top: 0;
+                padding-bottom: 0;
+                overflow: hidden;
+            }
+
+            tbody tr.row-link {
+                cursor: pointer;
+            }
+
+            tbody tr.row-link:hover {
+                background: #f5f5f5;
+            }
+
+            tbody tr.row-link:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: -2px;
+            }
+
+            thead th {
+                background: var(--surface);
+                font-weight: 600;
+            }
+
+            .num {
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            .rank {
+                width: 50px;
+                text-align: right;
+            }
+
+            .player-cell {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+                gap: 0.5rem;
+                height: var(--char-row-height);
+                overflow: hidden;
+            }
+
+            .player-cell span {
+                font-weight: 700;
+                font-size: 0.95rem;
+            }
+
+            .player-link {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .player-link:hover,
+            .player-link:focus {
+                text-decoration: underline;
+            }
+
+            .stat-link {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .stat-link:hover,
+            .stat-link:focus {
+                text-decoration: underline;
+            }
+
+            .table-portrait {
+                width: auto;
+                height: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                display: block;
+            }
+
+            .player-cell .table-portrait {
+                height: var(--char-row-height) !important;
+                max-height: var(--char-row-height) !important;
+                width: auto;
+                max-width: 100%;
+            }
+
+            .table-portrait.empty {
+                opacity: 0.3;
+            }
+
+            table th:nth-child(2),
+            table td:nth-child(2) {
+                width: 240px;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            table th:nth-child(4),
+            table td:nth-child(4) {
+                width: 80px;
+            }
+
+            table th:nth-child(5),
+            table td:nth-child(5),
+            table th:nth-child(6),
+            table td:nth-child(6) {
+                width: 70px;
+            }
+
+            table th:nth-child(7),
+            table td:nth-child(7) {
+                width: 170px;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            tbody tr {
+                height: var(--char-row-height);
+            }
+
+            .rate-bar {
+                margin-top: 0.3rem;
+                height: 4px;
+                background: #e6e6e6;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            .rate-bar-fill {
+                height: 100%;
+                width: 0%;
+                background: #2d2d2d;
+                border-radius: 10px;
+            }
+
+            @media (max-width: 600px) {
+                :root {
+                    --char-row-height: 46px;
+                }
+
+                th,
+                td {
+                    font-size: 0.82rem;
+                }
+
+                .rank {
+                    width: 40px;
+                }
+
+                table th:nth-child(2),
+                table td:nth-child(2) {
+                    width: 160px;
+                }
+
+                table th:nth-child(3),
+                table td:nth-child(3),
+                table th:nth-child(4),
+                table td:nth-child(4),
+                table th:nth-child(5),
+                table td:nth-child(5) {
+                    width: 56px;
+                }
+
+                table th:nth-child(6),
+                table td:nth-child(6) {
+                    width: 120px;
+                    font-size: 0.9rem;
+                }
+
+                .player-cell span {
+                    font-size: 0.85rem;
+                }
+            }
+
+            .tab-bar {
+                display: flex;
+                gap: 0.4rem;
+                flex-wrap: wrap;
+                margin-bottom: 0.6rem;
+            }
+
+            .tab-btn {
+                appearance: none;
+                border: 1px solid var(--line);
+                background: #ffffff;
+                color: var(--ink);
+                padding: 0.35rem 0.8rem;
+                border-radius: 999px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            }
+
+            .tab-btn.is-active {
+                background: #2f2f2f;
+                color: #ffffff;
+                border-color: #2f2f2f;
+            }
+
+            .tab-btn:focus-visible {
+                outline: 2px solid #2f2f2f;
+                outline-offset: 2px;
+            }
+
+            .filter-row {
+                display: flex;
+                align-items: center;
+                gap: 0.35rem;
+                flex-wrap: wrap;
+                margin-bottom: 0.6rem;
+            }
+
+            .filter-row[hidden] {
+                display: none !important;
+            }
+
+            .filter-label {
+                font-weight: 600;
+                font-size: 0.85rem;
+                color: #444;
+            }
+
+            .filter-selected {
+                font-size: 0.85rem;
+                color: var(--muted);
+            }
+
+            .chip-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0;
+            }
+
+            .char-chip {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 0;
+                border: 1px solid #d0d0d0;
+                background: #f5f5f5;
+                overflow: hidden;
+            }
+
+            .char-chip.char-filter {
+                appearance: none;
+                cursor: pointer;
+                padding: 0;
+                font: inherit;
+                color: inherit;
+                opacity: 1;
+                filter: grayscale(1) brightness(0.55);
+                transition:
+                    opacity 0.2s ease,
+                    filter 0.2s ease,
+                    border-color 0.2s ease,
+                    box-shadow 0.2s ease,
+                    background-color 0.2s ease;
+            }
+
+            .char-chip.char-filter:focus-visible {
+                outline: 2px solid #2f2f2f;
+                outline-offset: 2px;
+            }
+
+            .char-chip.is-active {
+                border-color: #2f2f2f;
+                box-shadow: 0 0 0 2px rgba(47, 47, 47, 0.2);
+                background: #ffffff;
+            }
+
+            .char-chip.char-filter.is-active {
+                opacity: 1;
+                filter: none;
+            }
+
+            .char-portrait {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .player-cell.no-portrait {
+                grid-template-columns: 1fr;
+            }
+        
+            .stats-links {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+                gap: 0.6rem;
+            }
+
+            .stats-links a {
+                display: flex;
+                font-size: calc(1rem - 1px);
+                padding: 0.8rem 0.8rem;
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                background: #ffffff;
+                color: inherit;
+                text-decoration: none;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+            }
+
+            .stats-links a:hover,
+            .stats-links a:focus {
+                border-color: #2d2d2d;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                outline: none;
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .stats-links a:visited {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            @media (max-width: 600px) {
+                .stats-links {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+                .stats-links a:last-child {
+                    grid-column: 1 / -1;
+                }
+            }
+
+        
+            </style>
+            <script src="/js/site-header.js" defer data-site-header></script>
+    </head>
+    <body
+        data-scope="all"
+        data-db-error="DBへの問い合わせに失敗しました。管理者にお問い合わせください。"
+        data-note-failed=""
+        data-note-stale=""
+        data-note-updated-prefix="更新："
+        data-note-updated-suffix=""
+        data-unknown-keys="unknown,0,不明"
+        data-winrate-label="勝率"
+    >
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+        <main>
+
+            <section class="stats-nav">
+                <h2>統計</h2>
+                <div class="panel">
+                    <div class="stats-links">
+                        <a href="diagram/">対戦ダイアグラム</a>
+                        <a href="diagram_upper/">対戦ダイアグラム<br />（上位勢）</a>
+                        <a href="character_usage/">キャラ使用率<br />ランキング</a>
+                        <a href="character_usage_upper/"
+                            >キャラ使用率<br />ランキング<br />（上位勢）</a
+                        >
+                        <a href="rankings/">勝率ランキング</a>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>勝率ランキング</h2>
+                <div class="panel">
+                    <p class="note" id="statsNote"></p>
+                    <div class="tab-bar" role="tablist" aria-label="勝率ランキングの切り替え">
+                        <button
+                            class="tab-btn is-active"
+                            type="button"
+                            data-tab="player"
+                            role="tab"
+                            aria-selected="true"
+                        >
+                            プレイヤー別
+                        </button>
+                        <button
+                            class="tab-btn"
+                            type="button"
+                            data-tab="character"
+                            role="tab"
+                            aria-selected="false"
+                            hidden
+                        >
+                            キャラ別
+                        </button>
+                        <button
+                            class="tab-btn"
+                            type="button"
+                            data-tab="pair"
+                            role="tab"
+                            aria-selected="false"
+                        >
+                            プレイヤー×キャラ別
+                        </button>
+                    </div>
+                    <div class="filter-row" id="charFilterWrap" hidden>
+                        <div class="chip-group char-filter-group" id="charFilterGroup"></div>
+                    </div>
+                    <div class="table-wrap">
+                        <table aria-label="勝率ランキング">
+                            <colgroup>
+                                <col style="width: 50px" />
+                                <col style="width: 240px" />
+                                <col style="width: 80px" />
+                                <col style="width: 70px" />
+                                <col style="width: 70px" />
+                                <col style="width: 170px" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th class="rank">順位</th>
+                                    <th>プレイヤー</th>
+                                    <th class="num">対戦数</th>
+                                    <th class="num">勝ち</th>
+                                    <th class="num">負け</th>
+                                    <th class="num">勝率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="topError" class="error" role="status" aria-live="polite"></div>
+                </div>
+            </section>
+        </main>
+
+        <script>
+</script>
+        <script src="/js/api-config.local.js"></script>
+
+        <script src="/js/top-player-chars.js?v=20260201-2"></script>
+    </body>
+</html>
+
+
+

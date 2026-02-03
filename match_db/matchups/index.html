@@ -1,0 +1,1405 @@
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8" />
+        <base href="../" />
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="../js/api-config.local.js"></script>
+
+
+        <script>
+
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+
+                dataLayer.push(arguments);
+
+            }
+
+            gtag("js", new Date());
+
+            gtag("config", "G-NM6S92KNW1");
+
+        </script>
+
+        
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>北斗の拳 対戦動画DB - 対戦カード統計</title>
+
+        <style>
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #666;
+
+                --line: #d7d7d7;
+
+                --card: #ffffff;
+
+                --surface: #f1f1f1;
+
+                --accent: #ffb347;
+
+                --p1: #e25555;
+
+                --p2: #4c7dff;
+
+            }
+
+
+
+            body {
+
+                font-family: sans-serif;
+
+                background-color: #f9f9f9;
+
+                color: var(--ink);
+
+                margin: 0;
+
+                padding: 0;
+
+            }
+
+
+
+            header {
+
+                background-color: #333;
+
+                color: white;
+
+                padding: 2rem 1rem 1rem;
+
+                text-align: center;
+
+                position: relative;
+
+            }
+
+
+
+            #navMenu {
+
+                display: flex;
+
+                justify-content: center;
+
+                gap: 1rem;
+
+                flex-wrap: nowrap;
+
+            }
+
+
+
+            #navMenu a {
+
+                color: white;
+
+                text-decoration: none;
+
+                font-weight: 600;
+
+                padding: 0.4rem 1rem;
+
+                border: 2px solid transparent;
+
+                border-radius: 4px;
+
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+                font-size: 1rem;
+
+                user-select: none;
+
+            }
+
+
+
+            #navMenu a:hover,
+
+            #navMenu a:focus {
+
+                background-color: var(--accent);
+
+                color: #333;
+
+                border-color: var(--accent);
+
+                outline: none;
+
+            }
+
+
+
+            .menu-toggle {
+
+                display: none;
+
+                position: absolute;
+
+                top: 0.5rem;
+
+                right: 0.5rem;
+
+                width: 30px;
+
+                height: 22px;
+
+                cursor: pointer;
+
+                flex-direction: column;
+
+                justify-content: space-between;
+
+                user-select: none;
+
+                z-index: 10;
+
+            }
+
+
+
+            .menu-toggle span {
+
+                display: block;
+
+                height: 4px;
+
+                background: white;
+
+                border-radius: 2px;
+
+            }
+
+
+
+            @media (max-width: 600px) {
+
+                #navMenu {
+
+                    position: absolute;
+
+                    top: 100%;
+
+                    left: 0;
+
+                    right: 0;
+
+                    background-color: #333;
+
+                    flex-direction: column;
+
+                    display: none;
+
+                    margin: 0;
+
+                    padding: 0.5rem 0;
+
+                }
+
+
+
+                #navMenu a {
+
+                    padding: 1rem;
+
+                    border: none;
+
+                    text-align: center;
+
+                    font-size: 1.2rem;
+
+                }
+
+
+
+                #navMenu.show {
+
+                    display: flex;
+
+                }
+
+
+
+                .menu-toggle {
+
+                    display: flex;
+
+                }
+
+
+
+                h1 {
+
+                    font-size: 18px;
+
+                    margin-bottom: 10px;
+
+                }
+
+            }
+
+
+
+            main {
+
+                max-width: 900px;
+
+                margin: 2rem auto;
+
+                padding: 1.2rem;
+
+                background: linear-gradient(180deg, #ffffff 0%, #f6f6f6 100%);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+
+            }
+
+
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border-bottom: 1px solid #ccc;
+
+                padding-bottom: 0.5rem;
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                padding: 1rem;
+
+                border-radius: 8px;
+
+                border: 1px solid var(--line);
+
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+            }
+
+
+
+            .form-row {
+
+                display: flex;
+
+                gap: 0.8rem;
+
+                align-items: center;
+
+                flex-wrap: wrap;
+
+                margin-bottom: 0.8rem;
+
+            }
+
+
+
+            .form-row label {
+
+                min-width: 140px;
+
+                font-weight: 600;
+
+            }
+
+
+
+            .form-row input,
+
+            .form-row select {
+
+                padding: 0.5rem 0.6rem;
+
+                border: 1px solid #ccc;
+
+                border-radius: 6px;
+
+                font-size: 1rem;
+
+                flex: 1;
+
+                min-width: 220px;
+
+            }
+
+
+
+            .form-row .small {
+
+                min-width: 120px;
+
+                max-width: 180px;
+
+                flex: 0 0 auto;
+
+            }
+
+
+
+            .actions {
+
+                display: flex;
+
+                gap: 0.6rem;
+
+                flex-wrap: wrap;
+
+                margin-top: 0.6rem;
+
+            }
+
+
+
+            button.primary {
+
+                background-color: #333;
+
+                color: white;
+
+                border: none;
+
+                padding: 0.55rem 1rem;
+
+                border-radius: 6px;
+
+                cursor: pointer;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .status {
+
+                margin-top: 0.8rem;
+
+                color: #444;
+
+                font-size: 0.95rem;
+
+            }
+
+
+
+            .error {
+
+                margin-top: 0.8rem;
+
+                background: #fff0f0;
+
+                border: 1px solid #ffb3b3;
+
+                padding: 0.8rem;
+
+                border-radius: 6px;
+
+                color: #8a1f1f;
+
+                display: none;
+
+            }
+
+
+
+            .table-wrap {
+
+                overflow-x: auto;
+
+            }
+
+
+
+            table {
+
+                width: 100%;
+
+                border-collapse: separate;
+
+                border-spacing: 0 8px;
+
+                margin-top: 0.5rem;
+
+            }
+
+
+
+            th,
+
+            td {
+
+                padding: 0.65rem 0.7rem;
+
+                text-align: left;
+
+                vertical-align: middle;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            th {
+
+                background: #f7f7f7;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .num {
+
+                text-align: right;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            .card-table th,
+
+            .card-table td {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+            }
+
+
+
+            .card-table thead th {
+
+                background: #f7f7f7;
+
+            }
+
+
+
+            .card-table tr th:first-child {
+
+                border-radius: 6px 0 0 6px;
+
+            }
+
+
+
+            .card-table tr td:last-child {
+
+                border-radius: 0 6px 6px 0;
+
+            }
+
+
+
+            .chip {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                padding: 0.2rem 0.6rem;
+
+                border-radius: 10px;
+
+                font-weight: 700;
+
+                font-size: 0.9rem;
+
+                border: 1px solid transparent;
+
+            }
+
+
+
+            .chip-a {
+
+                background: rgba(226, 85, 85, 0.12);
+
+                border-color: rgba(226, 85, 85, 0.35);
+
+                color: #a12d2d;
+
+            }
+
+
+
+            .chip-b {
+
+                background: rgba(76, 125, 255, 0.12);
+
+                border-color: rgba(76, 125, 255, 0.35);
+
+                color: #294eaa;
+
+            }
+
+
+
+            .vs-pill {
+
+                margin: 0 0.4rem;
+
+                color: var(--muted);
+
+                font-weight: 700;
+
+            }
+
+
+
+            .card-link {
+
+                color: inherit;
+
+                text-decoration: none;
+
+                display: inline-flex;
+
+                align-items: center;
+
+                flex-wrap: wrap;
+
+            }
+
+
+
+            .card-link:hover,
+
+            .card-link:focus {
+
+                text-decoration: underline;
+
+            }
+
+
+
+            .footer {
+
+                text-align: center;
+
+                color: #666;
+
+                margin-top: 2rem;
+
+                font-size: 0.9rem;
+
+            }
+
+        
+
+            
+
+            /* ====== clean fightlog ====== */
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #6b6b6b;
+
+                --line: #d6d6d6;
+
+                --card: #ffffff;
+
+                --surface: #f7f7f7;
+
+                --accent: #ffb347;
+
+                --p1: #c64b4b;
+
+                --p2: #2f6edc;
+
+            }
+
+
+
+            body {
+
+                color: var(--ink);
+
+                background-color: #f3f3f3;
+
+            }
+
+
+
+            main {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+
+            }
+
+
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border: none;
+
+                background: var(--surface);
+
+                padding: 0.45rem 0.8rem;
+
+                border-left: 6px solid var(--accent);
+
+                border-radius: 6px;
+
+                font-size: 1.05rem;
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+
+            }
+
+
+
+            .form-row label {
+
+                color: var(--muted);
+
+                font-size: 0.85rem;
+
+                letter-spacing: 0.03em;
+
+            }
+
+
+
+            .form-row input,
+
+            .form-row select,
+
+            .form-row textarea {
+
+                border: 1px solid #cfd3da;
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                box-shadow: none;
+
+            }
+
+
+
+            button.primary {
+
+                background-color: #2f2f2f;
+
+                color: #ffffff;
+
+                border: 1px solid #1d1d1d;
+
+            }
+
+
+
+            button.secondary {
+
+                background-color: #ffffff;
+
+                border: 1px solid #b9b9b9;
+
+            }
+
+
+
+            .status {
+
+                background: #f8f4ea;
+
+                border: 1px solid #e4d1a6;
+
+                border-radius: 6px;
+
+                padding: 0.4rem 0.6rem;
+
+                display: inline-block;
+
+            }
+
+
+
+            table {
+
+                border-collapse: collapse;
+
+                border-spacing: 0;
+
+            }
+
+
+
+            thead th {
+
+                background: #2f2f2f;
+
+                color: #ffffff;
+
+                font-size: 0.85rem;
+
+                letter-spacing: 0.04em;
+
+                border: none;
+
+            }
+
+
+
+            tbody td {
+
+                background: #ffffff;
+
+                border-bottom: 1px solid var(--line);
+
+            }
+
+
+
+            tbody tr:nth-child(even) td {
+
+                background: #fafafa;
+
+            }
+
+
+
+            .match-summary {
+
+                background: var(--surface);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: none;
+
+            }
+
+
+
+            .player-card {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                box-shadow: none;
+
+            }
+
+
+
+            .stat-card {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                box-shadow: none;
+
+            }
+
+
+
+            .badge {
+
+                border-radius: 10px;
+
+                border: 1px solid #d0d0d0;
+
+                font-size: 0.8rem;
+
+            }
+
+
+
+            .badge.p1 {
+
+                background: rgba(198, 75, 75, 0.12);
+
+                border-color: rgba(198, 75, 75, 0.4);
+
+                color: #8d2b2b;
+
+            }
+
+
+
+            .badge.p2 {
+
+                background: rgba(47, 110, 220, 0.12);
+
+                border-color: rgba(47, 110, 220, 0.4);
+
+                color: #23458e;
+
+            }
+
+
+
+            .badge.neutral {
+
+                background: #efefef;
+
+                border-color: #d0d0d0;
+
+                color: #555555;
+
+            }
+
+
+
+            .chip {
+
+                border-radius: 10px;
+
+                border: 1px solid #d0d0d0;
+
+                background: #f5f5f5;
+
+                font-size: 0.85rem;
+
+            }
+
+
+
+            .chip-a {
+
+                background: rgba(198, 75, 75, 0.1);
+
+                border-color: rgba(198, 75, 75, 0.35);
+
+                color: #8d2b2b;
+
+            }
+
+
+
+            .chip-b {
+
+                background: rgba(47, 110, 220, 0.1);
+
+                border-color: rgba(47, 110, 220, 0.35);
+
+                color: #23458e;
+
+            }
+
+
+
+            main a {
+
+                color: #1f4d99;
+
+                text-decoration: none;
+
+            }
+
+
+
+            main a:hover,
+
+            main a:focus {
+
+                color: #0f244d;
+
+                text-decoration: underline;
+
+            }
+
+        
+
+            .stats-links {
+
+                display: grid;
+
+                grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+
+                gap: 0.6rem;
+
+            }
+
+
+
+            .stats-links a {
+
+                display: flex;
+
+                font-size: calc(1rem - 1px);
+
+                padding: 0.8rem 0.8rem;
+
+                border: 1px solid var(--line);
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                color: inherit;
+
+                text-decoration: none;
+
+                text-align: center;
+
+                align-items: center;
+
+                justify-content: center;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .stats-links a:hover,
+
+            .stats-links a:focus {
+
+                border-color: #2d2d2d;
+
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+                outline: none;
+
+                color: inherit;
+
+                text-decoration: none;
+
+            }
+
+
+
+            .stats-links a:visited {
+
+                color: inherit;
+
+                text-decoration: none;
+
+            }
+
+
+
+            @media (max-width: 600px) {
+
+                .stats-links {
+
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+                }
+
+                .stats-links a:last-child {
+
+                    grid-column: 1 / -1;
+
+                }
+
+            }
+
+
+
+        
+            </style>
+
+            <script src="/js/site-header.js" defer data-site-header></script>
+
+    </head>
+
+
+
+    <body>
+
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+
+
+                <main>
+            <section class="stats-nav">
+                <h2>統計</h2>
+                <div class="panel">
+                    <div class="stats-links">
+                        <a href="diagram/">対戦ダイアグラム</a>
+                        <a href="diagram_upper/">対戦ダイアグラム<br />（上位勢）</a>
+                        <a href="character_usage/">キャラ使用率<br />ランキング</a>
+                        <a href="character_usage_upper/">キャラ使用率<br />ランキング<br />（上位勢）</a>
+                        <a href="rankings/">勝率ランキング</a>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>対戦カード統計</h2>
+                <div class="panel">
+                    <div class="form-row">
+                        <label for="mode">集計モード</label>
+                        <select id="mode">
+                            <option value="unordered" selected>unordered（左右区別なし）</option>
+                            <option value="sided">sided（左右区別あり）</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="period">期間</label>
+                        <select id="period">
+                            <option value="all" selected>all</option>
+                            <option value="30d">30d</option>
+                            <option value="90d">90d</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="minN">min_n</label>
+                        <input id="minN" class="small" type="number" min="1" value="10" />
+                    </div>
+                    <div class="form-row">
+                        <label for="charId">キャラ</label>
+                        <select id="charId"></select>
+                    </div>
+                    <div class="actions">
+                        <button id="searchBtn" class="primary" type="button">検索</button>
+                    </div>
+                    <div id="status" class="status"></div>
+                    <div id="error" class="error"></div>
+                </div>
+            </section>
+
+            <section>
+                <h2>対戦カードランキング</h2>
+                <div class="table-wrap">
+                    <table class="card-table" aria-label="対戦カードランキング">
+                        <thead>
+                            <tr>
+                                <th>対戦カード</th>
+                                <th class="num">対戦数</th>
+                                <th class="num">A勝率</th>
+                                <th class="num">B勝率</th>
+                                <th class="num">勝率差</th>
+                                <th>詳細</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+
+
+        <div class="footer">ご意見・ご要望などありましたら、<a href="https://twitter.com/tiki_tiki_bone" target="_blank">@tiki_tiki_bone</a>までお知らせください。</div>
+
+
+
+        <script>
+
+const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
+
+
+
+            const modeEl = document.getElementById("mode");
+
+            const periodEl = document.getElementById("period");
+
+            const minNEl = document.getElementById("minN");
+
+            const charIdEl = document.getElementById("charId");
+
+            const searchBtn = document.getElementById("searchBtn");
+
+            const statusEl = document.getElementById("status");
+
+            const errorEl = document.getElementById("error");
+
+            const resultBody = document.getElementById("resultBody");
+
+
+
+            function setError(msg) {
+
+                if (!msg) {
+
+                    errorEl.style.display = "none";
+
+                    errorEl.textContent = "";
+
+                    return;
+
+                }
+
+                errorEl.style.display = "block";
+
+                errorEl.textContent = msg;
+
+            }
+
+
+
+            function setStatus(msg) {
+
+                statusEl.textContent = msg || "";
+
+            }
+
+
+
+            function fmtPercent(val) {
+
+                const n = Number(val);
+
+                if (!Number.isFinite(n)) return "-";
+
+                const pct = n <= 1 ? n * 100 : n;
+
+                return `${pct.toFixed(1)}%`;
+
+            }
+
+
+
+            function fmtDate(val) {
+
+                if (!val) return "-";
+
+                const d = new Date(val);
+
+                if (Number.isNaN(d.getTime())) return String(val);
+
+                return d.toISOString().slice(0, 10);
+
+            }
+
+
+
+            function renderRows(items, mode) {
+
+                resultBody.innerHTML = "";
+
+                for (const row of items) {
+
+                    const a = row.a || {};
+
+                    const b = row.b || {};
+
+                    const aId = a.char_id || a.id || "";
+
+                    const bId = b.char_id || b.id || "";
+
+                    const aName = a.char || a.display_name || aId || "-";
+
+                    const bName = b.char || b.display_name || bId || "-";
+
+                    const cardLabel = `<span class="chip chip-a">${aName}</span><span class="vs-pill">vs</span><span class="chip chip-b">${bName}</span>`;
+
+                    const link = aId && bId ? `matchup/?a=${encodeURIComponent(aId)}&b=${encodeURIComponent(bId)}&mode=${encodeURIComponent(mode)}` : "";
+
+                    const tr = document.createElement("tr");
+
+                    const cardCell = link ? `<a class="card-link" href="${link}">${cardLabel}</a>` : cardLabel;
+
+                    tr.innerHTML = `
+
+                        <td>${cardCell}</td>
+
+                        <td class="num">${row.matches ?? "-"}</td>
+
+                        <td class="num">${fmtPercent(row.a_win_rate)}</td>
+
+                        <td class="num">${fmtPercent(row.b_win_rate)}</td>
+
+                        <td class="num">${fmtPercent(row.unknown_rate)}</td>
+
+                        <td>${fmtDate(row.last_played_at)}</td>
+
+                    `;
+
+                    resultBody.appendChild(tr);
+
+                }
+
+            }
+
+
+
+            async function doSearch() {
+
+                setError("");
+
+                const mode = modeEl.value;
+
+                const period = periodEl.value;
+
+                const minN = Math.max(1, parseInt(minNEl.value || "1", 10) || 1);
+
+                const ch = charIdEl.value.trim();
+
+
+
+                const params = new URLSearchParams();
+
+                params.set("mode", mode);
+
+                params.set("period", period);
+
+                params.set("min_n", String(minN));
+
+                if (ch) params.set("ch", ch);
+
+
+
+                const url = `${API_BASE}/api/stats/matchups?${params.toString()}`;
+
+                setStatus("隶諛・ｽｴ・｢闕ｳ・ｭ遯ｶ・ｦ");
+
+
+
+                try {
+
+                    const res = await fetch(url);
+
+                    const isJson = (res.headers.get("content-type") || "").includes("application/json");
+
+                    const payload = isJson ? await res.json() : { error: await res.text() };
+
+
+
+                    if (!res.ok) {
+
+                        const msg = payload && payload.error ? String(payload.error) : `HTTP ${res.status}`;
+
+                        setError(msg);
+
+                        setStatus("");
+
+                        renderRows([], mode);
+
+                        return;
+
+                    }
+
+
+
+                    const items = Array.isArray(payload.items) ? payload.items : [];
+
+                    renderRows(items, mode);
+
+                    setStatus(`闔会ｽｶ隰ｨ・ｰ: ${items.length}`);
+
+                } catch (e) {
+
+                    setError(String(e || "fetch error"));
+
+                    setStatus("");
+
+                    renderRows([], modeEl.value);
+
+                }
+
+            }
+
+
+
+            searchBtn.addEventListener("click", doSearch);
+
+
+
+            (function init() {
+
+                const params = new URLSearchParams(window.location.search);
+
+                const mode = params.get("mode");
+
+                const period = params.get("period");
+
+                const minN = params.get("min_n");
+
+                const ch = params.get("ch");
+
+
+
+                if (mode) modeEl.value = mode;
+
+                if (period) periodEl.value = period;
+
+                if (minN) minNEl.value = minN;
+
+                if (ch) charIdEl.value = ch;
+
+
+
+                if (params.toString()) {
+
+                    doSearch();
+
+                }
+
+            })();
+
+        </script>
+
+    </body>
+
+</html>
+
+
+
+
+
+
+
+
+
+

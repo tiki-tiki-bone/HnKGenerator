@@ -1,0 +1,383 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <base href="../" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="../js/api-config.local.js"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>北斗の拳 対戦動画DB - 対戦動画DBについて</title>
+        <style>
+            :root {
+                --ink: #222;
+                --muted: #6b6b6b;
+                --line: #d6d6d6;
+                --card: #ffffff;
+                --surface: #f7f7f7;
+                --accent: #ffb347;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: sans-serif;
+                color: var(--ink);
+                background-color: #f3f3f3;
+                margin: 0;
+                padding: 0;
+            }
+
+            header {
+                background-color: #333;
+                color: #ffffff;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            #navMenu {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            #navMenu a {
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                transition:
+                    background-color 0.3s ease,
+                    border-color 0.3s ease,
+                    color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            #navMenu a:hover,
+            #navMenu a:focus {
+                background-color: var(--accent);
+                color: #333;
+                border-color: var(--accent);
+                outline: none;
+            }
+
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: #ffffff;
+                border-radius: 2px;
+            }
+
+            @media (max-width: 600px) {
+                #navMenu {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none;
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+
+                #navMenu a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.1rem;
+                }
+
+                #navMenu.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+
+                h1 {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+            }
+
+            main {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 1.2rem;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            section {
+                margin-bottom: 1.6rem;
+            }
+
+            h2 {
+                border: none;
+                background: var(--surface);
+                padding: 0.45rem 0.8rem;
+                border-left: 6px solid var(--accent);
+                border-radius: 6px;
+                font-size: 1.05rem;
+            }
+
+            .panel {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 1rem;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+            }
+
+            .muted {
+                color: var(--muted);
+            }
+
+            ul {
+                padding-left: 1.3rem;
+                margin: 0.5rem 0 0;
+            }
+
+            li {
+                margin-bottom: 0.4rem;
+            }
+
+            a {
+                color: #1f4d99;
+                text-decoration: none;
+            }
+
+            a:hover,
+            a:focus {
+                color: #0f244d;
+                text-decoration: underline;
+            }
+
+            .qa-list {
+                display: grid;
+                gap: 0.8rem;
+            }
+
+            .qa-item {
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 0.8rem 1rem;
+                background: #fff;
+            }
+
+            .qa-item.is-highlight {
+                border-color: #ffb347;
+                background: #fff4e3;
+                box-shadow: 0 0 0 2px rgba(255, 179, 71, 0.35);
+                animation: qa-highlight-fade 2.5s ease-out 0.2s forwards;
+            }
+
+            @keyframes qa-highlight-fade {
+                0% {
+                    border-color: #ffb347;
+                    background: #fff4e3;
+                    box-shadow: 0 0 0 2px rgba(255, 179, 71, 0.35);
+                }
+                6% {
+                    border-color: var(--line);
+                    background: #fff;
+                    box-shadow: none;
+                }
+                12%,
+                80% {
+                    border-color: #ffb347;
+                    background: #fff4e3;
+                    box-shadow: 0 0 0 2px rgba(255, 179, 71, 0.35);
+                }
+                100% {
+                    border-color: var(--line);
+                    background: #fff;
+                    box-shadow: none;
+                }
+            }
+
+            .qa-line {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                column-gap: 0.5rem;
+                align-items: start;
+            }
+
+            .qa-label {
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+            .qa-q {
+                font-weight: 700;
+                margin: 0 0 0.4rem;
+            }
+
+            .qa-a {
+                margin: 0;
+                color: var(--muted);
+            }
+        
+            </style>
+        <script src="/js/site-header.js" defer data-site-header></script>
+    </head>
+    <body>
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+        <main>
+            <section>
+                <h2>対戦動画DBについて</h2>
+                <div class="panel">
+                    <p>
+                        北斗の拳
+                        対戦動画DBは、対戦動画と対戦カードを集計・表示できるデータベースです。
+                        プレイヤー/キャラクターごとの戦績や代表試合などを確認できます。
+                    </p>
+                    <p class="muted">
+                        掲載情報は随時更新されます。反映までに時間がかかる場合があります。
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>できること</h2>
+                <div class="panel">
+                    <ul>
+                        <li>対戦動画の検索・一覧表示</li>
+                        <li>プレイヤー/キャラクターごとの戦績表示</li>
+                        <li>対戦カードの統計（勝率・対戦数）</li>
+                        <li>試合情報の訂正提案</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>データについて</h2>
+                <div class="panel">
+                    <p>
+                        収集された対戦動画をもとに自動集計+目視チェックしています。不備や誤りがある場合は訂正提案からお知らせください。
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Q&amp;A</h2>
+                <div class="panel qa-list">
+                    <div class="qa-item" id="qa1">
+                        <p class="qa-q qa-line">
+                            <span class="qa-label">Q.</span>
+                            <span>勝率や勝敗数などの情報を知られたくありません</span>
+                        </p>
+                        <p class="qa-a qa-line">
+                            <span class="qa-label">A.</span>
+                            <span>
+                                プレイヤーページの勝率や勝敗数を知られたくない場合は非表示にすることが可能です。<br />
+                                <a
+                                    href="https://twitter.com/tiki_tiki_bone"
+                                    target="_blank"
+                                    rel="noopener"
+                                    >@tiki_tiki_bone</a
+                                >までDMにてお知らせください。
+                            </span>
+                        </p>
+                    </div>
+                    <div class="qa-item">
+                        <p class="qa-q qa-line">
+                            <span class="qa-label">Q.</span>
+                            <span>上位勢とは何ですか？</span>
+                        </p>
+                        <p class="qa-a qa-line">
+                            <span class="qa-label">A.</span>
+                            <span
+                                >勝率が60%以上のプレイヤー同士の試合を対象に集計しております。</span
+                            >
+                        </p>
+                    </div>
+                    <div class="qa-item">
+                        <p class="qa-q qa-line">
+                            <span class="qa-label">Q.</span>
+                            <span>特定の動画の情報がありません</span>
+                        </p>
+                        <p class="qa-a qa-line">
+                            <span class="qa-label">A.</span>
+                            <span
+                                >集計しますのでDMか任意の試合の訂正提案の備考欄にてお知らせください。</span
+                            >
+                        </p>
+                    </div>
+                    <div class="qa-item">
+                        <p class="qa-q qa-line">
+                            <span class="qa-label">Q.</span>
+                            <span>情報が間違っています</span>
+                        </p>
+                        <p class="qa-a qa-line">
+                            <span class="qa-label">A.</span>
+                            <span
+                                >試合情報の右下にある旗マークアイコンから訂正提案をお送りください。</span
+                            >
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>リンク</h2>
+                <div class="panel">
+                    <p><a href="./">対戦動画DB トップページ</a></p>
+                </div>
+            </section>
+        </main>
+        <script>
+            window.addEventListener("load", () => {
+                if (window.location.hash === "#qa1") {
+                    const qa1 = document.getElementById("qa1");
+                    if (qa1) {
+                        qa1.scrollIntoView({ block: "start", behavior: "smooth" });
+                        window.setTimeout(() => {
+                            qa1.classList.add("is-highlight");
+                            window.setTimeout(() => {
+                                qa1.classList.remove("is-highlight");
+                            }, 2500);
+                        }, 80);
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
+
+
+

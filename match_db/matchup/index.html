@@ -1,0 +1,1502 @@
+﻿<!DOCTYPE html>
+
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8" />
+        <base href="../" />
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="../js/api-config.local.js"></script>
+
+
+        <script>
+
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+
+                dataLayer.push(arguments);
+
+            }
+
+            gtag("js", new Date());
+
+            gtag("config", "G-NM6S92KNW1");
+
+        </script>
+
+        
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>北斗の拳 対戦動画DB - 対戦カード詳細</title>
+
+        <style>
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #666;
+
+                --line: #d7d7d7;
+
+                --card: #ffffff;
+
+                --surface: #f1f1f1;
+
+                --accent: #ffb347;
+
+                --p1: #e25555;
+
+                --p2: #4c7dff;
+
+            }
+
+
+
+            body {
+
+                font-family: sans-serif;
+
+                background-color: #f9f9f9;
+
+                color: var(--ink);
+
+                margin: 0;
+
+                padding: 0;
+
+            }
+
+
+
+            header {
+
+                background-color: #333;
+
+                color: white;
+
+                padding: 2rem 1rem 1rem;
+
+                text-align: center;
+
+                position: relative;
+
+            }
+
+
+
+            #navMenu {
+
+                display: flex;
+
+                justify-content: center;
+
+                gap: 1rem;
+
+                flex-wrap: nowrap;
+
+            }
+
+
+
+            #navMenu a {
+
+                color: white;
+
+                text-decoration: none;
+
+                font-weight: 600;
+
+                padding: 0.4rem 1rem;
+
+                border: 2px solid transparent;
+
+                border-radius: 4px;
+
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+                font-size: 1rem;
+
+                user-select: none;
+
+            }
+
+
+
+            #navMenu a:hover,
+
+            #navMenu a:focus {
+
+                background-color: var(--accent);
+
+                color: #333;
+
+                border-color: var(--accent);
+
+                outline: none;
+
+            }
+
+
+
+            .menu-toggle {
+
+                display: none;
+
+                position: absolute;
+
+                top: 0.5rem;
+
+                right: 0.5rem;
+
+                width: 30px;
+
+                height: 22px;
+
+                cursor: pointer;
+
+                flex-direction: column;
+
+                justify-content: space-between;
+
+                user-select: none;
+
+                z-index: 10;
+
+            }
+
+
+
+            .menu-toggle span {
+
+                display: block;
+
+                height: 4px;
+
+                background: white;
+
+                border-radius: 2px;
+
+            }
+
+
+
+            @media (max-width: 600px) {
+
+                #navMenu {
+
+                    position: absolute;
+
+                    top: 100%;
+
+                    left: 0;
+
+                    right: 0;
+
+                    background-color: #333;
+
+                    flex-direction: column;
+
+                    display: none;
+
+                    margin: 0;
+
+                    padding: 0.5rem 0;
+
+                }
+
+
+
+                #navMenu a {
+
+                    padding: 1rem;
+
+                    border: none;
+
+                    text-align: center;
+
+                    font-size: 1.2rem;
+
+                }
+
+
+
+                #navMenu.show {
+
+                    display: flex;
+
+                }
+
+
+
+                .menu-toggle {
+
+                    display: flex;
+
+                }
+
+
+
+                h1 {
+
+                    font-size: 18px;
+
+                    margin-bottom: 10px;
+
+                }
+
+            }
+
+
+
+            main {
+
+                max-width: 900px;
+
+                margin: 2rem auto;
+
+                padding: 1.2rem;
+
+                background: linear-gradient(180deg, #ffffff 0%, #f6f6f6 100%);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+
+            }
+
+
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border-bottom: 1px solid #ccc;
+
+                padding-bottom: 0.5rem;
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                padding: 1rem;
+
+                border-radius: 8px;
+
+                border: 1px solid var(--line);
+
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+            }
+
+
+
+            .status {
+
+                margin-top: 0.8rem;
+
+                color: #444;
+
+                font-size: 0.95rem;
+
+            }
+
+
+
+            .error {
+
+                margin-top: 0.8rem;
+
+                background: #fff0f0;
+
+                border: 1px solid #ffb3b3;
+
+                padding: 0.8rem;
+
+                border-radius: 6px;
+
+                color: #8a1f1f;
+
+                display: none;
+
+            }
+
+
+
+            .table-wrap {
+
+                overflow-x: auto;
+
+            }
+
+
+
+            table {
+
+                width: 100%;
+
+                border-collapse: separate;
+
+                border-spacing: 0 8px;
+
+                margin-top: 0.5rem;
+
+            }
+
+
+
+            th,
+
+            td {
+
+                padding: 0.65rem 0.7rem;
+
+                text-align: left;
+
+                vertical-align: middle;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            th {
+
+                background: #f7f7f7;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .num {
+
+                text-align: right;
+
+                white-space: nowrap;
+
+            }
+
+
+
+            td.wrap {
+
+                white-space: normal;
+
+            }
+
+
+
+            .card-table th,
+
+            .card-table td {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+            }
+
+
+
+            .card-table thead th {
+
+                background: #f7f7f7;
+
+            }
+
+
+
+            .card-table tr th:first-child {
+
+                border-radius: 6px 0 0 6px;
+
+            }
+
+
+
+            .card-table tr td:last-child {
+
+                border-radius: 0 6px 6px 0;
+
+            }
+
+
+
+            .matchup-header {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 0.5rem;
+
+                flex-wrap: wrap;
+
+                margin-bottom: 0.8rem;
+
+            }
+
+
+
+            .chip {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                padding: 0.2rem 0.6rem;
+
+                border-radius: 10px;
+
+                font-weight: 700;
+
+                font-size: 0.9rem;
+
+                border: 1px solid transparent;
+
+            }
+
+
+
+            .chip-a {
+
+                background: rgba(226, 85, 85, 0.12);
+
+                border-color: rgba(226, 85, 85, 0.35);
+
+                color: #a12d2d;
+
+            }
+
+
+
+            .chip-b {
+
+                background: rgba(76, 125, 255, 0.12);
+
+                border-color: rgba(76, 125, 255, 0.35);
+
+                color: #294eaa;
+
+            }
+
+
+
+            .mode-pill {
+
+                background: #efefef;
+
+                border: 1px solid #d0d0d0;
+
+                color: #555;
+
+                font-size: 0.85rem;
+
+                font-weight: 700;
+
+                padding: 0.2rem 0.55rem;
+
+                border-radius: 10px;
+
+            }
+
+
+
+            .vs-pill {
+
+                color: var(--muted);
+
+                font-weight: 700;
+
+            }
+
+
+
+            .stat-grid {
+
+                display: grid;
+
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+
+                gap: 0.6rem;
+
+            }
+
+
+
+            .stat-card {
+
+                background: var(--surface);
+
+                border: 1px solid var(--line);
+
+                border-radius: 6px;
+
+                padding: 0.6rem 0.8rem;
+
+            }
+
+
+
+            .stat-title {
+
+                font-size: 0.8rem;
+
+                color: var(--muted);
+
+                margin-bottom: 0.2rem;
+
+            }
+
+
+
+            .stat-value {
+
+                font-size: 1.1rem;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .badge {
+
+                display: inline-flex;
+
+                align-items: center;
+
+                padding: 0.15rem 0.55rem;
+
+                border-radius: 10px;
+
+                font-size: 0.85rem;
+
+                font-weight: 700;
+
+                border: 1px solid transparent;
+
+            }
+
+
+
+            .badge.p1 {
+
+                background: rgba(226, 85, 85, 0.15);
+
+                border-color: rgba(226, 85, 85, 0.4);
+
+                color: #a12d2d;
+
+            }
+
+
+
+            .badge.p2 {
+
+                background: rgba(76, 125, 255, 0.16);
+
+                border-color: rgba(76, 125, 255, 0.4);
+
+                color: #294eaa;
+
+            }
+
+
+
+            .badge.neutral {
+
+                background: #efefef;
+
+                border-color: #d0d0d0;
+
+                color: #555;
+
+            }
+
+
+
+            .footer {
+
+                text-align: center;
+
+                color: #666;
+
+                margin-top: 2rem;
+
+                font-size: 0.9rem;
+
+            }
+
+        
+
+            
+
+            /* ====== clean fightlog ====== */
+
+            :root {
+
+                --ink: #222;
+
+                --muted: #6b6b6b;
+
+                --line: #d6d6d6;
+
+                --card: #ffffff;
+
+                --surface: #f7f7f7;
+
+                --accent: #ffb347;
+
+                --p1: #c64b4b;
+
+                --p2: #2f6edc;
+
+            }
+
+
+
+            body {
+
+                color: var(--ink);
+
+                background-color: #f3f3f3;
+
+            }
+
+
+
+            main {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+
+            }
+
+
+
+            section {
+
+                margin-bottom: 1.6rem;
+
+            }
+
+
+
+            h2 {
+
+                border: none;
+
+                background: var(--surface);
+
+                padding: 0.45rem 0.8rem;
+
+                border-left: 6px solid var(--accent);
+
+                border-radius: 6px;
+
+                font-size: 1.05rem;
+
+            }
+
+
+
+            .panel {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+
+            }
+
+
+
+            .form-row label {
+
+                color: var(--muted);
+
+                font-size: 0.85rem;
+
+                letter-spacing: 0.03em;
+
+            }
+
+
+
+            .form-row input,
+
+            .form-row select,
+
+            .form-row textarea {
+
+                border: 1px solid #cfd3da;
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                box-shadow: none;
+
+            }
+
+
+
+            button.primary {
+
+                background-color: #2f2f2f;
+
+                color: #ffffff;
+
+                border: 1px solid #1d1d1d;
+
+            }
+
+
+
+            button.secondary {
+
+                background-color: #ffffff;
+
+                border: 1px solid #b9b9b9;
+
+            }
+
+
+
+            .status {
+
+                background: #f8f4ea;
+
+                border: 1px solid #e4d1a6;
+
+                border-radius: 6px;
+
+                padding: 0.4rem 0.6rem;
+
+                display: inline-block;
+
+            }
+
+
+
+            table {
+
+                border-collapse: collapse;
+
+                border-spacing: 0;
+
+            }
+
+
+
+            thead th {
+
+                background: #2f2f2f;
+
+                color: #ffffff;
+
+                font-size: 0.85rem;
+
+                letter-spacing: 0.04em;
+
+                border: none;
+
+            }
+
+
+
+            tbody td {
+
+                background: #ffffff;
+
+                border-bottom: 1px solid var(--line);
+
+            }
+
+
+
+            tbody tr:nth-child(even) td {
+
+                background: #fafafa;
+
+            }
+
+
+
+            .match-summary {
+
+                background: var(--surface);
+
+                border: 1px solid var(--line);
+
+                border-radius: 8px;
+
+                box-shadow: none;
+
+            }
+
+
+
+            .player-card {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                box-shadow: none;
+
+            }
+
+
+
+            .stat-card {
+
+                background: var(--card);
+
+                border: 1px solid var(--line);
+
+                box-shadow: none;
+
+            }
+
+
+
+            .badge {
+
+                border-radius: 10px;
+
+                border: 1px solid #d0d0d0;
+
+                font-size: 0.8rem;
+
+            }
+
+
+
+            .badge.p1 {
+
+                background: rgba(198, 75, 75, 0.12);
+
+                border-color: rgba(198, 75, 75, 0.4);
+
+                color: #8d2b2b;
+
+            }
+
+
+
+            .badge.p2 {
+
+                background: rgba(47, 110, 220, 0.12);
+
+                border-color: rgba(47, 110, 220, 0.4);
+
+                color: #23458e;
+
+            }
+
+
+
+            .badge.neutral {
+
+                background: #efefef;
+
+                border-color: #d0d0d0;
+
+                color: #555555;
+
+            }
+
+
+
+            .chip {
+
+                border-radius: 10px;
+
+                border: 1px solid #d0d0d0;
+
+                background: #f5f5f5;
+
+                font-size: 0.85rem;
+
+            }
+
+
+
+            .chip-a {
+
+                background: rgba(198, 75, 75, 0.1);
+
+                border-color: rgba(198, 75, 75, 0.35);
+
+                color: #8d2b2b;
+
+            }
+
+
+
+            .chip-b {
+
+                background: rgba(47, 110, 220, 0.1);
+
+                border-color: rgba(47, 110, 220, 0.35);
+
+                color: #23458e;
+
+            }
+
+
+
+            main a {
+
+                color: #1f4d99;
+
+                text-decoration: none;
+
+            }
+
+
+
+            main a:hover,
+
+            main a:focus {
+
+                color: #0f244d;
+
+                text-decoration: underline;
+
+            }
+
+        
+
+            .stats-links {
+
+                display: grid;
+
+                grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+
+                gap: 0.6rem;
+
+            }
+
+
+
+            .stats-links a {
+
+                display: flex;
+
+                font-size: calc(1rem - 1px);
+
+                padding: 0.8rem 0.8rem;
+
+                border: 1px solid var(--line);
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                color: inherit;
+
+                text-decoration: none;
+
+                text-align: center;
+
+                align-items: center;
+
+                justify-content: center;
+
+                font-weight: 700;
+
+            }
+
+
+
+            .stats-links a:hover,
+
+            .stats-links a:focus {
+
+                border-color: #2d2d2d;
+
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+                outline: none;
+
+                color: inherit;
+
+                text-decoration: none;
+
+            }
+
+
+
+            .stats-links a:visited {
+
+                color: inherit;
+
+                text-decoration: none;
+
+            }
+
+
+
+            @media (max-width: 600px) {
+
+                .stats-links {
+
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+                }
+
+                .stats-links a:last-child {
+
+                    grid-column: 1 / -1;
+
+                }
+
+            }
+
+
+
+        
+            </style>
+
+            <script src="/js/site-header.js" defer data-site-header></script>
+
+    </head>
+
+
+
+    <body>
+
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+
+
+                <main>
+            <section class="stats-nav">
+                <h2>統計</h2>
+                <div class="panel">
+                    <div class="stats-links">
+                        <a href="diagram/">対戦ダイアグラム</a>
+                        <a href="diagram_upper/">対戦ダイアグラム<br />（上位勢）</a>
+                        <a href="character_usage/">キャラ使用率<br />ランキング</a>
+                        <a href="character_usage_upper/">キャラ使用率<br />ランキング<br />（上位勢）</a>
+                        <a href="rankings/">勝率ランキング</a>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>対戦カード詳細</h2>
+                <div id="matchupStatus" class="status"></div>
+                <div id="matchupError" class="error"></div>
+                <div class="panel">
+                    <div id="matchupSummary"></div>
+                </div>
+            </section>
+
+            <section>
+                <h2>直近の試合</h2>
+                <div class="table-wrap">
+                    <table class="card-table" aria-label="直近の試合">
+                        <thead>
+                            <tr>
+                                <th>試合日</th>
+                                <th class="num">時間</th>
+                                <th class="wrap">P1</th>
+                                <th class="wrap">P2</th>
+                                <th>勝敗</th>
+                                <th>詳細</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+
+
+        <div class="footer">ご意見・ご要望などありましたら、<a href="https://twitter.com/tiki_tiki_bone" target="_blank">@tiki_tiki_bone</a>までお知らせください。</div>
+
+
+
+        <script>
+
+const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
+
+
+
+            const matchupStatusEl = document.getElementById("matchupStatus");
+
+            const matchupErrorEl = document.getElementById("matchupError");
+
+            const matchupSummaryEl = document.getElementById("matchupSummary");
+
+            const recentBody = document.getElementById("recentBody");
+
+
+
+            function setMatchupError(msg) {
+
+                if (!msg) {
+
+                    matchupErrorEl.style.display = "none";
+
+                    matchupErrorEl.textContent = "";
+
+                    return;
+
+                }
+
+                matchupErrorEl.style.display = "block";
+
+                matchupErrorEl.textContent = msg;
+
+            }
+
+
+
+            function setMatchupStatus(msg) {
+
+                matchupStatusEl.textContent = msg || "";
+
+            }
+
+
+
+            function fmtPercent(val) {
+
+                const n = Number(val);
+
+                if (!Number.isFinite(n)) return "-";
+
+                const pct = n <= 1 ? n * 100 : n;
+
+                return `${pct.toFixed(1)}%`;
+
+            }
+
+
+
+            function fmtSec(sec) {
+
+                const n = Number(sec);
+
+                if (!Number.isFinite(n)) return "";
+
+                const s = Math.max(0, Math.trunc(n));
+
+                const h = Math.floor(s / 3600);
+
+                const m = Math.floor((s % 3600) / 60);
+
+                const ss = s % 60;
+
+                const pad2 = (x) => String(x).padStart(2, "0");
+
+                if (h > 0) return `${h}:${pad2(m)}:${pad2(ss)}`;
+
+                return `${m}:${pad2(ss)}`;
+
+            }
+
+
+
+            function ytUrl(videoId, startSec) {
+
+                const t = Math.max(0, Math.trunc(Number(startSec) || 0));
+
+                return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&t=${t}s`;
+
+            }
+
+
+
+            function normalizeMatch(it) {
+
+                const p1 = it.p1 || {};
+
+                const p2 = it.p2 || {};
+
+                return {
+
+                    id: it.id || it.match_id,
+
+                    videoId: it.video_id || it.videoId || it.video || "",
+
+                    tStart: it.t_start ?? it.start_sec ?? it.start ?? "",
+
+                    p1Name: it.p1_player || p1.name || p1.display_name || it.p1_name || "",
+
+                    p1Char: it.p1_char || p1.char || p1.char_name || "",
+
+                    p2Name: it.p2_player || p2.name || p2.display_name || it.p2_name || "",
+
+                    p2Char: it.p2_char || p2.char || p2.char_name || "",
+
+                    winner: it.winner || ""
+
+                };
+
+            }
+
+
+
+            function renderSummary(aId, bId, mode, summary) {
+
+                const matches = summary?.matches ?? summary?.total ?? "-";
+
+                const aWin = summary?.a_win_rate ?? summary?.aWinRate;
+
+                const bWin = summary?.b_win_rate ?? summary?.bWinRate;
+
+                const unknown = summary?.unknown_rate ?? summary?.unknownRate;
+
+                const lastPlayed = summary?.last_played_at || summary?.lastPlayedAt || "-";
+
+
+
+                matchupSummaryEl.innerHTML = `
+
+                    <div class="matchup-header">
+
+                        <span class="chip chip-a">${aId}</span>
+
+                        <span class="vs-pill">vs</span>
+
+                        <span class="chip chip-b">${bId}</span>
+
+                        <span class="mode-pill">${mode}</span>
+
+                    </div>
+
+                    <div class="stat-grid">
+
+                        <div class="stat-card">
+
+                            <div class="stat-title">対戦数</div>
+
+                            <div class="stat-value">${matches}</div>
+
+                        </div>
+
+                        <div class="stat-card">
+
+                            <div class="stat-title">A勝率</div>
+
+                            <div class="stat-value">${fmtPercent(aWin)}</div>
+
+                        </div>
+
+                        <div class="stat-card">
+
+                            <div class="stat-title">B勝率</div>
+
+                            <div class="stat-value">${fmtPercent(bWin)}</div>
+
+                        </div>
+
+                        <div class="stat-card">
+
+                            <div class="stat-title">不明</div>
+
+                            <div class="stat-value">${fmtPercent(unknown)}</div>
+
+                        </div>
+
+                        <div class="stat-card">
+
+                            <div class="stat-title">最終対戦日</div>
+
+                            <div class="stat-value">${lastPlayed}</div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+
+
+            function winnerBadge(winner) {
+
+                if (winner === "P1") return '<span class="badge p1">P1</span>';
+
+                if (winner === "P2") return '<span class="badge p2">P2</span>';
+
+                if (!winner) return "-";
+
+                return '<span class="badge neutral">闕ｳ閧ｴ繝ｻ</span>';
+
+            }
+
+
+
+            function renderRecent(items) {
+
+                recentBody.innerHTML = "";
+
+                for (const it of items) {
+
+                    const row = normalizeMatch(it);
+
+                    const tr = document.createElement("tr");
+
+                    const videoCell = row.videoId
+
+                        ? `<a href="${ytUrl(row.videoId, row.tStart)}" target="_blank" rel="noopener">${row.videoId}</a>`
+
+                        : "-";
+
+                    const p1 = row.p1Char ? `${row.p1Name} / ${row.p1Char}` : row.p1Name || "-";
+
+                    const p2 = row.p2Char ? `${row.p2Name} / ${row.p2Char}` : row.p2Name || "-";
+
+                    const detail = row.id
+                        ? `<a href="correction/?id=${encodeURIComponent(row.id)}">詳細</a>`
+                        : "-";
+
+                    const winner = winnerBadge(row.winner);
+
+                    tr.innerHTML = `
+
+                        <td>${videoCell}</td>
+
+                        <td class="num">${fmtSec(row.tStart)}</td>
+
+                        <td class="wrap">${p1}</td>
+
+                        <td class="wrap">${p2}</td>
+
+                        <td>${winner}</td>
+
+                        <td>${detail}</td>
+
+                    `;
+
+                    recentBody.appendChild(tr);
+
+                }
+
+            }
+
+
+
+            async function init() {
+
+                const params = new URLSearchParams(window.location.search);
+
+                const aId = (params.get("a") || "").trim();
+
+                const bId = (params.get("b") || "").trim();
+
+                const mode = (params.get("mode") || "unordered").trim();
+
+
+
+                if (!aId || !bId) {
+
+                    setMatchupError(
+                        "matchup/?a=<char_id>&b=<char_id>&mode=... を指定してください。",
+                    );
+
+                    return;
+
+                }
+
+
+
+                setMatchupStatus("読み込み中...");
+
+                try {
+
+                    const url = `${API_BASE}/api/stats/matchup?a=${encodeURIComponent(aId)}&b=${encodeURIComponent(bId)}&mode=${encodeURIComponent(mode)}`;
+
+                    const res = await fetch(url);
+
+                    const isJson = (res.headers.get("content-type") || "").includes("application/json");
+
+                    const payload = isJson ? await res.json() : { error: await res.text() };
+
+
+
+                    if (!res.ok) {
+
+                        const msg = payload && payload.error ? String(payload.error) : `HTTP ${res.status}`;
+
+                        setMatchupError(msg);
+
+                        setMatchupStatus("");
+
+                        return;
+
+                    }
+
+
+
+                    renderSummary(aId, bId, mode, payload.summary || payload);
+
+                    const matches = payload.recent_matches || payload.matches || payload.items || [];
+
+                    renderRecent(Array.isArray(matches) ? matches : []);
+
+                    setMatchupStatus("");
+
+                } catch (e) {
+
+                    setMatchupError(String(e || "fetch error"));
+
+                    setMatchupStatus("");
+
+                }
+
+            }
+
+
+
+            init();
+
+        </script>
+
+    </body>
+
+</html>
+
+
+
+
+
+
+
+
+
+

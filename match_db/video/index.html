@@ -1,0 +1,1021 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script src="/js/api-config.local.js"></script>
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta charset="UTF-8" />
+        <base href="../" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>北斗の拳 対戦動画DB - 動画</title>
+        <link rel="stylesheet" href="/css/match-cards.css" />
+        <style>
+            :root {
+                --ink: #222;
+                --muted: #6b6b6b;
+                --line: #d6d6d6;
+                --card: #ffffff;
+                --surface: #f7f7f7;
+                --accent: #ffb347;
+                --p1: #c64b4b;
+                --p2: #2f6edc;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: sans-serif;
+                color: var(--ink);
+                background-color: #f3f3f3;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+            }
+
+            header {
+                background-color: #333;
+                color: #ffffff;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            #navMenu {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            #navMenu a {
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            #navMenu a:hover,
+            #navMenu a:focus {
+                background-color: var(--accent);
+                color: #333;
+                border-color: var(--accent);
+                outline: none;
+            }
+
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: #ffffff;
+                border-radius: 2px;
+            }
+
+            main {
+                max-width: 900px;
+                margin: 2rem auto;
+                padding: 1rem;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            section {
+                margin-bottom: 1.6rem;
+            }
+
+            h2 {
+                border: none;
+                background: var(--surface);
+                padding: 0.45rem 0.8rem;
+                border-left: 6px solid var(--accent);
+                border-radius: 6px;
+                font-size: 1.05rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.5rem;
+            }
+
+            .section-meta {
+                color: var(--muted);
+                font-size: 0.85rem;
+                letter-spacing: 0.02em;
+                background: var(--surface);
+                border-radius: 4px;
+                padding: 0.15rem 0.4rem;
+            }
+
+            .video-profile {
+                background: #ffffff;
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 1rem;
+                display: grid;
+                grid-template-columns: 220px minmax(0, 1fr);
+                gap: 0.6rem;
+                align-items: start;
+            }
+
+            .video-thumb-wrap {
+                grid-row: 1 / span 2;
+            }
+
+            .video-link {
+                display: block;
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .video-link:hover,
+            .video-link:focus {
+                text-decoration: underline;
+            }
+
+            .video-thumb {
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
+                border-radius: 6px;
+                display: block;
+                background: #e9e9e9;
+            }
+
+            .video-title {
+                font-size: 1.2rem;
+                font-weight: 700;
+                word-break: break-word;
+            }
+
+            .video-meta {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 0.35rem;
+                color: var(--muted);
+                font-size: 0.85rem;
+            }
+
+            .video-meta-item {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 0.35rem;
+                width: 100%;
+            }
+
+            .video-meta-item .label {
+                color: var(--ink);
+                font-weight: 600;
+                text-align: right;
+            }
+
+            .video-meta-value {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                min-width: 0;
+                justify-content: flex-end;
+                text-align: right;
+            }
+
+            .video-meta-value span {
+                min-width: 0;
+            }
+
+            .channel-icon {
+                display: none;
+            }
+
+            .video-meta-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .video-meta-link:hover,
+            .video-meta-link:focus {
+                text-decoration: underline;
+            }
+
+            .video-actions {
+                grid-column: 2;
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 0.4rem;
+            }
+
+            button.secondary {
+                background-color: #ffffff;
+                color: #333;
+                border: 1px solid #aaa;
+                padding: 0.55rem 1rem;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+
+            .pager button.secondary {
+                border-radius: 4px;
+            }
+
+            button.secondary:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .error {
+                margin-top: 0.8rem;
+                background: #fff0f0;
+                border: 1px solid #ffb3b3;
+                padding: 0.8rem;
+                border-radius: 6px;
+                color: #8a1f1f;
+                display: none;
+            }
+
+            @media (max-width: 600px) {
+                #navMenu {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none;
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+
+                #navMenu a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.1rem;
+                }
+
+                #navMenu.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+
+                h2 {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .video-title {
+                    font-size: 1.05rem;
+                }
+
+                .video-meta {
+                    grid-template-columns: max-content minmax(0, 1fr);
+                }
+
+                .video-profile {
+                    grid-template-columns: 1fr;
+                }
+
+                .video-thumb-wrap {
+                    grid-row: auto;
+                }
+
+                .video-actions {
+                    grid-column: 1;
+                }
+            }
+        
+            </style>
+        <script src="/js/site-header.js" defer data-site-header></script>
+    </head>
+    <body>
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+
+        <main>
+            <section>
+                <h2>動画</h2>
+                <div class="video-profile">
+                    <div class="video-thumb-wrap" id="videoThumbWrap" style="display: none;">
+                        <a
+                            id="videoThumbLink"
+                            class="video-link"
+                            href="#"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <img
+                                id="videoThumb"
+                                class="video-thumb"
+                                alt="動画サムネイル"
+                                loading="lazy"
+                            />
+                        </a>
+                    </div>
+                    <a id="videoTitleLink" class="video-link" href="#" target="_blank" rel="noopener">
+                        <span id="videoTitle" class="video-title">-</span>
+                    </a>
+                    <div class="video-meta">
+                        <div class="video-meta-item">
+                            <span class="label">チャンネル&#xFF1A</span>
+                            <span class="video-meta-value">
+                                <a
+                                    id="channelLink"
+                                    class="video-meta-link"
+                                    href="#"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    <img id="channelIcon" class="channel-icon" alt="" />
+                                    <span id="videoChannel">-</span>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="video-meta-item">
+                            <span class="label">投稿日&#xFF1A</span>
+                            <span id="videoDate" class="video-meta-value">-</span>
+                        </div>
+                        <div class="video-meta-item">
+                            <span class="label">場所&#xFF1A</span>
+                            <span id="videoLocate" class="video-meta-value">-</span>
+                        </div>
+                    </div>
+                    <div class="video-actions">
+                        <button id="matchSearchBtn" class="secondary" type="button">
+                            この動画内の試合を検索
+                        </button>
+                    </div>
+                </div>
+                <div id="videoError" class="error"></div>
+            </section>
+
+            <section>
+                <h2>
+                    <span>試合一覧</span>
+                    <span id="resultCount" class="section-meta"></span>
+                </h2>
+                <div class="pager pager-top">
+                    <button id="prevBtnTop" class="secondary" type="button">前へ</button>
+                    <div id="pagerPagesTop" class="pager-pages" aria-label="ペー&#x30B8"></div>
+                    <button id="nextBtnTop" class="secondary" type="button">次へ</button>
+                </div>
+                <div id="matchBody" class="match-cards" role="list"></div>
+                <div id="matchError" class="error"></div>
+                <div class="pager">
+                    <button id="prevBtn" class="secondary" type="button">前へ</button>
+                    <div id="pagerPages" class="pager-pages" aria-label="ペー&#x30B8"></div>
+                    <button id="nextBtn" class="secondary" type="button">次へ</button>
+                </div>
+            </section>
+        </main>
+
+        <script src="/js/match-cards.js"></script>
+        <script>
+            const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
+            const IMAGE_BASE = "/images/";
+            const DB_ERROR_MSG =
+                "\u0044\u0042\u3078\u306e\u554f\u3044\u5408\u308f\u305b\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002\u7ba1\u7406\u8005\u306b\u304a\u554f\u3044\u5408\u308f\u305b\u304f\u3060\u3055\u3044\u3002";
+            const DATE_PREFIX = "\u6295\u7a3f\u65e5\uff1a";
+            const DEFAULTS = {
+                limit: 20,
+                page: 1,
+            };
+
+            const videoTitleEl = document.getElementById("videoTitle");
+            const videoTitleLinkEl = document.getElementById("videoTitleLink");
+            const videoChannelEl = document.getElementById("videoChannel");
+            const videoDateEl = document.getElementById("videoDate");
+            const videoLocateEl = document.getElementById("videoLocate");
+            const videoThumbEl = document.getElementById("videoThumb");
+            const videoThumbWrapEl = document.getElementById("videoThumbWrap");
+            const videoThumbLinkEl = document.getElementById("videoThumbLink");
+            const channelIconEl = document.getElementById("channelIcon");
+            const channelLinkEl = document.getElementById("channelLink");
+            const matchSearchBtn = document.getElementById("matchSearchBtn");
+            const videoErrorEl = document.getElementById("videoError");
+            const matchErrorEl = document.getElementById("matchError");
+            const matchBody = document.getElementById("matchBody");
+            const resultCountEl = document.getElementById("resultCount");
+
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const prevBtnTop = document.getElementById("prevBtnTop");
+            const nextBtnTop = document.getElementById("nextBtnTop");
+            const pagerPagesEl = document.getElementById("pagerPages");
+            const pagerPagesTopEl = document.getElementById("pagerPagesTop");
+
+            let currentPage = DEFAULTS.page;
+            let currentLimit = DEFAULTS.limit;
+            let lastHasNext = null;
+            let lastTotal = 0;
+            let videoMeta = {
+                title: "",
+                channel: "",
+                date: "",
+                channelUrl: "",
+                locate: "",
+            };
+
+            function getYoutubeThumbnailUrl(videoId) {
+                const clean = String(videoId || "").trim();
+                if (!clean) return "";
+                return `https://img.youtube.com/vi/${encodeURIComponent(clean)}/hqdefault.jpg`;
+            }
+
+            function getYoutubeVideoUrl(videoId) {
+                const clean = String(videoId || "").trim();
+                if (!clean) return "";
+                return `https://www.youtube.com/watch?v=${encodeURIComponent(clean)}`;
+            }
+
+            function getChannelIconUrl(channelUrl) {
+                let host = "www.youtube.com";
+                if (channelUrl) {
+                    try {
+                        host = new URL(channelUrl).hostname || host;
+                    } catch {
+                        // ignore
+                    }
+                }
+                return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
+                    host,
+                )}&sz=64`;
+            }
+
+            function clampInt(raw, min, max, fallback) {
+                const n = parseInt(raw, 10);
+                if (!Number.isFinite(n)) return fallback;
+                return Math.max(min, Math.min(max, n));
+            }
+
+            function setError(el, msg) {
+                if (!el) return;
+                if (!msg) {
+                    el.textContent = "";
+                    el.style.display = "none";
+                    return;
+                }
+                el.textContent = msg;
+                el.style.display = "block";
+            }
+
+            function formatVideoDate(item) {
+                const displayDate = item.display_uploaded_at || "";
+                if (displayDate) return String(displayDate);
+                const epoch = Number(item.uploaded_at);
+                if (!Number.isFinite(epoch) || epoch <= 0) return "";
+                const d = new Date(epoch * 1000);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, "0");
+                const day = String(d.getDate()).padStart(2, "0");
+                return `${y}-${m}-${day}`;
+            }
+
+            if (matchSearchBtn) {
+                matchSearchBtn.addEventListener("click", () => {
+                    const href = matchSearchBtn.dataset.href || "";
+                    if (href) window.location.href = href;
+                });
+            }
+
+            function updateMatchSearchBtn(videoId) {
+                if (!matchSearchBtn) return;
+                const cleanId = String(videoId || "").trim();
+                if (!cleanId) {
+                    matchSearchBtn.disabled = true;
+                    matchSearchBtn.dataset.href = "";
+                    return;
+                }
+                const target = new URL("../", window.location.href);
+                target.searchParams.set("mode", "card");
+                target.searchParams.set("vid", cleanId);
+                matchSearchBtn.disabled = false;
+                matchSearchBtn.dataset.href = target.toString();
+            }
+
+            function applyVideoMeta(meta, videoId) {
+                if (videoTitleEl) {
+                    videoTitleEl.textContent = meta.title || "-";
+                    if (meta.title) videoTitleEl.title = meta.title;
+                }
+                const videoHref = getYoutubeVideoUrl(videoId);
+                if (videoTitleLinkEl) {
+                    if (videoHref) {
+                        videoTitleLinkEl.href = videoHref;
+                    } else {
+                        videoTitleLinkEl.removeAttribute("href");
+                    }
+                }
+                if (videoChannelEl) {
+                    videoChannelEl.textContent = meta.channel || "-";
+                }
+                if (videoDateEl) {
+                    videoDateEl.textContent = meta.date || "-";
+                }
+                if (videoLocateEl) {
+                    videoLocateEl.textContent = meta.locate || "-";
+                }
+                if (channelIconEl) {
+                    const iconUrl = getChannelIconUrl(meta.channelUrl);
+                    channelIconEl.src = iconUrl;
+                    channelIconEl.style.display = iconUrl ? "" : "none";
+                    channelIconEl.alt = meta.channel ? meta.channel : "";
+                }
+                if (channelLinkEl) {
+                    if (meta.channelUrl) {
+                        channelLinkEl.href = meta.channelUrl;
+                    } else {
+                        channelLinkEl.removeAttribute("href");
+                    }
+                }
+                if (videoThumbEl && videoThumbWrapEl) {
+                    const thumbUrl = getYoutubeThumbnailUrl(videoId);
+                    if (thumbUrl) {
+                        videoThumbEl.src = thumbUrl;
+                        videoThumbEl.alt = meta.title
+                            ? `動画サムネイ&#x30EB: ${meta.title}`
+                            : "動画サムネイル";
+                        videoThumbWrapEl.style.display = "";
+                        if (videoThumbLinkEl && videoHref) {
+                            videoThumbLinkEl.href = videoHref;
+                        }
+                    } else {
+                        videoThumbEl.removeAttribute("src");
+                        videoThumbWrapEl.style.display = "none";
+                        if (videoThumbLinkEl) {
+                            videoThumbLinkEl.removeAttribute("href");
+                        }
+                    }
+                }
+                updateMatchSearchBtn(videoId);
+            }
+
+            async function fetchJson(url) {
+                const res = await fetch(url);
+                const isJson = (res.headers.get("content-type") || "").includes(
+                    "application/json",
+                );
+                const data = isJson ? await res.json() : null;
+                if (!res.ok) {
+                    throw new Error(DB_ERROR_MSG);
+                }
+                return data || {};
+            }
+
+            async function loadVideoMeta(videoId) {
+                if (!videoId) return;
+                try {
+                    const url = `${API_BASE}/api/videos?vid=${encodeURIComponent(videoId)}&limit=5`;
+                    const data = await fetchJson(url);
+                    const items = Array.isArray(data.items) ? data.items : [];
+                    const exact = items.find((it) => String(it.video_id || "") === videoId);
+                    const picked = exact || items[0];
+                    if (!picked) return;
+                    const title = picked.title ? String(picked.title) : "";
+                    const channelName = picked.channel_name ? String(picked.channel_name) : "";
+                    const channelUrl = picked.channel_url ? String(picked.channel_url) : "";
+                    const locateName = picked.locate_name ? String(picked.locate_name) : "";
+                    const dateText = formatVideoDate(picked);
+                    videoMeta = {
+                        title,
+                        channel: channelName,
+                        date: dateText,
+                        channelUrl,
+                        locate: locateName,
+                    };
+                    applyVideoMeta(videoMeta, videoId);
+                } catch (e) {
+                    setError(videoErrorEl, DB_ERROR_MSG);
+                }
+            }
+
+            function fmtSec(sec) {
+                const n = Number(sec);
+                if (!Number.isFinite(n)) return "";
+                const s = Math.max(0, Math.trunc(n));
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const ss = s % 60;
+                const pad2 = (x) => String(x).padStart(2, "0");
+                if (h > 0) return `${h}:${pad2(m)}:${pad2(ss)}`;
+                return `${m}:${pad2(ss)}`;
+            }
+
+            function fmtRange(startSec, endSec) {
+                const start = fmtSec(startSec);
+                const end = fmtSec(endSec);
+                if (start && end) return `${start} - ${end}`;
+                return start || end || "";
+            }
+
+            function fmtDuration(startSec, endSec) {
+                const start = Number(startSec);
+                const end = Number(endSec);
+                if (!Number.isFinite(start) || !Number.isFinite(end)) return "";
+                const diff = Math.max(0, Math.trunc(end - start));
+                if (!diff) return "";
+                return fmtSec(diff);
+            }
+
+            function ytUrl(videoId, startSec) {
+                const t = Math.max(0, Math.trunc(Number(startSec) || 0));
+                return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&t=${t}s`;
+            }
+
+            function buildCharImage(charId, charName) {
+                const cleanId = String(charId || "").trim();
+                const img = document.createElement("img");
+                img.className = "match-char-img";
+                img.decoding = "async";
+                img.loading = "lazy";
+                if (!cleanId) {
+                    img.classList.add("empty");
+                    img.alt = "";
+                    return img;
+                }
+                const portraitPrefix = "match_card";
+                img.src = `${IMAGE_BASE}${portraitPrefix}_${encodeURIComponent(cleanId)}.png`;
+                img.alt = charName ? String(charName) : cleanId;
+                img.addEventListener("error", () => {
+                    img.classList.add("empty");
+                    img.removeAttribute("src");
+                });
+                return img;
+            }
+
+            function resolvePlayerName(name, id) {
+                const raw = String(name || "").trim();
+                if (raw && raw !== "-") return raw;
+                const fallback = String(id || "").trim();
+                return fallback || "-";
+            }
+
+            function createTextLink(text, href, className) {
+                const hasLink = Boolean(href);
+                const el = document.createElement(hasLink ? "a" : "div");
+                if (className) el.className = className;
+                if (hasLink) {
+                    el.href = href;
+                    el.classList.add("match-link");
+                }
+                if (text) {
+                    el.textContent = text;
+                    el.title = text;
+                }
+                return el;
+            }
+
+            function isInteractiveTarget(target) {
+                return Boolean(
+                    target && target.closest("a, button, input, select, textarea, label"),
+                );
+            }
+
+            function normalizeMatch(it) {
+                const p1 = it.p1 || {};
+                const p2 = it.p2 || {};
+                return {
+                    id: it.match_id ?? "",
+                    videoId: it.video_id || "",
+                    videoTitle: videoMeta.title || "",
+                    videoUploadedAt: videoMeta.date || "",
+                    tStart: it.start_sec ?? "",
+                    tEnd: it.end_sec ?? "",
+                    p1Id: p1.player_id ?? "",
+                    p1Name: p1.player_name || p1.player_raw || "",
+                    p1CharId: p1.char_id || "",
+                    p1Char: p1.char_name || p1.char_raw || "",
+                    p2Id: p2.player_id ?? "",
+                    p2Name: p2.player_name || p2.player_raw || "",
+                    p2CharId: p2.char_id || "",
+                    p2Char: p2.char_name || p2.char_raw || "",
+                    winner: it.winner ?? "",
+                };
+            }
+
+            function normalizeWinnerSide(raw) {
+                const v = String(raw ?? "").trim().toLowerCase();
+                if (v === "p1" || v === "player1" || v === "1" || v === "left") return "p1";
+                if (v === "p2" || v === "player2" || v === "2" || v === "right") return "p2";
+                return "";
+            }
+
+            function renderMatches(items) {
+                if (typeof window.renderMatchCards !== "function") return;
+                window.renderMatchCards({
+                    container: matchBody,
+                    items,
+                    emptyText: "\u8a72\u5f53\u3059\u308b\u8a66\u5408\u304c\u3042\u308a\u307e\u305b\u3093\u3002",
+                    normalizeMatch,
+                    normalizeWinnerSide,
+                    ytUrl,
+                    fmtRange,
+                    fmtSec,
+                    fmtDuration,
+                    datePrefix: DATE_PREFIX,
+                    videoLabel: "\u52d5\u753b",
+                    correctionLabel: "\u60c5\u5831\u8a02\u6b63",
+                    getCorrectionHref: (row) =>
+                        row && row.id ? `correction/?id=${encodeURIComponent(row.id)}` : "",
+                    isInteractiveTarget,
+                    createTextLink,
+                    buildCharImage,
+                    resolvePlayerName,
+                    resolvePlayerLinkId: (display, id) => {
+                        const clean = String(id || "").trim();
+                        if (!clean || clean === "0") return "";
+                        return clean;
+                    },
+                    resolveCharacterId: (charId) => charId || "",
+                    resolveCharacterName: (charId, charName) =>
+                        String(charName || charId || ""),
+                    getVideoLinkHref: (videoId) =>
+                        `video/?vid=${encodeURIComponent(videoId)}`,
+                    getCharacterLinkHref: (charId) =>
+                        `character/?c=${encodeURIComponent(charId)}`,
+                    getPlayerLinkHref: (playerId) =>
+                        `player/?p=${encodeURIComponent(playerId)}`,
+                });
+            }
+
+            function renderPagerPages(container, currentPageValue, pageSize, total, hasNext) {
+                if (!container) return;
+                container.innerHTML = "";
+                const pages = [];
+                const addPage = (p) => {
+                    if (!pages.includes(p)) pages.push(p);
+                };
+                const totalNum = Number(total);
+                const hasTotal = Number.isFinite(totalNum);
+                const totalPages = hasTotal ? Math.max(1, Math.ceil(totalNum / pageSize)) : null;
+                const isMobile =
+                    typeof window !== "undefined" &&
+                    window.matchMedia &&
+                    window.matchMedia("(max-width: 600px)").matches;
+
+                if (isMobile) {
+                    if (totalPages) {
+                        addPage(1);
+                        addPage(totalPages);
+                        for (let p = currentPageValue - 1; p <= currentPageValue + 1; p += 1) {
+                            if (p >= 1 && p <= totalPages) addPage(p);
+                        }
+                    } else {
+                        const start = Math.max(1, currentPageValue - 1);
+                        const end = currentPageValue + 1;
+                        for (let p = start; p <= end; p += 1) addPage(p);
+                    }
+                    pages.sort((a, b) => a - b);
+                    let lastMobile = null;
+                    for (const p of pages) {
+                        if (lastMobile !== null && p - lastMobile > 1) {
+                            const ellipsis = document.createElement("span");
+                            ellipsis.className = "pager-ellipsis";
+                            ellipsis.textContent = "...";
+                            container.appendChild(ellipsis);
+                        }
+                        const btn = document.createElement("button");
+                        btn.type = "button";
+                        btn.className = "pager-page";
+                        btn.textContent = String(p);
+                        if (p === currentPageValue) {
+                            btn.classList.add("active");
+                            btn.disabled = true;
+                        } else {
+                            btn.addEventListener("click", () => loadMatches(p));
+                        }
+                        container.appendChild(btn);
+                        lastMobile = p;
+                    }
+                    return;
+                }
+
+                if (hasTotal) {
+                    const start = Math.max(1, currentPageValue - 2);
+                    const end = Math.min(totalPages, currentPageValue + 2);
+                    addPage(1);
+                    addPage(totalPages);
+                    for (let p = start; p <= end; p += 1) addPage(p);
+                } else {
+                    const maxPage = hasNext === false ? currentPageValue : currentPageValue + 2;
+                    const start = Math.max(1, currentPageValue - 2);
+                    const end = Math.max(start, maxPage);
+                    if (currentPageValue > 3) addPage(1);
+                    for (let p = start; p <= end; p += 1) addPage(p);
+                }
+                pages.sort((a, b) => a - b);
+                let last = null;
+                for (const p of pages) {
+                    if (last !== null && p - last > 1) {
+                        const ellipsis = document.createElement("span");
+                        ellipsis.className = "pager-ellipsis";
+                        ellipsis.textContent = "...";
+                        container.appendChild(ellipsis);
+                    }
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "pager-page";
+                    btn.textContent = String(p);
+                    if (p === currentPageValue) {
+                        btn.classList.add("active");
+                        btn.disabled = true;
+                    } else {
+                        btn.addEventListener("click", () => loadMatches(p));
+                    }
+                    container.appendChild(btn);
+                    last = p;
+                }
+            }
+
+            function updateResultCount(total, page, pageSize, itemCount) {
+                if (!resultCountEl) return;
+                const safePage = Math.max(1, Number(page) || 1);
+                const safeSize = Math.max(1, Number(pageSize) || DEFAULTS.limit);
+                const count = Math.max(0, Number(itemCount) || 0);
+                const totalNum = Number(total);
+                const hasTotal = Number.isFinite(totalNum);
+                if (!hasTotal) {
+                    if (!count) {
+                        resultCountEl.textContent = "0 / ?";
+                        return;
+                    }
+                    const start = (safePage - 1) * safeSize + 1;
+                    const end = start + count - 1;
+                    resultCountEl.textContent = `${start}-${end} / ?`;
+                    return;
+                }
+                const safeTotal = Math.max(0, totalNum);
+                if (!safeTotal) {
+                    resultCountEl.textContent = "0 / 0";
+                    return;
+                }
+                const start = Math.min((safePage - 1) * safeSize + 1, safeTotal);
+                const end =
+                    count > 0
+                        ? Math.min(start + count - 1, safeTotal)
+                        : Math.min(safePage * safeSize, safeTotal);
+                resultCountEl.textContent = `${start}-${end} / ${safeTotal}`;
+            }
+
+            function updatePager(page, pageSize, total, hasNext, itemCount) {
+                lastTotal = total;
+                currentPage = page;
+                currentLimit = pageSize;
+                lastHasNext = hasNext;
+
+                [prevBtn, prevBtnTop].forEach((btn) => {
+                    if (btn) btn.disabled = page <= 1;
+                });
+                if (typeof hasNext === "boolean") {
+                    [nextBtn, nextBtnTop].forEach((btn) => {
+                        if (btn) btn.disabled = !hasNext;
+                    });
+                } else {
+                    const totalNum = Number(total);
+                    const disabled = Number.isFinite(totalNum)
+                        ? page * pageSize >= totalNum
+                        : true;
+                    [nextBtn, nextBtnTop].forEach((btn) => {
+                        if (btn) btn.disabled = disabled;
+                    });
+                }
+                updateResultCount(total, page, pageSize, itemCount);
+                renderPagerPages(pagerPagesEl, page, pageSize, total, hasNext);
+                renderPagerPages(pagerPagesTopEl, page, pageSize, total, hasNext);
+            }
+
+            function buildCanonicalQuery(state) {
+                const entries = [];
+                if (state.vid) entries.push(["vid", state.vid]);
+                if (state.limit && state.limit !== DEFAULTS.limit)
+                    entries.push(["limit", String(state.limit)]);
+                if (state.page && state.page !== DEFAULTS.page)
+                    entries.push(["page", String(state.page)]);
+                return entries
+                    .map(
+                        ([key, value]) =>
+                            `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+                    )
+                    .join("&");
+            }
+
+            function updateUrl(state) {
+                const query = buildCanonicalQuery(state);
+                const nextUrl = query
+                    ? `${window.location.pathname}?${query}`
+                    : window.location.pathname;
+                window.history.replaceState(null, "", nextUrl);
+            }
+
+            async function loadMatches(pageOverride) {
+                const state = {
+                    vid: currentVid,
+                    limit: currentLimit,
+                    page: clampInt(pageOverride || currentPage, 1, 100000, DEFAULTS.page),
+                };
+                updateUrl(state);
+                setError(matchErrorEl, "");
+                if (typeof window.renderLoadingCards === "function") {
+                    window.renderLoadingCards(matchBody, "\u8aad\u8fbc\u4e2d...");
+                }
+                try {
+                    const url = `${API_BASE}/api/matches?vid=${encodeURIComponent(
+                        state.vid,
+                    )}&sort=start_time&expand=names&limit=${state.limit}&page=${state.page}`;
+                    const payload = await fetchJson(url);
+                    const items = Array.isArray(payload.items) ? payload.items : [];
+                    const totalNum = Number(payload.total);
+                    const total = Number.isFinite(totalNum) ? totalNum : null;
+                    const hasNext =
+                        typeof payload.has_next === "boolean" ? payload.has_next : null;
+                    const rp = Number(payload.page) || state.page;
+                    const rps = Number(payload.limit) || state.limit;
+
+                    renderMatches(items);
+                    updatePager(rp, rps, total, hasNext, items.length);
+                } catch (e) {
+                    setError(matchErrorEl, DB_ERROR_MSG);
+                    renderMatches([]);
+                    updatePager(DEFAULTS.page, state.limit, 0, false, 0);
+                }
+            }
+
+            function parseQuery() {
+                const params = new URLSearchParams(window.location.search);
+                const vid = (params.get("vid") || "").trim();
+                const page = clampInt(params.get("page"), 1, 100000, DEFAULTS.page);
+                const limit = clampInt(params.get("limit"), 1, 200, DEFAULTS.limit);
+                return { vid, page, limit };
+            }
+
+            let currentVid = "";
+            const init = async () => {
+                const state = parseQuery();
+                currentVid = state.vid;
+                currentPage = state.page;
+                currentLimit = state.limit;
+
+                if (!currentVid) {
+                    setError(videoErrorEl, "\u52d5\u753bID\u304c\u6307\u5b9a\u3055\u308c\u3066\u3044\u307e\u305b\u3093\u3002");
+                    applyVideoMeta(videoMeta, "");
+                    updatePager(DEFAULTS.page, currentLimit, 0, false, 0);
+                    return;
+                }
+
+                applyVideoMeta(videoMeta, currentVid);
+                await loadVideoMeta(currentVid);
+                await loadMatches(currentPage);
+            };
+
+            prevBtn.addEventListener("click", () => loadMatches(Math.max(1, currentPage - 1)));
+            nextBtn.addEventListener("click", () => loadMatches(currentPage + 1));
+            if (prevBtnTop) {
+                prevBtnTop.addEventListener("click", () =>
+                    loadMatches(Math.max(1, currentPage - 1)),
+                );
+            }
+            if (nextBtnTop) {
+                nextBtnTop.addEventListener("click", () => loadMatches(currentPage + 1));
+            }
+
+            init();
+        </script>
+    </body>
+</html>
+
+
+
