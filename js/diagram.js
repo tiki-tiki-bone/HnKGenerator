@@ -1,6 +1,6 @@
 ﻿(() => {
     const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
-const IMAGE_BASE = "/images/";
+const IMAGE_BASE = "../images/";
 
     const tableEl = document.getElementById("diagramTable");
     const errorEl = document.getElementById("diagramError");
