@@ -768,6 +768,34 @@
                 .video-thumb-wrap {
                     grid-row: auto;
                 }
+
+                [data-mode-fields="card"] .form-row.duo {
+                    display: grid;
+                    grid-template-columns: 3ch minmax(0, 1fr) minmax(0, 0.6fr);
+                    column-gap: 0.5rem;
+                    row-gap: 0.35rem;
+                    align-items: center;
+                }
+
+                [data-mode-fields="card"] .form-row.duo label {
+                    font-size: 0.85rem;
+                    white-space: nowrap;
+                }
+
+                [data-mode-fields="card"] .form-row.duo label[for="cardChar1"],
+                [data-mode-fields="card"] .form-row.duo label[for="cardChar2"] {
+                    display: none;
+                }
+
+                [data-mode-fields="card"] .form-row.duo > .suggest-field,
+                [data-mode-fields="card"] .form-row.duo > select {
+                    min-width: 0;
+                    width: 100%;
+                }
+
+                [data-mode-fields="card"] .form-row.duo > select {
+                    grid-column: 3;
+                }
             }
 
             /* ====== clean fightlog ====== */
@@ -924,9 +952,17 @@
             }
 
             .db-about-icon {
-                font-size: 1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 1.1em;
+                height: 1.1em;
+                border: 1.5px solid currentColor;
+                border-radius: 50%;
+                font-size: 0.85em;
+                font-weight: 700;
                 line-height: 1;
-                margin-right: 0.05em;
+                margin-right: 0.1em;
             }
         
             </style>
@@ -939,7 +975,7 @@
         <main>
             <div class="db-about-link">
                 <a href="about/">
-                    <span class="db-about-icon" aria-hidden="true">🛈</span>
+                    <span class="db-about-icon" aria-hidden="true">i</span>
                     対戦動画DBについて
                 </a>
             </div>

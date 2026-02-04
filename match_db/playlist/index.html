@@ -235,6 +235,10 @@
             }
 
             @media (max-width: 700px) {
+                #siteHeader {
+                    display: none;
+                }
+
                 h1 {
                     font-size: 18px;
                     margin-bottom: 10px;
@@ -244,7 +248,7 @@
                     border-radius: 0;
                 }
                 body {
-                    height: 100vh;
+                    height: var(--vvh, 100vh);
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
@@ -260,6 +264,9 @@
                     max-height: 100%;
                     overflow: hidden;
                     border-radius: 0;
+                    border: none;
+                    box-shadow: none;
+                    background: transparent;
                 }
 
                 .playlist {
@@ -385,6 +392,8 @@
 
             let player = null;
             let currentIndex = 0;
+            let lastEndHandledAt = 0;
+            const END_GUARD_MS = 800;
 
             function updateList() {
                 if (!playlistItemsEl) return;
@@ -415,8 +424,13 @@
 
             function formatTime(sec) {
                 const s = Math.max(0, Math.trunc(Number(sec) || 0));
+                const h = Math.floor(s / 3600);
                 const m = Math.floor(s / 60);
                 const ss = String(s % 60).padStart(2, "0");
+                if (h > 0) {
+                    const mm = String(m % 60).padStart(2, "0");
+                    return `${h}:${mm}:${ss}`;
+                }
                 return `${m}:${ss}`;
             }
 
@@ -471,6 +485,12 @@
                 loadIndex(currentIndex - 1, true);
             }
 
+            function shouldHandleEnd() {
+                const now = Date.now();
+                if (now - lastEndHandledAt < END_GUARD_MS) return false;
+                lastEndHandledAt = now;
+                return true;
+            }
             function seekRelative(delta) {
                 if (!player || typeof player.getCurrentTime !== "function") return;
                 const now = Number(player.getCurrentTime()) || 0;
@@ -501,6 +521,21 @@
                 if (nextBtn) nextBtn.addEventListener("click", playNext);
             }
 
+            function updateViewportHeight() {
+                const root = document.documentElement;
+                const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                if (!root || !vh) return;
+                root.style.setProperty("--vvh", `${vh}px`);
+            }
+
+            updateViewportHeight();
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener("resize", updateViewportHeight);
+                window.visualViewport.addEventListener("scroll", updateViewportHeight);
+            } else {
+                window.addEventListener("resize", updateViewportHeight);
+            }
+
             window.onYouTubeIframeAPIReady = () => {
                 if (!items.length) return;
                 player = new YT.Player("player", {
@@ -516,6 +551,7 @@
                         onReady: () => loadIndex(0, true),
                         onStateChange: (event) => {
                             if (event.data === YT.PlayerState.ENDED) {
+                                if (!shouldHandleEnd()) return;
                                 playNext();
                             }
                         },
