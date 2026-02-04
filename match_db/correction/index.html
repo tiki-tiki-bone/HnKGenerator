@@ -405,15 +405,20 @@
             }
 
 
+            #correctionForm {
+                --label-col: 64px;
+                --label-col-sub: 52px;
+            }
+
             .form-row {
 
-                display: flex;
+                display: grid;
 
-                gap: 0.8rem;
+                grid-template-columns: var(--label-col, 80px) minmax(0, 1fr);
+
+                column-gap: 0.6rem;
 
                 align-items: center;
-
-                flex-wrap: nowrap;
 
                 margin-bottom: 0.8rem;
 
@@ -425,11 +430,13 @@
 
                 display: grid;
 
-                grid-template-columns: 140px minmax(0, 1fr) 80px minmax(0, 0.6fr);
+                grid-template-columns:
+                    var(--label-col, 80px) minmax(0, 1fr) var(--label-col-sub, 60px)
+                    minmax(0, 0.6fr);
 
                 align-items: center;
 
-                column-gap: 0.8rem;
+                column-gap: 0.6rem;
 
                 row-gap: 0.6rem;
 
@@ -441,11 +448,13 @@
 
                 display: grid;
 
-                grid-template-columns: 140px minmax(0, 1fr) max-content minmax(0, 0.7fr) max-content minmax(0, 0.7fr);
+                grid-template-columns:
+                    var(--label-col, 80px) minmax(0, 1fr) var(--label-col-sub, 60px)
+                    minmax(0, 0.7fr) var(--label-col-sub, 60px) minmax(0, 0.7fr);
 
                 align-items: center;
 
-                column-gap: 0.8rem;
+                column-gap: 0.6rem;
 
                 row-gap: 0.6rem;
 
@@ -454,7 +463,7 @@
 
 
             .form-row label {
-                min-width: 140px;
+                min-width: var(--label-col, 64px);
                 font-weight: 600;
             }
 
@@ -603,18 +612,12 @@
                 }
 
                 .form-row.duo {
-                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr) minmax(0, 40px) minmax(
-                            0,
-                            1fr
-                        );
+                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr) minmax(0, 0.8fr);
                 }
 
                 .form-row.trio {
-                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr) minmax(0, 40px) minmax(
-                            0,
-                            1fr
-                        );
-                    align-items: start;
+                    grid-template-columns: minmax(0, 40px) minmax(0, 1fr);
+                    align-items: center;
                 }
 
                 .form-row label {
@@ -637,6 +640,16 @@
                     width: 100%;
                 }
 
+                label[for="p1CharId"],
+                label[for="p2CharId"] {
+                    display: none;
+                }
+
+                #p1CharId,
+                #p2CharId {
+                    grid-column: 3;
+                }
+
                 .form-row label span {
                     width: 100%;
                 }
@@ -649,11 +662,30 @@
                     justify-self: stretch;
                 }
 
-                .form-row:not(.duo) input,
-                .form-row:not(.duo) select,
+                .form-row textarea {
+                    max-width: none;
+                }
+
                 .form-row:not(.duo) textarea {
+                    max-width: none;
+                }
+
+                .form-row:not(.duo) input,
+                .form-row:not(.duo) select {
                     max-width: calc((100% - 0.5rem - 40px) / 2);
                     justify-self: start;
+                }
+
+                .form-row:not(.duo) textarea {
+                    max-width: none;
+                    justify-self: stretch;
+                }
+
+                .form-row.trio input,
+                .form-row.trio select,
+                .form-row.trio textarea {
+                    max-width: none;
+                    justify-self: stretch;
                 }
 
 
@@ -707,7 +739,7 @@
                         </label>
                         <select id="p2CharId"></select>
                     </div>
-                    <div class="form-row">
+                    <div class="form-row trio">
                         <label for="winner">
                             <span class="label-full">勝敗</span>
                             <span class="label-short">勝敗</span>
@@ -716,18 +748,26 @@
                             <option value="P1">P1</option>
                             <option value="P2">P2</option>
                         </select>
-                    </div>
-                    <div class="form-row duo">
                         <label for="tStart">
                             <span class="label-full">開始</span>
                             <span class="label-short">開始</span>
                         </label>
-                        <input id="tStart" type="text" pattern="\d{2}:\d{2}(:\d{2})?" title="hh:mm:ss または mm:ss" />
+                        <input
+                            id="tStart"
+                            type="text"
+                            pattern="\\d{2}:\\d{2}(:\\d{2})?"
+                            title="hh:mm:ss または mm:ss"
+                        />
                         <label for="tEnd">
                             <span class="label-full">終了</span>
                             <span class="label-short">終了</span>
                         </label>
-                        <input id="tEnd" type="text" pattern="\d{2}:\d{2}(:\d{2})?" title="hh:mm:ss または mm:ss" />
+                        <input
+                            id="tEnd"
+                            type="text"
+                            pattern="\\d{2}:\\d{2}(:\\d{2})?"
+                            title="hh:mm:ss または mm:ss"
+                        />
                     </div>
                     <div class="form-row">
                         <label for="reason">
