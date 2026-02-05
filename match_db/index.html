@@ -2559,18 +2559,6 @@
                         return;
                     }
 
-                    if (scrollToResults) {
-                        const resultTarget = resultTitleEl
-                            ? resultTitleEl.closest("section") || resultTitleEl
-                            : null;
-                        if (resultTarget) {
-                            resultTarget.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start",
-                            });
-                        }
-                    }
-
                     const listMode = getListMode(state);
                     syncResultBodies(listMode);
                     updateResultTitle(state);
@@ -2592,7 +2580,7 @@
                                 videoBody.innerHTML = "";
                                 const loading = document.createElement("div");
                                 loading.className = "empty-state";
-                                loading.textContent = "\u8aad\u8fbc\u4e2d...";
+                                loading.textContent = "読み込み中...";
                                 videoBody.appendChild(loading);
                             }
                             const url = `${API_BASE}/api/videos?${buildVideoQuery(state)}`;
@@ -2613,7 +2601,7 @@
                             updatePager(rp, rps, total, hasNext, items.length);
                         } else {
                             if (typeof window.renderLoadingCards === "function") {
-                                window.renderLoadingCards(matchBody, "\u8aad\u8fbc\u4e2d...");
+                                window.renderLoadingCards(matchBody, "読み込み中...");
                             }
                             const url = `${API_BASE}/api/matches?${buildMatchQuery(state)}`;
                             const res = await fetch(url);
@@ -2646,6 +2634,20 @@
                             requestAnimationFrame(() =>
                                 window.scrollTo(scrollPos.x, scrollPos.y),
                             );
+                        } else if (scrollToResults) {
+                            const resultTarget = resultTitleEl
+                                ? resultTitleEl.closest("section") || resultTitleEl
+                                : null;
+                            if (resultTarget) {
+                                const targetTop =
+                                    resultTarget.getBoundingClientRect().top + window.scrollY;
+                                requestAnimationFrame(() =>
+                                    window.scrollTo({
+                                        top: Math.max(0, Math.round(targetTop)),
+                                        behavior: "smooth",
+                                    }),
+                                );
+                            }
                         }
                     }
                 }

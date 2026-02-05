@@ -96,7 +96,7 @@ function renderCorrectionLoading() {
     overlay.setAttribute("aria-live", "polite");
     overlay.innerHTML =
         '<span class="loading-spinner" aria-hidden="true"></span>' +
-        '<span class="loading-text">\u8aad\u8fbc\u4e2d...</span>';
+        '<span class="loading-text">読み込み中...</span>';
     correctionForm.appendChild(overlay);
 }
 

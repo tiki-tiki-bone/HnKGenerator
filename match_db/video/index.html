@@ -951,7 +951,7 @@
                 updateUrl(state);
                 setError(matchErrorEl, "");
                 if (typeof window.renderLoadingCards === "function") {
-                    window.renderLoadingCards(matchBody, "\u8aad\u8fbc\u4e2d...");
+                    window.renderLoadingCards(matchBody, "読み込み中...");
                 }
                 try {
                     const url = `${API_BASE}/api/matches?vid=${encodeURIComponent(

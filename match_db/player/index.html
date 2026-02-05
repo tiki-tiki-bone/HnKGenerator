@@ -1133,6 +1133,10 @@
                     padding: 0.45rem 0.6rem;
                 }
 
+                .stat-card.has-rank {
+                    padding-right: 2.2rem;
+                }
+
 
                 .stat-title {
 
@@ -2412,6 +2416,7 @@ const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.d
 
                     }
                     if (card.rank) {
+                        el.classList.add("has-rank");
                         const rankEl = document.createElement("div");
                         rankEl.className = "stat-rank";
                         rankEl.textContent = `${card.rank}位`;

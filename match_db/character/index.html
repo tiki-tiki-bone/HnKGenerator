@@ -2664,7 +2664,7 @@
 
                 if (!charId) {
 
-                    setError("character/?c=<char_id> \u3092\u6307\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044\u3002");
+                    setError("character/?c=<char_id> を指定してください。");
 
                     return;
 
@@ -2675,7 +2675,7 @@
                 currentCharId = charId;
                 if (charNameEl) {
                     charNameEl.innerHTML =
-                        '<span class="loading-inline"><span class="loading-spinner" aria-hidden="true"></span><span>隱ｭ縺ｿ霎ｼ縺ｿ荳ｭ...</span></span>';
+                        '<span class="loading-inline"><span class="loading-spinner" aria-hidden="true"></span><span>読み込み中...</span></span>';
                 }
 
                 if (profileCardEl) {

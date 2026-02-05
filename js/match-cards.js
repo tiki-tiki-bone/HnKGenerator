@@ -341,7 +341,7 @@
         card.className = "match-card loading";
         card.setAttribute("role", "status");
         card.setAttribute("aria-live", "polite");
-        const text = message || "\u8AAD\u8FBC\u4E2D...";
+        const text = message || "読み込み中...";
         card.innerHTML =
             '<span class="loading-spinner" aria-hidden="true"></span>' +
             `<span class="loading-text">${text}</span>`;
