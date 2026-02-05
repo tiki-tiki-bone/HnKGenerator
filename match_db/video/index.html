@@ -523,6 +523,7 @@
                 const target = new URL("../", window.location.href);
                 target.searchParams.set("mode", "card");
                 target.searchParams.set("vid", cleanId);
+                target.searchParams.set("scroll", "form");
                 matchSearchBtn.disabled = false;
                 matchSearchBtn.dataset.href = target.toString();
             }

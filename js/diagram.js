@@ -15,7 +15,7 @@ const IMAGE_BASE = "../images/";
     const noteStale = bodyData.noteStale || "";
     const noteUpdatedPrefix = bodyData.noteUpdatedPrefix || "";
     const noteUpdatedSuffix = bodyData.noteUpdatedSuffix || "";
-    const totalLabel = bodyData.totalLabel || "Total";
+    const totalLabel = (bodyData.totalLabel || "").trim();
     const unknownKeys = new Set(
         String(bodyData.unknownKeys || "unknown,0")
             .split(",")

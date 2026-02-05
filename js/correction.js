@@ -14,7 +14,7 @@ if (menuToggle && navMenu) {
 }
 
 const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
-const IMAGE_BASE = "/images/";
+const IMAGE_BASE = "../images/";
 const IS_MOBILE = window.matchMedia("(max-width: 600px)").matches;
 const DATE_PREFIX = "\u6295\u7a3f\u65e5\uff1a";
 const DB_ERROR_MSG = "DB\u3078\u306e\u554f\u3044\u5408\u308f\u305b\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002\u7ba1\u7406\u8005\u306b\u304a\u554f\u3044\u5408\u308f\u305b\u304f\u3060\u3055\u3044\u3002";

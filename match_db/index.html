@@ -771,7 +771,7 @@
 
                 [data-mode-fields="card"] .form-row.duo {
                     display: grid;
-                    grid-template-columns: 3ch minmax(0, 1fr) minmax(0, 0.6fr);
+                    grid-template-columns: 3ch minmax(0, 0.9fr) minmax(0, 0.7fr);
                     column-gap: 0.5rem;
                     row-gap: 0.35rem;
                     align-items: center;
@@ -1393,7 +1393,6 @@
                         inputEl.value = "";
                         if (typeof onClear === "function") onClear();
                         inputEl.dispatchEvent(new Event("input", { bubbles: true }));
-                        inputEl.focus();
                     });
                     inputEl.addEventListener("input", () => toggleClearButton(inputEl));
                     toggleClearButton(inputEl);
@@ -2492,9 +2491,41 @@
                     }
                     refreshClearButtons();
                 }
+
+                function getScrollPreference() {
+                    const params = new URLSearchParams(window.location.search);
+                    const raw = String(params.get("scroll") || "")
+                        .trim()
+                        .toLowerCase();
+                    const hasQuery = Array.from(params.keys()).some((key) => key !== "scroll");
+                    return { raw, hasQuery };
+                }
+
+                function applyScrollPreference(pref) {
+                    if (!pref) return;
+                    const searchTarget = searchPanelEl
+                        ? searchPanelEl.closest("section") || searchPanelEl
+                        : null;
+                    const resultTarget = resultTitleEl
+                        ? resultTitleEl.closest("section") || resultTitleEl
+                        : null;
+                    if (pref.raw === "form") {
+                        if (searchTarget) {
+                            searchTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                        return;
+                    }
+                    if (pref.raw === "results" || (!pref.raw && pref.hasQuery)) {
+                        if (resultTarget) {
+                            resultTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                    }
+                }
+
                 async function doSearch(pageOverride, options = {}) {
                     const allowEmpty = Boolean(options.allowEmpty);
                     const preserveScroll = Boolean(options.preserveScroll);
+                    const scrollToResults = Boolean(options.scrollToResults);
                     const scrollPos = preserveScroll
                         ? { x: window.scrollX || 0, y: window.scrollY || 0 }
                         : null;
@@ -2526,6 +2557,18 @@
                     if (isEmptyVideoSearch && !allowEmpty) {
                         searchBtn.disabled = false;
                         return;
+                    }
+
+                    if (scrollToResults) {
+                        const resultTarget = resultTitleEl
+                            ? resultTitleEl.closest("section") || resultTitleEl
+                            : null;
+                        if (resultTarget) {
+                            resultTarget.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                            });
+                        }
                     }
 
                     const listMode = getListMode(state);
@@ -2643,7 +2686,9 @@
                     });
                 });
 
-                searchBtn.addEventListener("click", () => doSearch(DEFAULTS.page));
+                searchBtn.addEventListener("click", () =>
+                    doSearch(DEFAULTS.page, { scrollToResults: true }),
+                );
                 prevBtn.addEventListener("click", () =>
                     doSearch(Math.max(1, lastPage - 1), {
                         allowEmpty: lastListMode === MODE.VIDEO,
@@ -2742,6 +2787,7 @@
 
                 const init = async () => {
                     const state = parseQuery();
+                    const scrollPref = getScrollPreference();
                     await Promise.all([loadCharacters(), loadLocates()]);
                     applyState(state);
                     if (state.p) {
@@ -2758,6 +2804,7 @@
                     setStatsVisibility(state);
                     updatePager(DEFAULTS.page, state.limit || DEFAULTS.limit, 0, false, 0);
                     await doSearch(state.page, { allowEmpty: true });
+                    applyScrollPreference(scrollPref);
                 };
 
                 init();

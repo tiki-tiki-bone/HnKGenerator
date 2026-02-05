@@ -1236,63 +1236,65 @@
 
             <section>
 
-                <h2>得意/苦手キャラ</h2>
+                <h2>勝率が高いキャラ</h2>
 
-                <div class="grid-2">
+                <div class="panel">
 
-                    <div class="panel">
+                    <div class="table-wrap">
 
-                        <div class="table-wrap">
+                        <table aria-label="勝率が高いキャラ" class="char-usage-table">
 
-                            <table aria-label="得意キャラ" class="char-usage-table">
+                            <thead>
 
-                                <thead>
+                                <tr>
 
-                                    <tr>
+                                    <th class="icon-col">キャラ</th>
 
-                                        <th class="icon-col">キャラ</th>
+                                    <th class="num">勝率</th>
 
-                                        <th class="num">勝率</th>
+                                    <th class="num">対戦数</th>
 
-                                        <th class="num">対戦数</th>
+                                </tr>
 
-                                    </tr>
+                            </thead>
 
-                                </thead>
+                            <tbody id="strongBody"></tbody>
 
-                                <tbody id="strongBody"></tbody>
-
-                            </table>
-
-                        </div>
+                        </table>
 
                     </div>
 
-                    <div class="panel">
+                </div>
 
-                        <div class="table-wrap">
+            </section>
 
-                            <table aria-label="苦手キャラ" class="char-usage-table">
+            <section>
 
-                                <thead>
+                <h2>勝率が低いキャラ</h2>
 
-                                    <tr>
+                <div class="panel">
 
-                                        <th class="icon-col">キャラ</th>
+                    <div class="table-wrap">
 
-                                        <th class="num">勝率</th>
+                        <table aria-label="勝率が低いキャラ" class="char-usage-table">
 
-                                        <th class="num">対戦数</th>
+                            <thead>
 
-                                    </tr>
+                                <tr>
 
-                                </thead>
+                                    <th class="icon-col">キャラ</th>
 
-                                <tbody id="weakBody"></tbody>
+                                    <th class="num">勝率</th>
 
-                            </table>
+                                    <th class="num">対戦数</th>
 
-                        </div>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="weakBody"></tbody>
+
+                        </table>
 
                     </div>
 
@@ -2107,9 +2109,9 @@
 
                 const sorted = [...opponents].sort((a, b) => (b.winRate || 0) - (a.winRate || 0));
 
-                const strong = sorted.slice(0, 5);
+                const strong = sorted.slice(0, 3);
 
-                const weak = [...sorted].reverse().slice(0, 5);
+                const weak = [...sorted].reverse().slice(0, 3);
 
                 const ids = new Set();
 

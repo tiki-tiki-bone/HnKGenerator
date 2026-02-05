@@ -188,7 +188,7 @@
             }
 
             .playlist {
-                margin-top: 0.7rem;
+                margin-top: 0.35rem;
                 border-top: 1px solid var(--line);
                 padding-top: 1rem;
             }
@@ -406,10 +406,14 @@
                         item.end != null ? `-${formatTime(item.end)}` : ""
                     })`;
                     li.tabIndex = 0;
-                    li.addEventListener("click", () => loadIndex(idx, true));
+                    li.addEventListener("click", () => {
+                        if (idx === currentIndex) return;
+                        loadIndex(idx, true);
+                    });
                     li.addEventListener("keydown", (event) => {
                         if (event.key === "Enter" || event.key === " ") {
                             event.preventDefault();
+                            if (idx === currentIndex) return;
                             loadIndex(idx, true);
                         }
                     });

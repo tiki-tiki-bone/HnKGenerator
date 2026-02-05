@@ -47,6 +47,14 @@
             typeof window !== "undefined" &&
             window.matchMedia &&
             window.matchMedia("(max-width: 600px)").matches;
+        const openCardUrl = (url) => {
+            if (!url) return;
+            if (isMobile) {
+                window.location.href = url;
+            } else {
+                window.open(url, "_blank", "noopener");
+            }
+        };
 
         const videoIds = [];
         for (const it of items) {
@@ -61,12 +69,12 @@
                 card.tabIndex = 0;
                 card.addEventListener("click", (e) => {
                     if (isInteractiveTarget(e.target)) return;
-                    window.open(cardUrl, "_blank", "noopener");
+                    openCardUrl(cardUrl);
                 });
                 card.addEventListener("keydown", (e) => {
                     if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
-                        window.open(cardUrl, "_blank", "noopener");
+                        openCardUrl(cardUrl);
                     }
                 });
             }
@@ -221,13 +229,26 @@
                         centerTime.appendChild(endLink);
                     }
                     if (duration) {
+                        if (isMobile) {
+                            centerTime.appendChild(document.createElement("br"));
+                        }
                         const dur = document.createElement("span");
                         dur.className = "match-time-duration";
-                        dur.textContent = ` (${duration})`;
+                        dur.textContent = isMobile ? `(${duration})` : ` (${duration})`;
                         centerTime.appendChild(dur);
                     }
                 } else {
-                    centerTime.textContent = rangeText;
+                    if (isMobile && range && duration) {
+                        centerTime.textContent = "";
+                        centerTime.appendChild(document.createTextNode(range));
+                        centerTime.appendChild(document.createElement("br"));
+                        const dur = document.createElement("span");
+                        dur.className = "match-time-duration";
+                        dur.textContent = `(${duration})`;
+                        centerTime.appendChild(dur);
+                    } else {
+                        centerTime.textContent = rangeText;
+                    }
                 }
             }
 
