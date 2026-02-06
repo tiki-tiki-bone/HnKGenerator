@@ -1361,6 +1361,54 @@
                     return extractVideoId(value) || value;
                 }
 
+                function toHiragana(value) {
+                    return String(value || "").replace(/[\u30a1-\u30f6]/g, (ch) =>
+                        String.fromCharCode(ch.charCodeAt(0) - 0x60),
+                    );
+                }
+
+                function toKatakana(value) {
+                    return String(value || "").replace(/[\u3041-\u3096]/g, (ch) =>
+                        String.fromCharCode(ch.charCodeAt(0) + 0x60),
+                    );
+                }
+
+                function normalizeKana(value) {
+                    return toHiragana(value).toLowerCase();
+                }
+
+                function fetchPlayerSuggestions(query, limit = 20) {
+                    const raw = String(query || "").trim();
+                    if (!raw) return Promise.resolve([]);
+                    const queries = Array.from(new Set([raw, toHiragana(raw), toKatakana(raw)]));
+                    return Promise.all(
+                        queries.map(async (q) => {
+                            try {
+                                const url = `${API_BASE}/api/players?q=${encodeURIComponent(q)}&limit=${limit}`;
+                                const res = await fetch(url);
+                                if (!res.ok) return [];
+                                const data = await res.json();
+                                return Array.isArray(data.items) ? data.items : [];
+                            } catch {
+                                return [];
+                            }
+                        }),
+                    ).then((groups) => {
+                        const merged = [];
+                        const seen = new Set();
+                        for (const group of groups) {
+                            for (const item of group) {
+                                const id = String(item.player_id ?? "").trim();
+                                const key = id || JSON.stringify(item);
+                                if (!key || seen.has(key)) continue;
+                                seen.add(key);
+                                merged.push(item);
+                            }
+                        }
+                        return merged;
+                    });
+                }
+
                 function toggleClearButton(inputEl) {
                     if (!inputEl) return;
                     const field = inputEl.closest(".suggest-field");
@@ -1443,18 +1491,17 @@
                     if (!raw) return "";
                     if (isNumericId(raw)) return raw;
                     try {
-                        const url = `${API_BASE}/api/players?q=${encodeURIComponent(raw)}&limit=5`;
-                        const res = await fetch(url);
-                        if (!res.ok) return "";
-                        const data = await res.json();
-                        const items = Array.isArray(data.items) ? data.items : [];
+                        const items = await fetchPlayerSuggestions(raw, 20);
                         const lower = raw.toLowerCase();
+                        const kana = normalizeKana(raw);
                         const exact =
                             items.find((it) => String(it.player_id) === raw) ||
                             items.find(
                                 (it) =>
                                     String(it.canonical_name || "").toLowerCase() === lower ||
-                                    String(it.display_name || "").toLowerCase() === lower,
+                                    String(it.display_name || "").toLowerCase() === lower ||
+                                    normalizeKana(it.canonical_name || "") === kana ||
+                                    normalizeKana(it.display_name || "") === kana,
                             );
                         if (!exact) return "";
                         const id = String(exact.player_id || "").trim();
@@ -2379,13 +2426,21 @@
                         pending += 1;
                         const currentPending = pending;
                         try {
-                            const url = `${API_BASE}/api/players?q=${encodeURIComponent(value)}&limit=20`;
-                            const res = await fetch(url);
-                            if (!res.ok) return;
-                            const data = await res.json();
                             if (currentPending !== pending) return;
-                            const items = Array.isArray(data.items) ? data.items : [];
-                            renderList(items);
+                            const items = await fetchPlayerSuggestions(value, 20);
+                            if (currentPending !== pending) return;
+                            const needle = normalizeKana(value);
+                            const filtered = items.filter((it) => {
+                                const id = String(it.player_id || "").toLowerCase();
+                                const canonical = normalizeKana(it.canonical_name || "");
+                                const display = normalizeKana(it.display_name || "");
+                                return (
+                                    id.includes(value.toLowerCase()) ||
+                                    canonical.includes(needle) ||
+                                    display.includes(needle)
+                                );
+                            });
+                            renderList(filtered);
                         } catch {
                             closeSuggestions(listEl);
                         }

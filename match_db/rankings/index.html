@@ -159,6 +159,25 @@
                 color: var(--muted);
             }
 
+            .note-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.6rem;
+                margin: 0 0 0.6rem;
+            }
+
+            .note-row .note {
+                margin: 0;
+            }
+
+            .ranking-info-link {
+                flex: 0 0 auto;
+                font-size: calc(0.85rem + 2px);
+                line-height: 1;
+                text-decoration: none;
+            }
+
             .error {
                 margin-top: 0.6rem;
                 color: #b00020;
@@ -551,7 +570,15 @@
             <section>
                 <h2>勝率ランキング</h2>
                 <div class="panel">
-                    <p class="note" id="statsNote"></p>
+                    <div class="note-row">
+                        <p class="note" id="statsNote"></p>
+                        <a
+                            class="ranking-info-link"
+                            href="about/#qa1"
+                            aria-label="記載の情報について"
+                            >⚠</a
+                        >
+                    </div>
                     <div class="tab-bar" role="tablist" aria-label="勝率ランキングの切り替え">
                         <button
                             class="tab-btn is-active"
