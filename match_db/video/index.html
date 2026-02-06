@@ -137,6 +137,17 @@
                 white-space: nowrap;
             }
 
+            .result-title-wrap {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.6rem;
+                flex-wrap: wrap;
+            }
+
+            .result-action {
+                white-space: nowrap;
+            }
+
             .video-profile {
                 background: #ffffff;
                 border: 1px solid var(--line);
@@ -246,6 +257,11 @@
                 border-radius: 6px;
                 cursor: pointer;
                 font-weight: 700;
+            }
+
+            button.secondary.small {
+                padding: 0.35rem 0.75rem;
+                font-size: 0.9rem;
             }
 
             .pager button.secondary {
@@ -386,8 +402,13 @@
 
             <section>
                 <h2>
-                    <span>試合一覧</span>
-                    <span id="resultCount" class="section-meta"></span>
+                    <span class="result-title-wrap">
+                        <span>試合一覧</span>
+                        <span id="resultCount" class="section-meta"></span>
+                    </span>
+                    <button id="playSeqBtn" class="secondary small result-action" type="button" disabled>
+                        連続再生
+                    </button>
                 </h2>
                 <div class="pager pager-top">
                     <button id="prevBtnTop" class="secondary" type="button">前へ</button>
@@ -427,6 +448,7 @@
             const channelIconEl = document.getElementById("channelIcon");
             const channelLinkEl = document.getElementById("channelLink");
             const matchSearchBtn = document.getElementById("matchSearchBtn");
+            const playSeqBtn = document.getElementById("playSeqBtn");
             const videoErrorEl = document.getElementById("videoError");
             const matchErrorEl = document.getElementById("matchError");
             const matchBody = document.getElementById("matchBody");
@@ -450,6 +472,7 @@
                 channelUrl: "",
                 locate: "",
             };
+            let lastMatchItems = [];
 
             function getYoutubeThumbnailUrl(videoId) {
                 const clean = String(videoId || "").trim();
@@ -512,6 +535,13 @@
                     if (href) window.location.href = href;
                 });
             }
+            if (playSeqBtn) {
+                playSeqBtn.addEventListener("click", () => {
+                    const href = playSeqBtn.dataset.href || "";
+                    if (!href) return;
+                    window.location.href = href;
+                });
+            }
 
             function updateMatchSearchBtn(videoId) {
                 if (!matchSearchBtn) return;
@@ -527,6 +557,36 @@
                 target.searchParams.set("scroll", "form");
                 matchSearchBtn.disabled = false;
                 matchSearchBtn.dataset.href = target.toString();
+            }
+
+            function buildSequenceUrl(items) {
+                const params = new URLSearchParams();
+                for (const row of items) {
+                    const vid = String(row.videoId || "").trim();
+                    if (!vid) continue;
+                    const start = Math.max(0, Math.trunc(Number(row.tStart) || 0));
+                    const endNum = Number(row.tEnd);
+                    const end = Number.isFinite(endNum) ? Math.max(0, Math.trunc(endNum)) : "";
+                    const p1Name = resolvePlayerName(row.p1Name, row.p1Id);
+                    const p2Name = resolvePlayerName(row.p2Name, row.p2Id);
+                    const p1Char = String(row.p1Char || row.p1CharId || "").trim();
+                    const p2Char = String(row.p2Char || row.p2CharId || "").trim();
+                    const left = p1Char ? `${p1Name}(${p1Char})` : p1Name;
+                    const right = p2Char ? `${p2Name}(${p2Char})` : p2Name;
+                    const label = [left, right].filter(Boolean).join(" vs ");
+                    let entry = `${encodeURIComponent(vid)}@${start}${end !== "" ? `:${end}` : ""}`;
+                    if (label) entry += `~${encodeURIComponent(label)}`;
+                    params.append("item", entry);
+                }
+                const query = params.toString();
+                return query ? `playlist/?${query}` : "";
+            }
+
+            function updateSequenceButton(items) {
+                if (!playSeqBtn) return;
+                const href = buildSequenceUrl(items || []);
+                playSeqBtn.dataset.href = href;
+                playSeqBtn.disabled = !href;
             }
 
             function applyVideoMeta(meta, videoId) {
@@ -967,11 +1027,15 @@
                     const rp = Number(payload.page) || state.page;
                     const rps = Number(payload.limit) || state.limit;
 
+                    lastMatchItems = items.map(normalizeMatch);
                     renderMatches(items);
+                    updateSequenceButton(lastMatchItems);
                     updatePager(rp, rps, total, hasNext, items.length);
                 } catch (e) {
                     setError(matchErrorEl, DB_ERROR_MSG);
+                    lastMatchItems = [];
                     renderMatches([]);
+                    updateSequenceButton(lastMatchItems);
                     updatePager(DEFAULTS.page, state.limit, 0, false, 0);
                 }
             }
@@ -994,6 +1058,7 @@
                 if (!currentVid) {
                     setError(videoErrorEl, "\u52d5\u753bID\u304c\u6307\u5b9a\u3055\u308c\u3066\u3044\u307e\u305b\u3093\u3002");
                     applyVideoMeta(videoMeta, "");
+                    updateSequenceButton([]);
                     updatePager(DEFAULTS.page, currentLimit, 0, false, 0);
                     return;
                 }
