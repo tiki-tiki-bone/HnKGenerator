@@ -1,0 +1,1922 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <base href="../" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>北斗の拳 対戦動画DB - 訂正提案レビュー</title>
+        <link rel="stylesheet" href="../css/match-cards.css" />
+        <style>
+            :root {
+                --ink: #222;
+                --muted: #6b6b6b;
+                --line: #d6d6d6;
+                --card: #ffffff;
+                --surface: #f7f7f7;
+                --accent: #ffb347;
+                --danger: #b52f2f;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: sans-serif;
+                color: var(--ink);
+                background-color: #f3f3f3;
+                margin: 0;
+                padding: 0;
+            }
+
+            header {
+                background-color: #333;
+                color: #ffffff;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            #navMenu {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            #navMenu a {
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                transition:
+                    background-color 0.3s ease,
+                    border-color 0.3s ease,
+                    color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            #navMenu a:hover,
+            #navMenu a:focus {
+                background-color: var(--accent);
+                color: #333;
+                border-color: var(--accent);
+                outline: none;
+            }
+
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: #ffffff;
+                border-radius: 2px;
+            }
+
+            main {
+                max-width: 1100px;
+                margin: 2rem auto;
+                padding: 1rem;
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            section {
+                margin-bottom: 1.6rem;
+            }
+
+            h2 {
+                border: none;
+                background: var(--surface);
+                padding: 0.45rem 0.8rem;
+                border-left: 6px solid var(--accent);
+                border-radius: 6px;
+                font-size: 1.05rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.8rem;
+            }
+
+            .section-meta {
+                color: var(--muted);
+                font-size: 0.85rem;
+                letter-spacing: 0.02em;
+                background: var(--surface);
+                border-radius: 4px;
+                padding: 0.15rem 0.4rem;
+            }
+
+            .panel {
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 1rem;
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.7rem;
+                align-items: end;
+            }
+
+            .form-row {
+                display: flex;
+                flex-direction: column;
+                gap: 0.35rem;
+            }
+
+            .form-row label {
+                color: var(--muted);
+                font-size: 0.85rem;
+            }
+
+            input,
+            select,
+            textarea,
+            button {
+                font: inherit;
+            }
+
+            input,
+            select,
+            textarea {
+                border: 1px solid #cfd3da;
+                border-radius: 6px;
+                padding: 0.55rem 0.7rem;
+                background: #fff;
+            }
+
+            textarea {
+                min-height: 90px;
+                resize: vertical;
+            }
+
+            .actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                align-items: center;
+            }
+
+            button.primary,
+            button.secondary,
+            button.warn,
+            button.danger {
+                background: #fff;
+                border: 1px solid #aaa;
+                border-radius: 6px;
+                padding: 0.55rem 1rem;
+                font-weight: 700;
+                cursor: pointer;
+                color: #333;
+            }
+
+            button.primary {
+                background: #333;
+                color: #fff;
+                border-color: #333;
+            }
+
+            button.danger {
+                color: var(--danger);
+                border-color: #d59b9b;
+            }
+
+            button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+                border: 1px solid var(--line);
+                border-radius: 8px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 920px;
+                background: #fff;
+            }
+
+            th,
+            td {
+                border-bottom: 1px solid var(--line);
+                padding: 0.55rem 0.6rem;
+                text-align: left;
+                vertical-align: top;
+                font-size: 0.92rem;
+                white-space: nowrap;
+            }
+
+            thead th {
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                background: #333;
+                color: #fff;
+                font-weight: 700;
+            }
+
+            tbody tr {
+                cursor: pointer;
+            }
+
+            tbody tr:hover {
+                background: #f6f6f6;
+            }
+
+            tbody tr.selected {
+                background: #ececec;
+            }
+
+            .detail-box {
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 0.8rem;
+                background: #fff;
+            }
+
+            .detail-box h3 {
+                margin: 0 0 0.6rem;
+                font-size: 0.98rem;
+            }
+
+            dl {
+                margin: 0;
+                display: grid;
+                grid-template-columns: max-content minmax(0, 1fr);
+                gap: 0.35rem 0.6rem;
+            }
+
+            dt {
+                color: var(--muted);
+                font-size: 0.85rem;
+            }
+
+            dd {
+                margin: 0;
+                word-break: break-word;
+            }
+
+            dt.is-diff,
+            dd.is-diff {
+                color: #8a1f1f;
+                font-weight: 700;
+            }
+
+            .detail-cards-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .compare-cards.match-cards {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            .diff-summary {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.45rem;
+                margin-bottom: 1rem;
+                min-height: 1.2rem;
+            }
+
+            .diff-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                background: #fff4f4;
+                border: 1px solid #f1bbbb;
+                color: #8a1f1f;
+                border-radius: 999px;
+                font-size: 0.82rem;
+                padding: 0.18rem 0.55rem;
+                font-weight: 700;
+            }
+
+            .review-panel {
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 0.8rem;
+            }
+
+            .apply-form {
+                display: grid;
+                gap: 0.8rem;
+            }
+
+            .apply-row {
+                display: grid;
+                grid-template-columns: 120px minmax(0, 1fr);
+                align-items: center;
+                gap: 0.55rem 0.9rem;
+            }
+
+            .apply-row.duo {
+                grid-template-columns: 70px minmax(0, 1fr) 70px minmax(0, 260px);
+            }
+
+            .apply-row.trio {
+                grid-template-columns: 70px minmax(0, 1fr) 70px minmax(0, 1fr);
+            }
+
+            .apply-row label {
+                font-weight: 700;
+                font-size: 0.96rem;
+            }
+
+            .apply-row input,
+            .apply-row select,
+            .apply-row textarea {
+                width: 100%;
+            }
+
+            .apply-row textarea {
+                min-height: 72px;
+            }
+
+            .apply-row input.is-diff,
+            .apply-row select.is-diff {
+                border-color: #d48c8c;
+                background: #fff7f7;
+            }
+
+            .player-resolve-row {
+                grid-template-columns: 70px minmax(0, 1fr);
+                align-items: start;
+            }
+
+            .player-resolve-wrap {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0.45rem;
+                background: #f8f8f8;
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                padding: 0.55rem;
+            }
+
+            .player-resolve-wrap[hidden] {
+                display: none;
+            }
+
+            .player-resolve-wrap .muted {
+                font-size: 0.82rem;
+                line-height: 1.35;
+            }
+
+            .status {
+                margin-top: 0.5rem;
+                color: #1f4f1f;
+                min-height: 1.25rem;
+            }
+
+            .error {
+                margin-top: 0.5rem;
+                color: #8a1f1f;
+                background: #ffecec;
+                border: 1px solid #f1bbbb;
+                border-radius: 6px;
+                padding: 0.5rem 0.7rem;
+                display: none;
+            }
+
+            .muted {
+                color: var(--muted);
+            }
+
+            @media (max-width: 900px) {
+                .form-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .detail-cards-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .apply-row.duo {
+                    grid-template-columns: 70px minmax(0, 1fr);
+                }
+
+                .apply-row.trio {
+                    grid-template-columns: 70px minmax(0, 1fr);
+                }
+            }
+
+            @media (max-width: 600px) {
+                #navMenu {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none;
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+
+                #navMenu a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.1rem;
+                }
+
+                #navMenu.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+
+                main {
+                    margin: 0.8rem;
+                    padding: 0.8rem;
+                }
+
+                .form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .apply-row,
+                .apply-row.duo,
+                .apply-row.trio {
+                    grid-template-columns: 70px minmax(0, 1fr);
+                }
+            }
+        </style>
+        <script src="../js/site-header.js" defer data-site-header></script>
+    </head>
+    <body>
+        <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
+        <main>
+            <section>
+                <h2>訂正提案レビュー管理</h2>
+                <div class="panel">
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <label for="adminKey">管理キー（x-admin-key）</label>
+                            <input id="adminKey" type="password" autocomplete="off" />
+                        </div>
+                        <div class="form-row">
+                            <label for="adminIdHeader">管理者ID（x-admin-id、任意）</label>
+                            <input id="adminIdHeader" type="text" autocomplete="off" />
+                        </div>
+                        <div class="form-row">
+                            <label>&nbsp;</label>
+                            <div class="actions">
+                                <button id="authBtn" type="button" class="primary">認証して表示</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="authStatus" class="status"></div>
+                    <div id="authError" class="error"></div>
+                </div>
+            </section>
+
+            <section id="listSection" hidden>
+                <h2>
+                    <span>提案一覧</span>
+                    <span id="listMeta" class="section-meta">0件</span>
+                </h2>
+                <div class="panel">
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <label for="statusFilter">status</label>
+                            <select id="statusFilter">
+                                <option value="pending">pending</option>
+                                <option value="approved">approved</option>
+                                <option value="rejected">rejected</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label for="matchIdFilter">match_id</label>
+                            <input id="matchIdFilter" type="text" inputmode="numeric" />
+                        </div>
+                        <div class="form-row">
+                            <label for="correctionIdFilter">correction_id</label>
+                            <input id="correctionIdFilter" type="text" inputmode="numeric" />
+                        </div>
+                        <div class="form-row">
+                            <label>&nbsp;</label>
+                            <div class="actions">
+                                <button id="searchBtn" type="button" class="primary">再取得</button>
+                                <button id="clearBtn" type="button" class="secondary">クリア</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="listError" class="error"></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>correction_id</th>
+                                    <th>match_id</th>
+                                    <th>start_sec</th>
+                                    <th>end_sec</th>
+                                    <th>p1_player</th>
+                                    <th>p2_player</th>
+                                    <th>p1_char</th>
+                                    <th>p2_char</th>
+                                    <th>winner</th>
+                                    <th>reason</th>
+                                    <th>status</th>
+                                    <th>reviewed_at</th>
+                                    <th>reviewed_by</th>
+                                    <th>review_note</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="detailSection" hidden>
+                <h2>詳細</h2>
+                <div class="panel">
+                    <div id="detailHint" class="muted">一覧の行を選択してください。</div>
+                    <div id="detailArea" hidden>
+                        <div class="detail-cards-grid">
+                            <div class="detail-box">
+                                <h3>現在の試合データ</h3>
+                                <div id="currentMatchCard" class="match-cards compare-cards"></div>
+                            </div>
+                            <div class="detail-box">
+                                <h3>訂正提案データ</h3>
+                                <div id="proposedMatchCard" class="match-cards compare-cards"></div>
+                            </div>
+                        </div>
+                        <div id="diffSummary" class="diff-summary muted"></div>
+                        <div class="review-panel">
+                            <form id="applyForm" class="apply-form">
+                                <div class="apply-row duo">
+                                    <label for="applyP1Player">P1</label>
+                                    <input id="applyP1Player" type="text" autocomplete="off" />
+                                    <label for="applyP1Char">キャラ</label>
+                                    <select id="applyP1Char"></select>
+                                </div>
+                                <div class="apply-row player-resolve-row">
+                                    <label>&nbsp;</label>
+                                    <div id="applyP1ResolveWrap" class="player-resolve-wrap" hidden>
+                                        <select id="applyP1Resolve"></select>
+                                        <div class="muted">
+                                            未登録名です。既存プレイヤーを選ぶと別名登録し、「新規」で新規プレイヤー作成します。
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="apply-row duo">
+                                    <label for="applyP2Player">P2</label>
+                                    <input id="applyP2Player" type="text" autocomplete="off" />
+                                    <label for="applyP2Char">キャラ</label>
+                                    <select id="applyP2Char"></select>
+                                </div>
+                                <div class="apply-row player-resolve-row">
+                                    <label>&nbsp;</label>
+                                    <div id="applyP2ResolveWrap" class="player-resolve-wrap" hidden>
+                                        <select id="applyP2Resolve"></select>
+                                        <div class="muted">
+                                            未登録名です。既存プレイヤーを選ぶと別名登録し、「新規」で新規プレイヤー作成します。
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="apply-row trio">
+                                    <label for="applyWinner">勝敗</label>
+                                    <select id="applyWinner">
+                                        <option value="0">不明</option>
+                                        <option value="1">P1</option>
+                                        <option value="2">P2</option>
+                                    </select>
+                                    <label for="applyStartSec">開始</label>
+                                    <input id="applyStartSec" type="text" inputmode="numeric" />
+                                </div>
+                                <div class="apply-row trio">
+                                    <label for="applyEndSec">終了</label>
+                                    <input id="applyEndSec" type="text" inputmode="numeric" />
+                                    <label for="applyReviewedBy">reviewed_by</label>
+                                    <input id="applyReviewedBy" type="text" autocomplete="off" />
+                                </div>
+                                <div class="apply-row">
+                                    <label for="applyReviewNote">review_note</label>
+                                    <textarea id="applyReviewNote"></textarea>
+                                </div>
+                                <div class="actions">
+                                    <button id="applyBtn" type="submit" class="primary">OK</button>
+                                </div>
+                            </form>
+                            <div id="reviewStatus" class="status"></div>
+                            <div id="reviewError" class="error"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <script src="../js/api-config.local.js"></script>
+        <script src="../js/match-cards.js"></script>
+        <script>
+            const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
+            const IMAGE_BASE = "../images/";
+            const DATE_PREFIX = "投稿日：";
+
+            const statusFilterEl = document.getElementById("statusFilter");
+            const matchIdFilterEl = document.getElementById("matchIdFilter");
+            const correctionIdFilterEl = document.getElementById("correctionIdFilter");
+            const searchBtn = document.getElementById("searchBtn");
+            const clearBtn = document.getElementById("clearBtn");
+            const listMetaEl = document.getElementById("listMeta");
+            const listBodyEl = document.getElementById("listBody");
+            const listErrorEl = document.getElementById("listError");
+            const listSectionEl = document.getElementById("listSection");
+            const detailSectionEl = document.getElementById("detailSection");
+            const authBtn = document.getElementById("authBtn");
+            const authStatusEl = document.getElementById("authStatus");
+            const authErrorEl = document.getElementById("authError");
+
+            const detailHintEl = document.getElementById("detailHint");
+            const detailAreaEl = document.getElementById("detailArea");
+            const currentMatchCardEl = document.getElementById("currentMatchCard");
+            const proposedMatchCardEl = document.getElementById("proposedMatchCard");
+            const diffSummaryEl = document.getElementById("diffSummary");
+
+            const adminKeyEl = document.getElementById("adminKey");
+            const adminIdHeaderEl = document.getElementById("adminIdHeader");
+            const applyFormEl = document.getElementById("applyForm");
+            const applyP1PlayerEl = document.getElementById("applyP1Player");
+            const applyP2PlayerEl = document.getElementById("applyP2Player");
+            const applyP1CharEl = document.getElementById("applyP1Char");
+            const applyP2CharEl = document.getElementById("applyP2Char");
+            const applyP1ResolveWrapEl = document.getElementById("applyP1ResolveWrap");
+            const applyP2ResolveWrapEl = document.getElementById("applyP2ResolveWrap");
+            const applyP1ResolveEl = document.getElementById("applyP1Resolve");
+            const applyP2ResolveEl = document.getElementById("applyP2Resolve");
+            const applyWinnerEl = document.getElementById("applyWinner");
+            const applyStartSecEl = document.getElementById("applyStartSec");
+            const applyEndSecEl = document.getElementById("applyEndSec");
+            const applyReviewedByEl = document.getElementById("applyReviewedBy");
+            const applyReviewNoteEl = document.getElementById("applyReviewNote");
+            const applyBtn = document.getElementById("applyBtn");
+            const reviewStatusEl = document.getElementById("reviewStatus");
+            const reviewErrorEl = document.getElementById("reviewError");
+
+            const state = {
+                list: [],
+                selected: null,
+                loadingList: false,
+                submittingReview: false,
+                authenticated: false,
+                resolveToken: { p1: 0, p2: 0 },
+                resolveDebounce: { p1: null, p2: null },
+            };
+            const videoInfoCache = new Map();
+            const videoInfoPending = new Set();
+            const charIdToName = new Map();
+            const charNameToId = new Map();
+            let charactersLoaded = false;
+            let charactersLoadingPromise = null;
+            let allPlayersCache = null;
+            let allPlayersPending = null;
+            let allAliasesMapCache = null;
+            let allAliasesMapPending = null;
+
+            function setError(el, msg) {
+                if (!el) return;
+                if (!msg) {
+                    el.textContent = "";
+                    el.style.display = "none";
+                    return;
+                }
+                el.textContent = msg;
+                el.style.display = "block";
+            }
+
+            function setStatus(el, msg) {
+                if (!el) return;
+                el.textContent = msg || "";
+            }
+
+            function esc(value) {
+                if (value === null || value === undefined || value === "") return "-";
+                return String(value);
+            }
+
+            function normalizeKey(value) {
+                return String(value || "")
+                    .trim()
+                    .toLowerCase();
+            }
+
+            function normalizeTextNfkc(value) {
+                return String(value || "").normalize("NFKC");
+            }
+
+            function toHiragana(value) {
+                return normalizeTextNfkc(value).replace(/[\u30a1-\u30f6]/g, (ch) =>
+                    String.fromCharCode(ch.charCodeAt(0) - 0x60),
+                );
+            }
+
+            function normalizeKana(value) {
+                return toHiragana(value).toLowerCase();
+            }
+
+            function winnerLabel(value) {
+                if (value === 1 || value === "1" || value === "P1" || value === "p1") return "P1";
+                if (value === 2 || value === "2" || value === "P2" || value === "p2") return "P2";
+                return esc(value);
+            }
+
+            function mapReviewError(status, fallback) {
+                if (status === 401) return "401: 管理キーが不正です。";
+                if (status === 409) return "409: すでに審査済みです。";
+                if (status === 404) return "404: 認証APIが見つかりません。";
+                if (status === 503)
+                    return "503: サーバー設定不足です（ADMIN_REVIEW_KEY未設定の可能性）。";
+                return fallback || "審査APIの呼び出しに失敗しました。";
+            }
+
+            function mapApplyError(status, fallback) {
+                if (status === 400) return fallback || "400: 入力値が不正です。";
+                if (status === 401) return "401: 管理キーが不正です。";
+                if (status === 404) return "404: /api/correction/apply が見つかりません。";
+                if (status === 409) return fallback || "409: すでに処理済みです。";
+                if (status === 503)
+                    return "503: サーバー設定不足です（ADMIN_REVIEW_KEY未設定の可能性）。";
+                return fallback || "適用APIの呼び出しに失敗しました。";
+            }
+
+            async function parseResponse(res) {
+                const ct = res.headers.get("content-type") || "";
+                if (ct.includes("application/json")) {
+                    return await res.json();
+                }
+                const text = await res.text();
+                return { error: text };
+            }
+
+            async function ensureCharactersLoaded() {
+                if (charactersLoaded) return;
+                if (charactersLoadingPromise) {
+                    await charactersLoadingPromise;
+                    return;
+                }
+                charactersLoadingPromise = (async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/characters?limit=200`);
+                        const data = await parseResponse(res);
+                        if (!res.ok) return;
+                        const items = Array.isArray(data.items)
+                            ? data.items
+                            : Array.isArray(data)
+                              ? data
+                              : [];
+                        charIdToName.clear();
+                        charNameToId.clear();
+                        for (const it of items) {
+                            const id = String(
+                                it.char_id || it.id || it.canonical_id || it.canonical_name || "",
+                            ).trim();
+                            const name = String(
+                                it.display_name ||
+                                    it.char_disp_name ||
+                                    it.canonical_name ||
+                                    it.name ||
+                                    "",
+                            ).trim();
+                            if (!id && !name) continue;
+                            const resolvedId = id || name;
+                            const resolvedName = name || id || name;
+                            charIdToName.set(resolvedId, resolvedName);
+                            if (resolvedName) {
+                                charNameToId.set(normalizeKey(resolvedName), resolvedId);
+                            }
+                            if (id) {
+                                charNameToId.set(normalizeKey(id), id);
+                            }
+                        }
+                    } catch {
+                        // noop
+                    } finally {
+                        charactersLoaded = true;
+                        charactersLoadingPromise = null;
+                    }
+                })();
+                await charactersLoadingPromise;
+            }
+
+            function normalizeNumericPlayerId(raw) {
+                const text = String(raw || "").trim();
+                if (!/^\d+$/.test(text)) return null;
+                const n = Number(text);
+                return Number.isFinite(n) ? n : null;
+            }
+
+            function setPlayerResolveHidden(side, hidden) {
+                const wrap = side === "p1" ? applyP1ResolveWrapEl : applyP2ResolveWrapEl;
+                if (wrap) wrap.hidden = Boolean(hidden);
+            }
+
+            function resetPlayerResolve(side) {
+                const select = side === "p1" ? applyP1ResolveEl : applyP2ResolveEl;
+                if (select) {
+                    select.innerHTML = "";
+                    delete select.dataset.rawName;
+                }
+                setPlayerResolveHidden(side, true);
+            }
+
+            async function fetchAllPlayersForResolve() {
+                if (Array.isArray(allPlayersCache)) return allPlayersCache;
+                if (allPlayersPending) return allPlayersPending;
+                allPlayersPending = (async () => {
+                    try {
+                        const url = `${API_BASE}/api/players?limit=2000&sort=canonical_name&order=asc`;
+                        const res = await fetch(url);
+                        const data = await parseResponse(res);
+                        if (!res.ok) return [];
+                        const items = Array.isArray(data.items)
+                            ? data.items
+                            : Array.isArray(data)
+                              ? data
+                              : [];
+                        allPlayersCache = items;
+                        return items;
+                    } catch {
+                        return [];
+                    } finally {
+                        allPlayersPending = null;
+                    }
+                })();
+                return allPlayersPending;
+            }
+
+            async function fetchAllAliasesMap() {
+                if (allAliasesMapCache instanceof Map) return allAliasesMapCache;
+                if (allAliasesMapPending) return allAliasesMapPending;
+                allAliasesMapPending = (async () => {
+                    const map = new Map();
+                    try {
+                        const url = `${API_BASE}/api/player_aliases`;
+                        const res = await fetch(url);
+                        const data = await parseResponse(res);
+                        if (!res.ok) return map;
+                        const items = Array.isArray(data.items)
+                            ? data.items
+                            : Array.isArray(data)
+                              ? data
+                              : [];
+                        for (const item of items) {
+                            const alias = String(item.alias || "").trim();
+                            const playerId = normalizeNumericPlayerId(item.player_id);
+                            if (!alias || playerId === null) continue;
+                            map.set(normalizeKana(alias), playerId);
+                        }
+                    } catch {
+                        // noop
+                    } finally {
+                        allAliasesMapPending = null;
+                    }
+                    allAliasesMapCache = map;
+                    return map;
+                })();
+                return allAliasesMapPending;
+            }
+
+            async function findPlayerIdByExactName(rawName) {
+                const raw = normalizeTextNfkc(rawName).trim();
+                if (!raw) return null;
+                const players = await fetchAllPlayersForResolve();
+                const key = normalizeKana(raw);
+
+                const byId = normalizeNumericPlayerId(raw);
+                if (
+                    byId !== null &&
+                    players.some((item) => normalizeNumericPlayerId(item.player_id) === byId)
+                ) {
+                    return byId;
+                }
+
+                for (const item of players) {
+                    const playerId = normalizeNumericPlayerId(item.player_id);
+                    if (playerId === null) continue;
+                    const names = [item.display_name, item.canonical_name, item.player_name]
+                        .map((x) => normalizeKana(x))
+                        .filter(Boolean);
+                    if (names.includes(key)) return playerId;
+                }
+
+                const aliasMap = await fetchAllAliasesMap();
+                if (aliasMap.has(key)) return aliasMap.get(key);
+                return null;
+            }
+
+            async function showPlayerResolveOptions(side, rawName) {
+                const select = side === "p1" ? applyP1ResolveEl : applyP2ResolveEl;
+                if (!select) return;
+                const players = await fetchAllPlayersForResolve();
+                select.innerHTML = "";
+
+                const placeholder = document.createElement("option");
+                placeholder.value = "";
+                placeholder.textContent = "登録先を選択してください";
+                select.appendChild(placeholder);
+
+                const createOpt = document.createElement("option");
+                createOpt.value = "new";
+                createOpt.textContent = "新規";
+                select.appendChild(createOpt);
+
+                for (const player of players) {
+                    const playerId = normalizeNumericPlayerId(player.player_id);
+                    if (playerId === null) continue;
+                    const display = String(
+                        player.display_name || player.canonical_name || `player:${playerId}`,
+                    ).trim();
+                    const opt = document.createElement("option");
+                    opt.value = String(playerId);
+                    opt.textContent = `${display} (#${playerId})`;
+                    select.appendChild(opt);
+                }
+
+                select.value = "";
+                select.dataset.rawName = String(rawName || "").trim();
+                setPlayerResolveHidden(side, false);
+            }
+
+            async function createPlayerByName(playerName, adminKey) {
+                const res = await fetch(`${API_BASE}/api/players`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-admin-key": adminKey,
+                    },
+                    body: JSON.stringify({ canonical_name: playerName }),
+                });
+                const data = await parseResponse(res);
+                if (!res.ok) {
+                    if (res.status === 409) {
+                        const existingId = await findPlayerIdByExactName(playerName);
+                        if (existingId !== null) return existingId;
+                    }
+                    const fallback = data && data.error ? String(data.error) : "";
+                    throw new Error(mapApplyError(res.status, fallback));
+                }
+                const playerId = normalizeNumericPlayerId(data?.item?.player_id);
+                if (playerId === null) {
+                    throw new Error("新規プレイヤー作成後の player_id を取得できませんでした。");
+                }
+                allPlayersCache = null;
+                allAliasesMapCache = null;
+                return playerId;
+            }
+
+            async function createPlayerAlias(aliasName, playerId, adminKey) {
+                const res = await fetch(`${API_BASE}/api/player_aliases`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-admin-key": adminKey,
+                    },
+                    body: JSON.stringify({ alias: aliasName, player_id: playerId }),
+                });
+                const data = await parseResponse(res);
+                if (res.ok) {
+                    allAliasesMapCache = null;
+                    return;
+                }
+
+                if (res.status === 409) {
+                    allAliasesMapCache = null;
+                    const aliasMap = await fetchAllAliasesMap();
+                    const registered = aliasMap.get(normalizeKana(aliasName));
+                    if (registered === playerId) {
+                        return;
+                    }
+                }
+                const fallback = data && data.error ? String(data.error) : "";
+                throw new Error(mapApplyError(res.status, fallback || "alias登録に失敗しました。"));
+            }
+
+            async function resolvePlayerIdForApply(side, rawName, adminKey) {
+                const clean = normalizeTextNfkc(rawName).trim();
+                if (!clean) return null;
+
+                const existingId = await findPlayerIdByExactName(clean);
+                if (existingId !== null) {
+                    resetPlayerResolve(side);
+                    return existingId;
+                }
+
+                const select = side === "p1" ? applyP1ResolveEl : applyP2ResolveEl;
+                if (!select) throw new Error("プレイヤー選択UIを初期化できませんでした。");
+
+                const sourceName = String(select.dataset.rawName || "").trim();
+                if (!sourceName || sourceName !== clean || select.options.length === 0) {
+                    await showPlayerResolveOptions(side, clean);
+                    throw new Error(
+                        `${side.toUpperCase()}プレイヤー「${clean}」が未登録です。登録先（新規/既存）を選択してください。`,
+                    );
+                }
+
+                const picked = String(select.value || "").trim();
+                if (!picked) {
+                    throw new Error(
+                        `${side.toUpperCase()}プレイヤー「${clean}」の登録先（新規/既存）を選択してください。`,
+                    );
+                }
+
+                if (picked === "new") {
+                    const createdId = await createPlayerByName(clean, adminKey);
+                    resetPlayerResolve(side);
+                    return createdId;
+                }
+
+                const selectedPlayerId = normalizeNumericPlayerId(picked);
+                if (selectedPlayerId === null) {
+                    throw new Error("登録先プレイヤーIDが不正です。");
+                }
+                await createPlayerAlias(clean, selectedPlayerId, adminKey);
+                resetPlayerResolve(side);
+                return selectedPlayerId;
+            }
+
+            async function refreshPlayerResolveHint(side) {
+                const inputEl = side === "p1" ? applyP1PlayerEl : applyP2PlayerEl;
+                if (!inputEl) return;
+                const raw = normalizeTextNfkc(inputEl.value || "").trim();
+                const token = (state.resolveToken[side] || 0) + 1;
+                state.resolveToken[side] = token;
+                if (!raw) {
+                    resetPlayerResolve(side);
+                    return;
+                }
+                const resolvedId = await findPlayerIdByExactName(raw);
+                if (state.resolveToken[side] !== token) return;
+                if (resolvedId === null) {
+                    await showPlayerResolveOptions(side, raw);
+                } else {
+                    resetPlayerResolve(side);
+                }
+            }
+
+            function schedulePlayerResolveHint(side) {
+                const prev = state.resolveDebounce[side];
+                if (prev) {
+                    clearTimeout(prev);
+                    state.resolveDebounce[side] = null;
+                }
+                state.resolveDebounce[side] = setTimeout(() => {
+                    state.resolveDebounce[side] = null;
+                    refreshPlayerResolveHint(side);
+                }, 220);
+            }
+
+            async function fetchVideoInfo(videoId) {
+                const cleanId = String(videoId || "").trim();
+                if (!cleanId) return;
+                if (videoInfoCache.has(cleanId) || videoInfoPending.has(cleanId)) return;
+                videoInfoPending.add(cleanId);
+                try {
+                    const url = `${API_BASE}/api/videos?vid=${encodeURIComponent(cleanId)}&limit=1`;
+                    const res = await fetch(url);
+                    if (!res.ok) return;
+                    const data = await parseResponse(res);
+                    const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+                    const exact = items.find((it) => String(it.video_id || "") === cleanId);
+                    const picked = exact || items[0];
+                    if (!picked) return;
+                    const title = picked.title ? String(picked.title) : "";
+                    let dateText = "";
+                    const displayDate = picked.display_uploaded_at || picked.displayUploadedAt || "";
+                    if (displayDate) {
+                        dateText = String(displayDate);
+                    } else {
+                        const epoch = Number(picked.uploaded_at ?? picked.uploadedAt);
+                        if (Number.isFinite(epoch) && epoch > 0) {
+                            const d = new Date(epoch * 1000);
+                            const y = d.getFullYear();
+                            const m = String(d.getMonth() + 1).padStart(2, "0");
+                            const day = String(d.getDate()).padStart(2, "0");
+                            dateText = `${y}-${m}-${day}`;
+                        }
+                    }
+                    videoInfoCache.set(cleanId, { title, date: dateText });
+                } catch {
+                    // noop
+                } finally {
+                    videoInfoPending.delete(cleanId);
+                }
+            }
+
+            function updateVideoInfoElements() {
+                document.querySelectorAll("[data-video-id]").forEach((el) => {
+                    const id = el.getAttribute("data-video-id") || "";
+                    if (!id) return;
+                    const info = videoInfoCache.get(id);
+                    if (info && info.title) {
+                        el.textContent = info.title;
+                        el.title = info.title;
+                    }
+                });
+                document.querySelectorAll("[data-video-date-id]").forEach((el) => {
+                    const id = el.getAttribute("data-video-date-id") || "";
+                    if (!id) return;
+                    const info = videoInfoCache.get(id);
+                    if (info && info.date) {
+                        el.textContent = `${DATE_PREFIX}${info.date}`;
+                        el.title = `${DATE_PREFIX}${info.date}`;
+                    }
+                });
+            }
+
+            async function hydrateVideoInfo(videoIds) {
+                const unique = Array.from(new Set((videoIds || []).filter(Boolean)));
+                if (!unique.length) return;
+                await Promise.all(unique.map((id) => fetchVideoInfo(id)));
+                updateVideoInfoElements();
+            }
+
+            function getListQuery() {
+                const params = new URLSearchParams();
+                const status = String(statusFilterEl.value || "").trim();
+                const matchId = String(matchIdFilterEl.value || "").trim();
+                const correctionId = String(correctionIdFilterEl.value || "").trim();
+                if (status) params.set("status", status);
+                if (matchId) params.set("match_id", matchId);
+                if (correctionId) params.set("correction_id", correctionId);
+                return params.toString();
+            }
+
+            function setAuthState(authenticated) {
+                state.authenticated = Boolean(authenticated);
+                if (listSectionEl) listSectionEl.hidden = !state.authenticated;
+                if (detailSectionEl) detailSectionEl.hidden = !state.authenticated;
+                if (!state.authenticated) {
+                    state.list = [];
+                    state.selected = null;
+                    renderRows();
+                    detailHintEl.hidden = false;
+                    detailAreaEl.hidden = true;
+                    resetPlayerResolve("p1");
+                    resetPlayerResolve("p2");
+                    renderCompareCards(null, null);
+                    renderDiffSummary([]);
+                }
+            }
+
+            function getAdminHeaders() {
+                const headers = {};
+                const adminKey = String(adminKeyEl.value || "").trim();
+                const adminId = String(adminIdHeaderEl.value || "").trim();
+                if (adminKey) headers["x-admin-key"] = adminKey;
+                if (adminId) headers["x-admin-id"] = adminId;
+                return headers;
+            }
+
+            async function authenticateAdmin() {
+                setError(authErrorEl, "");
+                setStatus(authStatusEl, "");
+                const adminKey = String(adminKeyEl.value || "").trim();
+                if (!adminKey) {
+                    setAuthState(false);
+                    setError(authErrorEl, "管理キーを入力してください。");
+                    return;
+                }
+                authBtn.disabled = true;
+                setStatus(authStatusEl, "認証中...");
+                try {
+                    setAuthState(true);
+                    const ok = await loadCorrections();
+                    if (!ok) {
+                        setAuthState(false);
+                        setStatus(authStatusEl, "");
+                        if (!authErrorEl.textContent) {
+                            setError(authErrorEl, "認証に失敗しました。");
+                        }
+                        return;
+                    }
+                    setStatus(authStatusEl, "認証成功");
+                } catch (err) {
+                    setAuthState(false);
+                    setStatus(authStatusEl, "");
+                    setError(authErrorEl, err instanceof Error ? err.message : "認証に失敗しました。");
+                } finally {
+                    authBtn.disabled = false;
+                }
+            }
+
+            function renderRows() {
+                listBodyEl.innerHTML = "";
+                const buildCell = (value) => {
+                    const td = document.createElement("td");
+                    td.textContent = esc(value);
+                    return td;
+                };
+                for (const row of state.list) {
+                    const tr = document.createElement("tr");
+                    if (state.selected && String(state.selected.correction_id) === String(row.correction_id)) {
+                        tr.classList.add("selected");
+                    }
+                    tr.appendChild(buildCell(row.correction_id));
+                    tr.appendChild(buildCell(row.match_id));
+                    tr.appendChild(buildCell(row.start_sec));
+                    tr.appendChild(buildCell(row.end_sec));
+                    tr.appendChild(buildCell(row.p1_player));
+                    tr.appendChild(buildCell(row.p2_player));
+                    tr.appendChild(buildCell(row.p1_char));
+                    tr.appendChild(buildCell(row.p2_char));
+                    tr.appendChild(buildCell(winnerLabel(row.winner)));
+                    tr.appendChild(buildCell(row.reason));
+                    tr.appendChild(buildCell(row.status));
+                    tr.appendChild(buildCell(row.reviewed_at));
+                    tr.appendChild(buildCell(row.reviewed_by));
+                    tr.appendChild(buildCell(row.review_note));
+                    tr.addEventListener("click", () => selectCorrection(row));
+                    listBodyEl.appendChild(tr);
+                }
+                listMetaEl.textContent = `${state.list.length}件`;
+            }
+
+            function normalizeWinnerSide(value) {
+                const v = String(value || "")
+                    .trim()
+                    .toLowerCase();
+                if (v === "p1" || v === "player1" || v === "1" || v === "left") return "p1";
+                if (v === "p2" || v === "player2" || v === "2" || v === "right") return "p2";
+                return "";
+            }
+
+            function winnerToCode(value) {
+                const side = normalizeWinnerSide(value);
+                if (side === "p1") return "1";
+                if (side === "p2") return "2";
+                return "0";
+            }
+
+            function parseTimeToSec(raw) {
+                const value = String(raw || "").trim();
+                if (!value) return null;
+                if (/^\d+$/.test(value)) {
+                    return Math.max(0, Number(value));
+                }
+                const m = value.match(/^(\d{1,2})(?::(\d{1,2}))(?::(\d{1,2}))?$/);
+                if (!m) return NaN;
+                const a = Number(m[1]);
+                const b = Number(m[2]);
+                const c = m[3] !== undefined ? Number(m[3]) : null;
+                if ([a, b, c].some((x) => x !== null && (!Number.isFinite(x) || x < 0))) return NaN;
+                if (c === null) {
+                    if (b > 59) return NaN;
+                    return a * 60 + b;
+                }
+                if (b > 59 || c > 59) return NaN;
+                return a * 3600 + b * 60 + c;
+            }
+
+            function secToInputValue(raw) {
+                const text = String(raw ?? "").trim();
+                if (!text) return "";
+                if (text.includes(":")) return text;
+                const n = toNumberOrNull(raw);
+                if (n === null) return text;
+                return fmtSec(n);
+            }
+
+            function toNumberOrNull(value) {
+                const n = Number(value);
+                return Number.isFinite(n) ? Math.trunc(n) : null;
+            }
+
+            function fmtSec(sec) {
+                const n = toNumberOrNull(sec);
+                if (n === null) return "";
+                const s = Math.max(0, n);
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const ss = s % 60;
+                const pad2 = (x) => String(x).padStart(2, "0");
+                if (h > 0) return `${h}:${pad2(m)}:${pad2(ss)}`;
+                return `${m}:${pad2(ss)}`;
+            }
+
+            function fmtRange(startSec, endSec) {
+                const start = fmtSec(startSec);
+                const end = fmtSec(endSec);
+                if (start && end) return `${start} - ${end}`;
+                return start || end || "";
+            }
+
+            function fmtDuration(startSec, endSec) {
+                const start = toNumberOrNull(startSec);
+                const end = toNumberOrNull(endSec);
+                if (start === null || end === null) return "";
+                const diff = Math.max(0, end - start);
+                return fmtSec(diff);
+            }
+
+            function normalizeMatchForCard(item) {
+                const p1 = item.p1 || {};
+                const p2 = item.p2 || {};
+                return {
+                    id: item.match_id ?? "",
+                    videoId: item.video_id || "",
+                    videoTitle: item.video_title || "",
+                    videoUploadedAt: item.display_uploaded_at || item.video_uploaded_at || "",
+                    tStart: item.start_sec,
+                    tEnd: item.end_sec,
+                    p1Id: p1.player_id || "",
+                    p1Name: p1.player_name || p1.player_raw || p1.player_id || "",
+                    p1CharId: p1.char_id || "",
+                    p1Char: p1.char_name || p1.char_raw || p1.char_id || "",
+                    p2Id: p2.player_id || "",
+                    p2Name: p2.player_name || p2.player_raw || p2.player_id || "",
+                    p2CharId: p2.char_id || "",
+                    p2Char: p2.char_name || p2.char_raw || p2.char_id || "",
+                    winner: item.winner || "",
+                };
+            }
+
+            function createTextLink(text, href, className) {
+                const el = document.createElement(href ? "a" : "div");
+                if (className) el.className = className;
+                if (href) el.href = href;
+                const safeText = text ? String(text) : "";
+                el.textContent = safeText;
+                if (safeText) el.title = safeText;
+                return el;
+            }
+
+            function buildCharImage(charId, charName) {
+                const cleanId = String(charId || "").trim();
+                const img = document.createElement("img");
+                img.className = "match-char-img";
+                img.decoding = "async";
+                img.loading = "lazy";
+                if (!cleanId) {
+                    img.classList.add("empty");
+                    img.alt = "";
+                    return img;
+                }
+                img.src = `${IMAGE_BASE}match_card_${encodeURIComponent(cleanId)}.png`;
+                img.alt = charName ? String(charName) : cleanId;
+                img.addEventListener("error", () => {
+                    img.classList.add("empty");
+                    img.removeAttribute("src");
+                });
+                return img;
+            }
+
+            function resolvePlayerName(name, id) {
+                const n = String(name || "").trim();
+                if (n) return n;
+                const i = String(id || "").trim();
+                return i || "-";
+            }
+
+            function resolveCharToken(rawValue, fallbackId, fallbackName) {
+                const raw = String(rawValue || "").trim();
+                const baseId = String(fallbackId || "").trim();
+                const baseName = String(fallbackName || "").trim();
+
+                if (!raw) {
+                    const id = baseId;
+                    const name = (id && charIdToName.get(id)) || baseName || id || "";
+                    return { id, name };
+                }
+
+                if (charIdToName.has(raw)) {
+                    return { id: raw, name: charIdToName.get(raw) || raw };
+                }
+
+                const idFromName = charNameToId.get(normalizeKey(raw)) || "";
+                if (idFromName) {
+                    return {
+                        id: idFromName,
+                        name: charIdToName.get(idFromName) || raw,
+                    };
+                }
+
+                if (baseId) {
+                    return { id: baseId, name: raw };
+                }
+                return { id: raw, name: raw };
+            }
+
+            function buildProposedMatch(currentMatch, row) {
+                const base = currentMatch || {};
+                const fallbackWinner = base.winner || "";
+                const proposedWinner = row.winner ?? fallbackWinner;
+                const p1Char = resolveCharToken(row.p1_char, base.p1CharId, base.p1Char);
+                const p2Char = resolveCharToken(row.p2_char, base.p2CharId, base.p2Char);
+                return {
+                    id: row.match_id || base.id || "",
+                    videoId: base.videoId || "",
+                    videoTitle: base.videoTitle || "",
+                    videoUploadedAt: base.videoUploadedAt || "",
+                    tStart: row.start_sec ?? base.tStart ?? "",
+                    tEnd: row.end_sec ?? base.tEnd ?? "",
+                    p1Id: base.p1Id || "",
+                    p1Name: row.p1_player || base.p1Name || base.p1Id || "",
+                    p1CharId: String(p1Char.id || "").trim(),
+                    p1Char: String(p1Char.name || "").trim(),
+                    p2Id: base.p2Id || "",
+                    p2Name: row.p2_player || base.p2Name || base.p2Id || "",
+                    p2CharId: String(p2Char.id || "").trim(),
+                    p2Char: String(p2Char.name || "").trim(),
+                    winner: proposedWinner,
+                };
+            }
+
+            function setCharSelectOptions(selectEl, selectedRaw) {
+                if (!selectEl) return;
+                const selectedToken = resolveCharToken(selectedRaw, "", "");
+                const selectedId = String(selectedToken.id || "").trim();
+                const selectedName = String(selectedToken.name || selectedRaw || selectedId).trim();
+
+                const options = [];
+                for (const [id, name] of charIdToName.entries()) {
+                    options.push({ id: String(id), name: String(name || id) });
+                }
+                options.sort((a, b) => a.name.localeCompare(b.name, "ja"));
+                if (selectedId && !options.some((x) => x.id === selectedId)) {
+                    options.unshift({ id: selectedId, name: selectedName || selectedId });
+                }
+
+                selectEl.innerHTML = "";
+                for (const opt of options) {
+                    const o = document.createElement("option");
+                    o.value = opt.id;
+                    o.textContent = opt.name;
+                    selectEl.appendChild(o);
+                }
+                if (selectedId) {
+                    selectEl.value = selectedId;
+                }
+            }
+
+            function clearApplyDiffClass() {
+                [
+                    applyP1PlayerEl,
+                    applyP2PlayerEl,
+                    applyP1CharEl,
+                    applyP2CharEl,
+                    applyWinnerEl,
+                    applyStartSecEl,
+                    applyEndSecEl,
+                ].forEach((el) => {
+                    if (el) el.classList.remove("is-diff");
+                });
+            }
+
+            function fillApplyForm(row, diffMap) {
+                clearApplyDiffClass();
+                if (!row) return;
+                resetPlayerResolve("p1");
+                resetPlayerResolve("p2");
+                applyP1PlayerEl.value = String(row.p1_player || "");
+                applyP2PlayerEl.value = String(row.p2_player || "");
+                applyWinnerEl.value = winnerToCode(row.winner);
+                applyStartSecEl.value = secToInputValue(row.start_sec);
+                applyEndSecEl.value = secToInputValue(row.end_sec);
+                applyReviewedByEl.value = String(row.reviewed_by || "");
+                applyReviewNoteEl.value = String(row.review_note || "");
+
+                setCharSelectOptions(applyP1CharEl, row.p1_char);
+                setCharSelectOptions(applyP2CharEl, row.p2_char);
+
+                if (diffMap.p1_player) applyP1PlayerEl.classList.add("is-diff");
+                if (diffMap.p2_player) applyP2PlayerEl.classList.add("is-diff");
+                if (diffMap.p1_char) applyP1CharEl.classList.add("is-diff");
+                if (diffMap.p2_char) applyP2CharEl.classList.add("is-diff");
+                if (diffMap.winner) applyWinnerEl.classList.add("is-diff");
+                if (diffMap.start_sec) applyStartSecEl.classList.add("is-diff");
+                if (diffMap.end_sec) applyEndSecEl.classList.add("is-diff");
+            }
+
+            function normalizeComparable(value) {
+                return String(value ?? "")
+                    .trim()
+                    .toLowerCase();
+            }
+
+            function isCharChanged(proposed, currentId, currentName) {
+                const proposedNorm = normalizeComparable(proposed);
+                if (!proposedNorm) return false;
+                const idNorm = normalizeComparable(currentId);
+                const nameNorm = normalizeComparable(currentName);
+                return proposedNorm !== idNorm && proposedNorm !== nameNorm;
+            }
+
+            function buildDiffRows(currentMatch, proposedMatch) {
+                if (!currentMatch || !proposedMatch) return [];
+                const rows = [];
+                const push = (key, label, currentValue, proposedValue, changed) => {
+                    rows.push({ key, label, currentValue, proposedValue, changed: Boolean(changed) });
+                };
+
+                const p1Changed =
+                    normalizeComparable(proposedMatch.p1Name) !==
+                    normalizeComparable(currentMatch.p1Name || currentMatch.p1Id);
+                const p2Changed =
+                    normalizeComparable(proposedMatch.p2Name) !==
+                    normalizeComparable(currentMatch.p2Name || currentMatch.p2Id);
+                const p1CharChanged = isCharChanged(
+                    proposedMatch.p1CharId || proposedMatch.p1Char,
+                    currentMatch.p1CharId,
+                    currentMatch.p1Char,
+                );
+                const p2CharChanged = isCharChanged(
+                    proposedMatch.p2CharId || proposedMatch.p2Char,
+                    currentMatch.p2CharId,
+                    currentMatch.p2Char,
+                );
+                const winnerChanged = normalizeWinnerSide(proposedMatch.winner) !== normalizeWinnerSide(currentMatch.winner);
+                const startChanged = toNumberOrNull(proposedMatch.tStart) !== toNumberOrNull(currentMatch.tStart);
+                const endChanged = toNumberOrNull(proposedMatch.tEnd) !== toNumberOrNull(currentMatch.tEnd);
+
+                push("p1_player", "p1_player", currentMatch.p1Name, proposedMatch.p1Name, p1Changed);
+                push("p2_player", "p2_player", currentMatch.p2Name, proposedMatch.p2Name, p2Changed);
+                push("p1_char", "p1_char", currentMatch.p1Char, proposedMatch.p1Char, p1CharChanged);
+                push("p2_char", "p2_char", currentMatch.p2Char, proposedMatch.p2Char, p2CharChanged);
+                push("winner", "winner", winnerLabel(currentMatch.winner), winnerLabel(proposedMatch.winner), winnerChanged);
+                push("start_sec", "start_sec", currentMatch.tStart, proposedMatch.tStart, startChanged);
+                push("end_sec", "end_sec", currentMatch.tEnd, proposedMatch.tEnd, endChanged);
+                return rows;
+            }
+
+            function renderDiffSummary(diffRows) {
+                if (!diffSummaryEl) return;
+                const changed = (diffRows || []).filter((x) => x.changed);
+                diffSummaryEl.innerHTML = "";
+                if (!changed.length) {
+                    diffSummaryEl.classList.add("muted");
+                    diffSummaryEl.textContent = "差分なし";
+                    return;
+                }
+                diffSummaryEl.classList.remove("muted");
+                for (const row of changed) {
+                    const chip = document.createElement("span");
+                    chip.className = "diff-chip";
+                    chip.textContent = row.label;
+                    diffSummaryEl.appendChild(chip);
+                }
+            }
+
+            function renderCompareCard(container, match) {
+                if (!container) return;
+                if (!window.renderMatchCards) {
+                    container.textContent = "対戦カード描画を読み込めませんでした。";
+                    return;
+                }
+                window.renderMatchCards({
+                    items: match ? [match] : [],
+                    container,
+                    emptyText: "試合情報なし",
+                    normalizeMatch: (row) => row,
+                    normalizeWinnerSide,
+                    ytUrl: (videoId, startSec) =>
+                        videoId
+                            ? `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&t=${Math.max(0, toNumberOrNull(startSec) || 0)}s`
+                            : "",
+                    fmtRange,
+                    fmtSec,
+                    fmtDuration,
+                    datePrefix: DATE_PREFIX,
+                    videoLabel: "動画",
+                    enableCardLink: false,
+                    hydrateVideoInfo,
+                    createTextLink,
+                    buildCharImage,
+                    resolvePlayerName,
+                    resolvePlayerLinkId: () => "",
+                    resolveCharacterId: (charId) => String(charId || "").trim(),
+                    resolveCharacterName: (charId, charName) =>
+                        String(charName || charId || "").trim(),
+                    getVideoLinkHref: () => "",
+                    getCharacterLinkHref: () => "",
+                    getPlayerLinkHref: () => "",
+                });
+            }
+
+            function renderCompareCards(currentMatch, proposedMatch) {
+                renderCompareCard(currentMatchCardEl, currentMatch);
+                renderCompareCard(proposedMatchCardEl, proposedMatch);
+            }
+
+            async function loadMatchForCompare(matchId) {
+                if (!matchId) return null;
+                try {
+                    const url = `${API_BASE}/api/matches?match_id=${encodeURIComponent(matchId)}&limit=1&expand=names`;
+                    const res = await fetch(url);
+                    const data = await parseResponse(res);
+                    if (!res.ok) {
+                        throw new Error(data && data.error ? String(data.error) : "取得失敗");
+                    }
+                    const item =
+                        data.item ||
+                        data.match ||
+                        (Array.isArray(data.items) ? data.items[0] : null) ||
+                        (Array.isArray(data) ? data[0] : null);
+                    if (!item) return null;
+                    return normalizeMatchForCard(item);
+                } catch (err) {
+                    return null;
+                }
+            }
+
+            async function selectCorrection(row) {
+                state.selected = row;
+                renderRows();
+                detailHintEl.hidden = true;
+                detailAreaEl.hidden = false;
+
+                await ensureCharactersLoaded();
+                const currentMatch = await loadMatchForCompare(row.match_id);
+                const proposedMatch = buildProposedMatch(currentMatch, row);
+                const diffRows = buildDiffRows(currentMatch, proposedMatch);
+                const diffMap = Object.fromEntries(diffRows.filter((x) => x.changed).map((x) => [x.key, true]));
+
+                renderCompareCards(currentMatch, proposedMatch);
+                renderDiffSummary(diffRows);
+
+                fillApplyForm(row, diffMap);
+                refreshPlayerResolveHint("p1");
+                refreshPlayerResolveHint("p2");
+
+                updateActionButtons();
+            }
+
+            function updateActionButtons() {
+                const hasSelection = Boolean(state.selected);
+                const pending = hasSelection && String(state.selected.status || "") === "pending";
+                const disabled = state.submittingReview || !pending;
+                applyBtn.disabled = disabled;
+            }
+
+            async function loadCorrections() {
+                if (!state.authenticated) return;
+                if (state.loadingList) return;
+                state.loadingList = true;
+                searchBtn.disabled = true;
+                clearBtn.disabled = true;
+                setError(listErrorEl, "");
+                let ok = true;
+                try {
+                    const query = getListQuery();
+                    const url = query ? `${API_BASE}/api/correction?${query}` : `${API_BASE}/api/correction`;
+                    const res = await fetch(url, { headers: getAdminHeaders() });
+                    const data = await parseResponse(res);
+                    if (!res.ok) {
+                        throw new Error(data && data.error ? String(data.error) : "一覧取得に失敗しました。");
+                    }
+                    const items = Array.isArray(data.items)
+                        ? data.items
+                        : Array.isArray(data)
+                          ? data
+                          : [];
+                    state.list = items;
+                    if (
+                        state.selected &&
+                        !items.some(
+                            (x) => String(x.correction_id) === String(state.selected.correction_id),
+                        )
+                    ) {
+                        state.selected = null;
+                    }
+                    renderRows();
+                    if (!state.selected) {
+                        detailHintEl.hidden = false;
+                        detailAreaEl.hidden = true;
+                        renderCompareCards(null, null);
+                        renderDiffSummary([]);
+                    } else {
+                        await selectCorrection(
+                            items.find(
+                                (x) => String(x.correction_id) === String(state.selected.correction_id),
+                            ) || state.selected,
+                        );
+                    }
+                    setStatus(reviewStatusEl, "");
+                } catch (err) {
+                    ok = false;
+                    setError(
+                        listErrorEl,
+                        err instanceof Error ? err.message : "一覧取得に失敗しました。",
+                    );
+                    state.list = [];
+                    state.selected = null;
+                    renderRows();
+                    detailHintEl.hidden = false;
+                    detailAreaEl.hidden = true;
+                    renderCompareCards(null, null);
+                    renderDiffSummary([]);
+                } finally {
+                    state.loadingList = false;
+                    searchBtn.disabled = false;
+                    clearBtn.disabled = false;
+                    updateActionButtons();
+                }
+                return ok;
+            }
+
+            async function submitApply() {
+                if (state.submittingReview || !state.selected) return;
+                const correctionId = state.selected.correction_id;
+                const adminKey = String(adminKeyEl.value || "").trim();
+                const adminId = String(adminIdHeaderEl.value || "").trim();
+                const reviewNote = String(applyReviewNoteEl.value || "").trim();
+                const reviewedBy = String(applyReviewedByEl.value || "").trim();
+                const p1PlayerName = String(applyP1PlayerEl.value || "").trim();
+                const p2PlayerName = String(applyP2PlayerEl.value || "").trim();
+                const p1Char = String(applyP1CharEl.value || "").trim();
+                const p2Char = String(applyP2CharEl.value || "").trim();
+                const winnerValue = String(applyWinnerEl.value || "0").trim();
+                const startSec = parseTimeToSec(applyStartSecEl.value);
+                const endSec = parseTimeToSec(applyEndSecEl.value);
+
+                setStatus(reviewStatusEl, "");
+                setError(reviewErrorEl, "");
+
+                if (!adminKey) {
+                    setError(reviewErrorEl, "管理キーを入力してください。");
+                    return;
+                }
+
+                if (Number.isNaN(startSec) || Number.isNaN(endSec)) {
+                    setError(reviewErrorEl, "開始/終了は 秒 または mm:ss / h:mm:ss 形式で入力してください。");
+                    return;
+                }
+                if (startSec !== null && endSec !== null && endSec < startSec) {
+                    setError(reviewErrorEl, "終了は開始以上にしてください。");
+                    return;
+                }
+
+                let p1PlayerId = null;
+                let p2PlayerId = null;
+                try {
+                    p1PlayerId = await resolvePlayerIdForApply("p1", p1PlayerName, adminKey);
+                    p2PlayerId = await resolvePlayerIdForApply("p2", p2PlayerName, adminKey);
+                } catch (err) {
+                    setError(
+                        reviewErrorEl,
+                        err instanceof Error ? err.message : "プレイヤー解決に失敗しました。",
+                    );
+                    return;
+                }
+
+                const body = {
+                    correction_id: correctionId,
+                    match_id: state.selected.match_id,
+                };
+                if (p1PlayerId !== null) body.p1_player = p1PlayerId;
+                if (p2PlayerId !== null) body.p2_player = p2PlayerId;
+                if (p1Char) body.p1_char = p1Char;
+                if (p2Char) body.p2_char = p2Char;
+                if (winnerValue === "0" || winnerValue === "1" || winnerValue === "2") {
+                    body.winner = Number(winnerValue);
+                }
+                if (startSec !== null) body.start_sec = startSec;
+                if (endSec !== null) body.end_sec = endSec;
+                if (reviewNote) body.review_note = reviewNote;
+                if (reviewedBy) body.reviewed_by = reviewedBy;
+
+                const headers = {
+                    "Content-Type": "application/json",
+                    "x-admin-key": adminKey,
+                };
+                if (adminId) headers["x-admin-id"] = adminId;
+
+                const hasUpdateField = [
+                    "start_sec",
+                    "end_sec",
+                    "p1_player",
+                    "p2_player",
+                    "winner",
+                    "p1_char",
+                    "p2_char",
+                ].some((key) => Object.prototype.hasOwnProperty.call(body, key));
+                if (!hasUpdateField) {
+                    setError(reviewErrorEl, "更新する項目がありません。");
+                    return;
+                }
+
+                state.submittingReview = true;
+                updateActionButtons();
+                setStatus(reviewStatusEl, "送信中...");
+                try {
+                    const res = await fetch(`${API_BASE}/api/correction/apply`, {
+                        method: "POST",
+                        headers,
+                        body: JSON.stringify(body),
+                    });
+                    const data = await parseResponse(res);
+                    if (!res.ok) {
+                        const fallback = data && data.error ? String(data.error) : "";
+                        throw new Error(mapApplyError(res.status, fallback));
+                    }
+                    setStatus(reviewStatusEl, "適用しました。");
+                    await loadCorrections();
+                } catch (err) {
+                    setStatus(reviewStatusEl, "");
+                    setError(
+                        reviewErrorEl,
+                        err instanceof Error ? err.message : "適用APIの呼び出しに失敗しました。",
+                    );
+                } finally {
+                    state.submittingReview = false;
+                    updateActionButtons();
+                }
+            }
+
+            searchBtn.addEventListener("click", loadCorrections);
+            clearBtn.addEventListener("click", () => {
+                statusFilterEl.value = "pending";
+                matchIdFilterEl.value = "";
+                correctionIdFilterEl.value = "";
+                loadCorrections();
+            });
+            applyFormEl.addEventListener("submit", (event) => {
+                event.preventDefault();
+                submitApply();
+            });
+            applyP1PlayerEl.addEventListener("input", () => {
+                resetPlayerResolve("p1");
+                setError(reviewErrorEl, "");
+                schedulePlayerResolveHint("p1");
+            });
+            applyP2PlayerEl.addEventListener("input", () => {
+                resetPlayerResolve("p2");
+                setError(reviewErrorEl, "");
+                schedulePlayerResolveHint("p2");
+            });
+            applyP1PlayerEl.addEventListener("blur", () => {
+                refreshPlayerResolveHint("p1");
+            });
+            applyP2PlayerEl.addEventListener("blur", () => {
+                refreshPlayerResolveHint("p2");
+            });
+            applyP1PlayerEl.addEventListener("change", () => {
+                refreshPlayerResolveHint("p1");
+            });
+            applyP2PlayerEl.addEventListener("change", () => {
+                refreshPlayerResolveHint("p2");
+            });
+            applyP1ResolveEl.addEventListener("change", () => {
+                setError(reviewErrorEl, "");
+            });
+            applyP2ResolveEl.addEventListener("change", () => {
+                setError(reviewErrorEl, "");
+            });
+            authBtn.addEventListener("click", authenticateAdmin);
+            adminKeyEl.addEventListener("input", () => {
+                setAuthState(false);
+                setStatus(authStatusEl, "");
+                setError(authErrorEl, "");
+            });
+            adminIdHeaderEl.addEventListener("input", () => {
+                if (!state.authenticated) return;
+                setAuthState(false);
+                setStatus(authStatusEl, "");
+                setError(authErrorEl, "");
+            });
+
+            setAuthState(false);
+        </script>
+    </body>
+</html>

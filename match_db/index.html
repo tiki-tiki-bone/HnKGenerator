@@ -257,6 +257,75 @@
                 min-width: 220px;
             }
 
+            .form-row.unknown-player-row > .unknown-toggle {
+                grid-column: 2;
+                min-width: 220px;
+                justify-self: start;
+            }
+
+            #searchPanel[data-search-mode="video"] #unknownPlayerRow {
+                display: none !important;
+            }
+
+            .unknown-toggle {
+                position: relative;
+                display: inline-flex;
+            }
+
+            .unknown-toggle input[type="checkbox"] {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .unknown-toggle label {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.38rem 0.72rem;
+                border-radius: 4px;
+                border: 1px solid #d1d1d6;
+                background: #e5e5ea;
+                color: #555;
+                font-weight: 600;
+                line-height: 1.15;
+                cursor: pointer;
+                user-select: none;
+                transition:
+                    background-color 0.2s ease,
+                    color 0.2s ease,
+                    box-shadow 0.2s ease,
+                    border-color 0.2s ease;
+            }
+
+            .unknown-toggle label::before {
+                content: "";
+                width: 14px;
+                height: 14px;
+                border-radius: 3px;
+                border: 1px solid #bdbdc2;
+                background: #ffffff;
+                box-sizing: border-box;
+            }
+
+            .unknown-toggle input[type="checkbox"]:checked + label {
+                background: #ffffff;
+                color: #111;
+                border-color: #c7c7cc;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+            }
+
+            .unknown-toggle input[type="checkbox"]:checked + label::before {
+                background: #2f2f2f;
+                border-color: #2f2f2f;
+                box-shadow: inset 0 0 0 2px #ffffff;
+            }
+
+            .unknown-toggle input[type="checkbox"]:focus-visible + label {
+                outline: 2px solid #2f2f2f;
+                outline-offset: 2px;
+            }
+
             .form-row > .winner-switch {
                 min-width: 0;
                 width: fit-content;
@@ -741,6 +810,10 @@
                     min-width: 0;
                     width: 100%;
                 }
+                .form-row.unknown-player-row > .unknown-toggle {
+                    min-width: 0;
+                    width: 100%;
+                }
                 .radio-group {
                     width: 100%;
                 }
@@ -841,6 +914,11 @@
                 align-items: center;
                 gap: 0.6rem;
                 flex-wrap: wrap;
+            }
+
+            .result-meta-right {
+                margin-left: auto;
+                white-space: nowrap;
             }
 
             .result-action {
@@ -996,7 +1074,7 @@
 
             <section>
                 <h2>検索</h2>
-                <div class="panel" id="searchPanel">
+                <div class="panel" id="searchPanel" data-search-mode="player">
                     <div class="form-row">
                         <label>検索モード</label>
                         <div id="modeSwitch" class="winner-switch mode-switch" role="tablist">
@@ -1183,6 +1261,13 @@
                         </div>
                     </div>
 
+                    <div id="unknownPlayerRow" class="form-row unknown-player-row">
+                        <div class="unknown-toggle">
+                            <input id="excludeUnknownPlayer" type="checkbox" />
+                            <label for="excludeUnknownPlayer">不明プレイヤーを除外</label>
+                        </div>
+                    </div>
+
                     <div class="actions">
                         <button id="searchBtn" class="primary" type="button">検索</button>
                         <button
@@ -1211,6 +1296,7 @@
                         <span id="resultTitle">動画一覧</span>
                         <span id="resultCount" class="section-meta"></span>
                     </span>
+                    <span id="resultMatchCount" class="section-meta result-meta-right" hidden></span>
                     <button
                         id="playSeqBtn"
                         class="secondary small result-action"
@@ -1257,6 +1343,7 @@
                 const errorEl = document.getElementById("error");
                 const resultTitleEl = document.getElementById("resultTitle");
                 const resultCountEl = document.getElementById("resultCount");
+                const resultMatchCountEl = document.getElementById("resultMatchCount");
                 const playSeqBtn = document.getElementById("playSeqBtn");
                 const statsSectionEl = document.getElementById("statsSection");
                 const searchPanelEl = document.getElementById("searchPanel");
@@ -1286,6 +1373,7 @@
 
                 const videoQueryEl = document.getElementById("videoQuery");
                 const locateEl = document.getElementById("locate");
+                const excludeUnknownPlayerEl = document.getElementById("excludeUnknownPlayer");
 
                 const searchBtn = document.getElementById("searchBtn");
                 const shareBtn = document.getElementById("shareBtn");
@@ -1304,6 +1392,8 @@
                 let lastTotal = 0;
                 let lastListMode = MODE.VIDEO;
                 let lastMatchItems = [];
+                let allMatchCountCache = null;
+                let allMatchCountPending = null;
 
                 const videoInfoCache = new Map();
                 const videoInfoPending = new Set();
@@ -1322,6 +1412,13 @@
                     const n = parseInt(raw, 10);
                     if (!Number.isFinite(n)) return fallback;
                     return Math.max(min, Math.min(max, n));
+                }
+
+                function isTrueLike(value) {
+                    const v = String(value || "")
+                        .trim()
+                        .toLowerCase();
+                    return v === "1" || v === "true";
                 }
 
                 function extractVideoId(raw) {
@@ -1361,14 +1458,18 @@
                     return extractVideoId(value) || value;
                 }
 
+                function normalizeTextNfkc(value) {
+                    return String(value || "").normalize("NFKC");
+                }
+
                 function toHiragana(value) {
-                    return String(value || "").replace(/[\u30a1-\u30f6]/g, (ch) =>
+                    return normalizeTextNfkc(value).replace(/[\u30a1-\u30f6]/g, (ch) =>
                         String.fromCharCode(ch.charCodeAt(0) - 0x60),
                     );
                 }
 
                 function toKatakana(value) {
-                    return String(value || "").replace(/[\u3041-\u3096]/g, (ch) =>
+                    return normalizeTextNfkc(value).replace(/[\u3041-\u3096]/g, (ch) =>
                         String.fromCharCode(ch.charCodeAt(0) + 0x60),
                     );
                 }
@@ -1377,14 +1478,26 @@
                     return toHiragana(value).toLowerCase();
                 }
 
+                function buildPlayerSuggestionLabel(item) {
+                    const playerId = String(item?.player_id ?? "").trim();
+                    const display =
+                        String(item?.display_name || item?.canonical_name || "").trim() || playerId;
+                    const matchedText = String(item?.matched_text || "").trim();
+                    if (!matchedText) return display;
+                    const displayNorm = normalizeTextNfkc(display).toLowerCase();
+                    const matchedNorm = normalizeTextNfkc(matchedText).toLowerCase();
+                    if (!matchedNorm || matchedNorm === displayNorm) return display;
+                    return `${display} (${matchedText})`;
+                }
+
                 function fetchPlayerSuggestions(query, limit = 20) {
-                    const raw = String(query || "").trim();
+                    const raw = normalizeTextNfkc(query).trim();
                     if (!raw) return Promise.resolve([]);
                     const queries = Array.from(new Set([raw, toHiragana(raw), toKatakana(raw)]));
                     return Promise.all(
                         queries.map(async (q) => {
                             try {
-                                const url = `${API_BASE}/api/players?q=${encodeURIComponent(q)}&limit=${limit}`;
+                                const url = `${API_BASE}/api/players/suggest?q=${encodeURIComponent(q)}&limit=${limit}`;
                                 const res = await fetch(url);
                                 if (!res.ok) return [];
                                 const data = await res.json();
@@ -1487,21 +1600,23 @@
                     if (!inputEl) return "";
                     const currentHidden = hiddenEl ? String(hiddenEl.value || "").trim() : "";
                     if (currentHidden) return currentHidden;
-                    const raw = String(inputEl.value || "").trim();
+                    const raw = normalizeTextNfkc(inputEl.value).trim();
                     if (!raw) return "";
                     if (isNumericId(raw)) return raw;
                     try {
                         const items = await fetchPlayerSuggestions(raw, 20);
-                        const lower = raw.toLowerCase();
+                        const lower = normalizeTextNfkc(raw).toLowerCase();
                         const kana = normalizeKana(raw);
                         const exact =
                             items.find((it) => String(it.player_id) === raw) ||
                             items.find(
                                 (it) =>
-                                    String(it.canonical_name || "").toLowerCase() === lower ||
-                                    String(it.display_name || "").toLowerCase() === lower ||
+                                    normalizeTextNfkc(it.canonical_name || "").toLowerCase() === lower ||
+                                    normalizeTextNfkc(it.display_name || "").toLowerCase() === lower ||
+                                    normalizeTextNfkc(it.matched_text || "").toLowerCase() === lower ||
                                     normalizeKana(it.canonical_name || "") === kana ||
-                                    normalizeKana(it.display_name || "") === kana,
+                                    normalizeKana(it.display_name || "") === kana ||
+                                    normalizeKana(it.matched_text || "") === kana,
                             );
                         if (!exact) return "";
                         const id = String(exact.player_id || "").trim();
@@ -1515,6 +1630,9 @@
                 function setMode(nextMode) {
                     const mode = Object.values(MODE).includes(nextMode) ? nextMode : DEFAULTS.mode;
                     currentMode = mode;
+                    if (searchPanelEl) {
+                        searchPanelEl.dataset.searchMode = mode;
+                    }
                     modeButtons.forEach((btn) => {
                         btn.classList.toggle("active", btn.dataset.mode === mode);
                     });
@@ -1583,9 +1701,23 @@
                         return !state.q && !state.locate_id;
                     }
                     if (state.mode === MODE.CARD) {
-                        return !state.p1 && !state.p2 && !state.ch1 && !state.ch2 && !state.vid;
+                        return (
+                            !state.p1 &&
+                            !state.p2 &&
+                            !state.ch1 &&
+                            !state.ch2 &&
+                            !state.vid &&
+                            (!state.w || state.w === "all") &&
+                            !state.exclude_unknown_player
+                        );
                     }
-                    return !state.p && !state.ch && !state.vid;
+                    return (
+                        !state.p &&
+                        !state.ch &&
+                        !state.vid &&
+                        (!state.w || state.w === "all") &&
+                        !state.exclude_unknown_player
+                    );
                 }
 
                 function hasSearchInputs(mode) {
@@ -1604,6 +1736,7 @@
                             Boolean(cardChar1El && cardChar1El.value) ||
                             Boolean(cardChar2El && cardChar2El.value) ||
                             Boolean(cardVideoEl && cardVideoEl.value.trim()) ||
+                            Boolean(excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked) ||
                             getWinnerValue(cardWinner) !== "all"
                         );
                     }
@@ -1611,6 +1744,7 @@
                         Boolean(playerInput && playerInput.value.trim()) ||
                         Boolean(playerCharEl && playerCharEl.value) ||
                         Boolean(playerVideoEl && playerVideoEl.value.trim()) ||
+                        Boolean(excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked) ||
                         getWinnerValue(playerWinner) !== "all"
                     );
                 }
@@ -1664,6 +1798,41 @@
                             ? Math.min(start + count - 1, safeTotal)
                             : Math.min(safePage * safeSize, safeTotal);
                     resultCountEl.textContent = `${start}-${end} / ${safeTotal}`;
+                }
+
+                function updateResultMatchCount(matchCount) {
+                    if (!resultMatchCountEl) return;
+                    const n = Number(matchCount);
+                    if (!Number.isFinite(n) || n < 0) {
+                        resultMatchCountEl.textContent = "";
+                        resultMatchCountEl.hidden = true;
+                        return;
+                    }
+                    resultMatchCountEl.textContent = `総試合数: ${Math.floor(n)}`;
+                    resultMatchCountEl.hidden = false;
+                }
+
+                async function fetchAllMatchCount() {
+                    if (Number.isFinite(allMatchCountCache)) return allMatchCountCache;
+                    if (allMatchCountPending) return allMatchCountPending;
+                    allMatchCountPending = (async () => {
+                        try {
+                            const url = `${API_BASE}/api/stats/state`;
+                            const res = await fetch(url);
+                            if (!res.ok) return null;
+                            const data = await res.json();
+                            const value = Number(data?.match_count);
+                            if (!Number.isFinite(value) || value < 0) return null;
+                            const parsed = Math.floor(value);
+                            allMatchCountCache = parsed;
+                            return parsed;
+                        } catch {
+                            return null;
+                        } finally {
+                            allMatchCountPending = null;
+                        }
+                    })();
+                    return allMatchCountPending;
                 }
 
                 function renderPagerPages(container, currentPageValue, pageSize, total, hasNext) {
@@ -1820,6 +1989,9 @@
                             ch2: cardChar2El ? cardChar2El.value : "",
                             vid: extractVideoId(cardVideoEl ? cardVideoEl.value : ""),
                             w: getWinnerValue(document.querySelector('[data-winner-group="card"]')),
+                            exclude_unknown_player: Boolean(
+                                excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked,
+                            ),
                             limit,
                             page,
                         };
@@ -1830,6 +2002,9 @@
                         ch: playerCharEl ? playerCharEl.value : "",
                         vid: extractVideoId(playerVideoEl ? playerVideoEl.value : ""),
                         w: getWinnerValue(document.querySelector('[data-winner-group="player"]')),
+                        exclude_unknown_player: Boolean(
+                            excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked,
+                        ),
                         limit,
                         page,
                     };
@@ -1850,11 +2025,15 @@
                         if (state.ch2) entries.push(["ch2", state.ch2]);
                         if (state.vid) entries.push(["vid", state.vid]);
                         if (state.w && state.w !== "all") entries.push(["w", state.w]);
+                        if (state.exclude_unknown_player)
+                            entries.push(["exclude_unknown_player", "1"]);
                     } else {
                         if (state.p) entries.push(["p", state.p]);
                         if (state.ch) entries.push(["ch", state.ch]);
                         if (state.vid) entries.push(["vid", state.vid]);
                         if (state.w && state.w !== "all") entries.push(["w", state.w]);
+                        if (state.exclude_unknown_player)
+                            entries.push(["exclude_unknown_player", "1"]);
                     }
                     if (state.limit && state.limit !== DEFAULTS.limit)
                         entries.push(["limit", String(state.limit)]);
@@ -1890,6 +2069,7 @@
                     }
                     if (state.vid) params.set("vid", state.vid);
                     if (state.w && state.w !== "all") params.set("w", state.w);
+                    if (state.exclude_unknown_player) params.set("exclude_unknown_player", "1");
                     params.set("sort", "recent");
                     params.set("expand", "names");
                     params.set("limit", String(state.limit));
@@ -2389,6 +2569,7 @@
                 function setupPlayerSuggest(inputEl, hiddenEl, listEl) {
                     if (!inputEl || !listEl) return;
                     let pending = 0;
+                    let inputTimer = 0;
 
                     const renderList = (items) => {
                         listEl.innerHTML = "";
@@ -2398,15 +2579,16 @@
                         }
                         for (const item of items) {
                             const playerId = String(item.player_id ?? "");
-                            const display =
-                                String(item.display_name || item.canonical_name || "").trim() ||
-                                playerId;
+                            const display = buildPlayerSuggestionLabel(item);
                             const row = document.createElement("div");
                             row.className = "suggestion-item";
                             row.textContent = display;
                             row.dataset.id = playerId;
                             row.addEventListener("click", () => {
-                                inputEl.value = display;
+                                const selectedDisplay =
+                                    String(item.display_name || item.canonical_name || "").trim() ||
+                                    playerId;
+                                inputEl.value = selectedDisplay;
                                 if (hiddenEl) hiddenEl.value = playerId;
                                 closeSuggestions(listEl);
                                 toggleClearButton(inputEl);
@@ -2416,34 +2598,29 @@
                         listEl.classList.add("open");
                     };
 
-                    inputEl.addEventListener("input", async () => {
-                        const value = String(inputEl.value || "").trim();
+                    inputEl.addEventListener("input", () => {
+                        const value = normalizeTextNfkc(inputEl.value).trim();
                         if (hiddenEl) hiddenEl.value = "";
+                        if (inputTimer) {
+                            clearTimeout(inputTimer);
+                            inputTimer = 0;
+                        }
                         if (!value) {
+                            pending += 1;
                             closeSuggestions(listEl);
                             return;
                         }
-                        pending += 1;
-                        const currentPending = pending;
-                        try {
-                            if (currentPending !== pending) return;
-                            const items = await fetchPlayerSuggestions(value, 20);
-                            if (currentPending !== pending) return;
-                            const needle = normalizeKana(value);
-                            const filtered = items.filter((it) => {
-                                const id = String(it.player_id || "").toLowerCase();
-                                const canonical = normalizeKana(it.canonical_name || "");
-                                const display = normalizeKana(it.display_name || "");
-                                return (
-                                    id.includes(value.toLowerCase()) ||
-                                    canonical.includes(needle) ||
-                                    display.includes(needle)
-                                );
-                            });
-                            renderList(filtered);
-                        } catch {
-                            closeSuggestions(listEl);
-                        }
+                        inputTimer = window.setTimeout(async () => {
+                            pending += 1;
+                            const currentPending = pending;
+                            try {
+                                const items = await fetchPlayerSuggestions(value, 20);
+                                if (currentPending !== pending) return;
+                                renderList(items);
+                            } catch {
+                                closeSuggestions(listEl);
+                            }
+                        }, 220);
                     });
 
                     inputEl.addEventListener("blur", () => {
@@ -2504,6 +2681,9 @@
                             ch2: (params.get("ch2") || "").trim(),
                             vid: (params.get("vid") || "").trim(),
                             w: (params.get("w") || "all").trim(),
+                            exclude_unknown_player: isTrueLike(
+                                params.get("exclude_unknown_player"),
+                            ),
                             limit: clampInt(params.get("limit"), 1, 200, DEFAULTS.limit),
                             page: clampInt(params.get("page"), 1, 100000, DEFAULTS.page),
                         };
@@ -2514,6 +2694,7 @@
                         ch: (params.get("ch") || "").trim(),
                         vid: (params.get("vid") || "").trim(),
                         w: (params.get("w") || "all").trim(),
+                        exclude_unknown_player: isTrueLike(params.get("exclude_unknown_player")),
                         limit: clampInt(params.get("limit"), 1, 200, DEFAULTS.limit),
                         page: clampInt(params.get("page"), 1, 100000, DEFAULTS.page),
                     };
@@ -2531,6 +2712,7 @@
                     if (state.mode === MODE.VIDEO) {
                         if (videoQueryEl) videoQueryEl.value = state.q || "";
                         if (locateEl) locateEl.value = state.locate_id || "";
+                        if (excludeUnknownPlayerEl) excludeUnknownPlayerEl.checked = false;
                     } else if (state.mode === MODE.CARD) {
                         if (cardPlayer1IdEl) cardPlayer1IdEl.value = state.p1 || "";
                         if (cardPlayer2IdEl) cardPlayer2IdEl.value = state.p2 || "";
@@ -2538,11 +2720,15 @@
                         if (cardChar2El) cardChar2El.value = state.ch2 || "";
                         if (cardVideoEl) cardVideoEl.value = state.vid || "";
                         setWinnerValue(cardWinner, state.w || "all");
+                        if (excludeUnknownPlayerEl)
+                            excludeUnknownPlayerEl.checked = Boolean(state.exclude_unknown_player);
                     } else {
                         if (playerIdEl) playerIdEl.value = state.p || "";
                         if (playerCharEl) playerCharEl.value = state.ch || "";
                         if (playerVideoEl) playerVideoEl.value = state.vid || "";
                         setWinnerValue(playerWinner, state.w || "all");
+                        if (excludeUnknownPlayerEl)
+                            excludeUnknownPlayerEl.checked = Boolean(state.exclude_unknown_player);
                     }
                     refreshClearButtons();
                 }
@@ -2624,13 +2810,20 @@
                         if (unresolved) {
                             if (listMode === MODE.VIDEO) {
                                 renderVideos([]);
+                                updateResultMatchCount(null);
                             } else {
                                 renderMatches([]);
+                                updateResultMatchCount(null);
                             }
                             updatePager(DEFAULTS.page, state.limit, 0, false, 0);
                             return;
                         }
                         if (listMode === MODE.VIDEO) {
+                            const shouldShowAllMatchCount =
+                                isDefaultState(state) && !hasSearchInputs(state.mode);
+                            const allMatchCountPromise = shouldShowAllMatchCount
+                                ? fetchAllMatchCount()
+                                : Promise.resolve(null);
                             if (videoBody) {
                                 videoBody.innerHTML = "";
                                 const loading = document.createElement("div");
@@ -2653,6 +2846,7 @@
                             const rp = Number(payload.page) || state.page;
                             const rps = Number(payload.limit) || state.limit;
                             renderVideos(items);
+                            updateResultMatchCount(await allMatchCountPromise);
                             updatePager(rp, rps, total, hasNext, items.length);
                         } else {
                             if (typeof window.renderLoadingCards === "function") {
@@ -2673,14 +2867,17 @@
                             const rp = Number(payload.page) || state.page;
                             const rps = Number(payload.limit) || state.limit;
                             renderMatches(items);
+                            updateResultMatchCount(null);
                             updatePager(rp, rps, total, hasNext, items.length);
                         }
                     } catch (e) {
                         setError(DB_ERROR_MSG);
                         if (listMode === MODE.VIDEO) {
                             renderVideos([]);
+                            updateResultMatchCount(null);
                         } else {
                             renderMatches([]);
+                            updateResultMatchCount(null);
                         }
                         updatePager(DEFAULTS.page, state.limit, 0, false, 0);
                     } finally {

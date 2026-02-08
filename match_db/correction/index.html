@@ -528,6 +528,32 @@
 
             }
 
+            .player-input-wrap {
+                display: flex;
+                flex-direction: column;
+                gap: 0.2rem;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .player-name-check {
+                min-height: 1.1rem;
+                font-size: 0.78rem;
+                line-height: 1.1;
+                color: #6b6b6b;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .player-name-check.is-registered {
+                color: #1f4f1f;
+            }
+
+            .player-name-check.is-new {
+                color: #8a1f1f;
+            }
+
 
 
             .form-row.trio input,
@@ -720,7 +746,10 @@
                             <span class="label-full">P1</span>
                             <span class="label-short">P1</span>
                         </label>
-                        <input id="p1Id" type="text" />
+                        <div class="player-input-wrap">
+                            <input id="p1Id" type="text" />
+                            <div id="p1NameCheck" class="player-name-check"></div>
+                        </div>
                         <label for="p1CharId">
                             <span class="label-full">キャラ</span>
                             <span class="label-short">キャラ</span>
@@ -732,7 +761,10 @@
                             <span class="label-full">P2</span>
                             <span class="label-short">P2</span>
                         </label>
-                        <input id="p2Id" type="text" />
+                        <div class="player-input-wrap">
+                            <input id="p2Id" type="text" />
+                            <div id="p2NameCheck" class="player-name-check"></div>
+                        </div>
                         <label for="p2CharId">
                             <span class="label-full">キャラ</span>
                             <span class="label-short">キャラ</span>
@@ -755,7 +787,7 @@
                         <input
                             id="tStart"
                             type="text"
-                            pattern="\\d{2}:\\d{2}(:\\d{2})?"
+                            pattern="[0-9]{2}:[0-9]{2}(:[0-9]{2})?"
                             title="hh:mm:ss または mm:ss"
                         />
                         <label for="tEnd">
@@ -765,7 +797,7 @@
                         <input
                             id="tEnd"
                             type="text"
-                            pattern="\\d{2}:\\d{2}(:\\d{2})?"
+                            pattern="[0-9]{2}:[0-9]{2}(:[0-9]{2})?"
                             title="hh:mm:ss または mm:ss"
                         />
                     </div>

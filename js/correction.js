@@ -44,6 +44,8 @@ const submitBtn = document.getElementById("submitBtn");
 
 const p1IdEl = document.getElementById("p1Id");
 const p2IdEl = document.getElementById("p2Id");
+const p1NameCheckEl = document.getElementById("p1NameCheck");
+const p2NameCheckEl = document.getElementById("p2NameCheck");
 const p1CharIdEl = document.getElementById("p1CharId");
 const p2CharIdEl = document.getElementById("p2CharId");
 const winnerEl = document.getElementById("winner");
@@ -57,6 +59,8 @@ const charNameToId = new Map();
 const charIdToName = new Map();
 const videoInfoCache = new Map();
 const videoInfoPending = new Set();
+const playerNameCheckCache = new Map();
+const playerAliasCache = new Map();
 
 function setMatchError(msg) {
     if (!msg) {
@@ -110,6 +114,136 @@ function normalizeKey(value) {
     return String(value || "")
         .trim()
         .toLowerCase();
+}
+
+function normalizeTextNfkc(value) {
+    return String(value || "").normalize("NFKC");
+}
+
+function toHiragana(value) {
+    return normalizeTextNfkc(value).replace(/[\u30a1-\u30f6]/g, (ch) =>
+        String.fromCharCode(ch.charCodeAt(0) - 0x60),
+    );
+}
+
+function normalizeKana(value) {
+    return toHiragana(value).toLowerCase();
+}
+
+function setPlayerNameCheck(el, kind, text) {
+    if (!el) return;
+    el.classList.remove("is-registered", "is-new");
+    el.textContent = text || "";
+    if (kind === "registered") el.classList.add("is-registered");
+    if (kind === "new") el.classList.add("is-new");
+}
+
+async function fetchPlayerAliasesNormalized(playerId) {
+    const id = String(playerId || "").trim();
+    if (!id) return new Set();
+    if (playerAliasCache.has(id)) return playerAliasCache.get(id);
+    const promise = (async () => {
+        try {
+            const url = `${API_BASE}/api/player_aliases?player_id=${encodeURIComponent(id)}`;
+            const res = await fetch(url);
+            if (!res.ok) return new Set();
+            const data = await res.json();
+            const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+            const set = new Set();
+            for (const item of items) {
+                const alias = String(item.alias || "").trim();
+                if (alias) set.add(normalizeKana(alias));
+            }
+            return set;
+        } catch {
+            return new Set();
+        }
+    })();
+    playerAliasCache.set(id, promise);
+    return promise;
+}
+
+function collectPlayerNames(item) {
+    const out = [];
+    const push = (v) => {
+        const s = String(v || "").trim();
+        if (s) out.push(s);
+    };
+    push(item.display_name);
+    push(item.canonical_name);
+    push(item.player_name);
+    push(item.name);
+    push(item.alias);
+    push(item.matched_alias);
+    if (Array.isArray(item.aliases)) {
+        for (const alias of item.aliases) push(alias);
+    }
+    return out;
+}
+
+async function checkPlayerNameRegistration(rawName) {
+    const raw = normalizeTextNfkc(rawName).trim();
+    if (!raw) return { kind: "", text: "" };
+    const key = normalizeKana(raw);
+    if (playerNameCheckCache.has(key)) return playerNameCheckCache.get(key);
+    const promise = (async () => {
+        try {
+            const url = `${API_BASE}/api/players?q=${encodeURIComponent(raw)}&limit=20`;
+            const res = await fetch(url);
+            if (!res.ok) return { kind: "", text: "" };
+            const data = await res.json();
+            const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+            for (const item of items) {
+                const names = collectPlayerNames(item);
+                if (names.some((name) => normalizeKana(name) === key)) {
+                    return { kind: "registered", text: "登録済み" };
+                }
+            }
+            const candidateIds = Array.from(
+                new Set(
+                    items
+                        .map((item) => String(item.player_id || "").trim())
+                        .filter(Boolean),
+                ),
+            ).slice(0, 8);
+            for (const playerId of candidateIds) {
+                const aliasSet = await fetchPlayerAliasesNormalized(playerId);
+                if (aliasSet.has(key)) return { kind: "registered", text: "登録済み" };
+            }
+            return { kind: "new", text: "新規" };
+        } catch {
+            return { kind: "", text: "" };
+        }
+    })();
+    playerNameCheckCache.set(key, promise);
+    return promise;
+}
+
+function setupPlayerNameChecker(inputEl, statusEl) {
+    if (!inputEl || !statusEl) return;
+    let timerId = 0;
+    let requestId = 0;
+    const run = async () => {
+        const value = String(inputEl.value || "").trim();
+        if (!value) {
+            setPlayerNameCheck(statusEl, "", "");
+            return;
+        }
+        const currentId = ++requestId;
+        setPlayerNameCheck(statusEl, "", "確認中...");
+        const result = await checkPlayerNameRegistration(value);
+        if (currentId !== requestId) return;
+        setPlayerNameCheck(statusEl, result.kind, result.text);
+    };
+    const schedule = () => {
+        clearTimeout(timerId);
+        timerId = window.setTimeout(run, 260);
+    };
+    inputEl.addEventListener("input", schedule);
+    inputEl.addEventListener("blur", () => {
+        clearTimeout(timerId);
+        run();
+    });
 }
 
 function isUnknownCharacter(name, id) {
@@ -437,6 +571,8 @@ function fillDefaults(match) {
         const winnerVal = normalizeWinnerValue(match.winner);
         if (winnerVal) winnerEl.value = winnerVal;
     }
+    if (p1NameCheckEl) setPlayerNameCheck(p1NameCheckEl, "", "");
+    if (p2NameCheckEl) setPlayerNameCheck(p2NameCheckEl, "", "");
 }
 
 function renderMatchCard(match) {
@@ -569,7 +705,9 @@ correctionForm.addEventListener("submit", (e) => {
             setCorrectionStatus("\u9001\u4fe1\u3057\u307e\u3057\u305f\u3002");
         })
         .catch(() => {
-        setCorrectionError("\u958b\u59cb\u79d2\u306f hh:mm:ss \u307e\u305f\u306f mm:ss \u5f62\u5f0f\u3067\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002");
+            setCorrectionError(
+                "\u958b\u59cb\u79d2\u306f hh:mm:ss \u307e\u305f\u306f mm:ss \u5f62\u5f0f\u3067\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
+            );
             setCorrectionStatus("");
         })
         .finally(() => {
@@ -580,6 +718,8 @@ correctionForm.addEventListener("submit", (e) => {
 });
 
 init();
+setupPlayerNameChecker(p1IdEl, p1NameCheckEl);
+setupPlayerNameChecker(p2IdEl, p2NameCheckEl);
 
 
 

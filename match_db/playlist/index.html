@@ -394,35 +394,65 @@
             let currentIndex = 0;
             let lastEndHandledAt = 0;
             const END_GUARD_MS = 800;
+            let playlistBuilt = false;
 
-            function updateList() {
+            function ensureItemVisibleInPlaylist(itemEl) {
+                if (!itemEl || !playlistItemsEl) return;
+                if (currentIndex <= 0) {
+                    playlistItemsEl.scrollTop = 0;
+                    return;
+                }
+                if (playlistItemsEl.clientHeight <= 0) {
+                    return;
+                }
+                const containerRect = playlistItemsEl.getBoundingClientRect();
+                const itemRect = itemEl.getBoundingClientRect();
+                const itemTop = itemRect.top - containerRect.top + playlistItemsEl.scrollTop;
+                const itemBottom = itemTop + itemRect.height;
+                const viewTop = playlistItemsEl.scrollTop;
+                const viewBottom = viewTop + playlistItemsEl.clientHeight;
+                if (itemTop < viewTop) {
+                    playlistItemsEl.scrollTop = itemTop;
+                } else if (itemBottom > viewBottom) {
+                    playlistItemsEl.scrollTop = itemBottom - playlistItemsEl.clientHeight;
+                }
+            }
+
+            function updateList(forceRebuild = false) {
                 if (!playlistItemsEl) return;
-                playlistItemsEl.innerHTML = "";
-                items.forEach((item, idx) => {
-                    const li = document.createElement("li");
-                    li.dataset.videoId = item.videoId;
-                    const label = item.label || item.videoId;
-                    li.textContent = `${label} (${formatTime(item.start)}${
-                        item.end != null ? `-${formatTime(item.end)}` : ""
-                    })`;
-                    li.tabIndex = 0;
-                    li.addEventListener("click", () => {
-                        if (idx === currentIndex) return;
-                        loadIndex(idx, true);
-                    });
-                    li.addEventListener("keydown", (event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
+                if (!playlistBuilt || forceRebuild) {
+                    playlistItemsEl.innerHTML = "";
+                    items.forEach((item, idx) => {
+                        const li = document.createElement("li");
+                        li.dataset.videoId = item.videoId;
+                        const label = item.label || item.videoId;
+                        li.textContent = `${label} (${formatTime(item.start)}${
+                            item.end != null ? `-${formatTime(item.end)}` : ""
+                        })`;
+                        li.tabIndex = 0;
+                        li.addEventListener("click", () => {
                             if (idx === currentIndex) return;
                             loadIndex(idx, true);
-                        }
+                        });
+                        li.addEventListener("keydown", (event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                if (idx === currentIndex) return;
+                                loadIndex(idx, true);
+                            }
+                        });
+                        playlistItemsEl.appendChild(li);
                     });
-                    if (idx === currentIndex) li.classList.add("active");
-                    playlistItemsEl.appendChild(li);
+                    playlistBuilt = true;
+                }
+
+                const entries = playlistItemsEl.querySelectorAll("li");
+                entries.forEach((li, idx) => {
+                    li.classList.toggle("active", idx === currentIndex);
                 });
-                const active = playlistItemsEl.querySelector("li.active");
+                const active = entries[currentIndex] || playlistItemsEl.querySelector("li.active");
                 if (active) {
-                    active.scrollIntoView({ block: "nearest" });
+                    ensureItemVisibleInPlaylist(active);
                 }
             }
 
