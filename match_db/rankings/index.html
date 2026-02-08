@@ -235,7 +235,7 @@
             }
 
             .rank {
-                width: 50px;
+                width: 40px;
                 text-align: right;
             }
 
@@ -251,6 +251,11 @@
             .player-cell span {
                 font-weight: 700;
                 font-size: 0.95rem;
+                justify-self: start;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .player-link {
@@ -294,9 +299,14 @@
 
             table th:nth-child(2),
             table td:nth-child(2) {
-                width: 240px;
+                width: 180px;
                 padding-top: 0;
                 padding-bottom: 0;
+            }
+
+            table[data-tab="pair"] th:nth-child(2),
+            table[data-tab="pair"] td:nth-child(2) {
+                width: 240px;
             }
 
             table th:nth-child(4),
@@ -348,27 +358,40 @@
                 }
 
                 .rank {
-                    width: 40px;
+                    width: 34px;
                 }
 
                 table th:nth-child(2),
                 table td:nth-child(2) {
-                    width: 160px;
+                    width: auto;
+                }
+
+                table[data-tab="pair"] th:nth-child(2),
+                table[data-tab="pair"] td:nth-child(2) {
+                    width: 180px;
                 }
 
                 table th:nth-child(3),
-                table td:nth-child(3),
+                table td:nth-child(3) {
+                    width: 50px;
+                }
+
                 table th:nth-child(4),
                 table td:nth-child(4),
                 table th:nth-child(5),
                 table td:nth-child(5) {
-                    width: 56px;
+                    width: 44px;
                 }
 
                 table th:nth-child(6),
                 table td:nth-child(6) {
-                    width: 120px;
+                    width: auto;
                     font-size: 0.9rem;
+                }
+
+                .rate-bar {
+                    width: 100%;
+                    margin-left: 0;
                 }
 
                 .player-cell span {
@@ -615,8 +638,8 @@
                     <div class="table-wrap">
                         <table aria-label="勝率ランキング">
                             <colgroup>
-                                <col style="width: 50px" />
-                                <col style="width: 240px" />
+                                <col style="width: 40px" />
+                                <col style="width: 180px" />
                                 <col style="width: 80px" />
                                 <col style="width: 70px" />
                                 <col style="width: 70px" />

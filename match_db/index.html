@@ -1889,8 +1889,47 @@
                         resultMatchCountEl.hidden = true;
                         return;
                     }
+                    if (!shouldShowTopAllMatchCountNow()) {
+                        resultMatchCountEl.textContent = "";
+                        resultMatchCountEl.hidden = true;
+                        return;
+                    }
                     resultMatchCountEl.textContent = `総試合数: ${Math.floor(n)}`;
                     resultMatchCountEl.hidden = false;
+                }
+
+                function hasSearchParamsInCurrentUrl() {
+                    const params = new URLSearchParams(window.location.search);
+                    const keys = [
+                        "p",
+                        "ch",
+                        "vid",
+                        "w",
+                        "exclude_unknown_player",
+                        "p1",
+                        "p2",
+                        "ch1",
+                        "ch2",
+                        "card_side",
+                        "q",
+                        "locate_id",
+                    ];
+                    return keys.some((key) => {
+                        if (!params.has(key)) return false;
+                        const value = String(params.get(key) || "").trim();
+                        return value !== "";
+                    });
+                }
+
+                function shouldShowTopAllMatchCountNow() {
+                    const state = parseQuery();
+                    return (
+                        getListMode(state) === MODE.VIDEO &&
+                        state.mode === MODE.PLAYER &&
+                        isDefaultState(state) &&
+                        !hasSearchInputs(state.mode) &&
+                        !hasSearchParamsInCurrentUrl()
+                    );
                 }
 
                 async function fetchAllMatchCount() {
@@ -2873,12 +2912,21 @@
                             hasUnresolvedPlayer(cardPlayer2Input, cardPlayer2IdEl);
                     }
                     const state = buildState(pageOverride);
+                    const shouldShowTopAllMatchCount =
+                        getListMode(state) === MODE.VIDEO &&
+                        state.mode === MODE.PLAYER &&
+                        isDefaultState(state) &&
+                        !hasSearchInputs(state.mode) &&
+                        !hasSearchParamsInCurrentUrl();
                     const isEmptySearch = state.mode !== MODE.VIDEO && isDefaultState(state);
                     const isEmptyVideoSearch =
                         state.mode === MODE.VIDEO && !state.q && !state.locate_id;
 
                     searchBtn.disabled = true;
                     setError("");
+                    if (!shouldShowTopAllMatchCount) {
+                        updateResultMatchCount(null);
+                    }
 
                     if (isEmptySearch && !allowEmpty) {
                         searchBtn.disabled = false;
@@ -2908,9 +2956,7 @@
                             return;
                         }
                         if (listMode === MODE.VIDEO) {
-                            const shouldShowAllMatchCount =
-                                isDefaultState(state) && !hasSearchInputs(state.mode);
-                            const allMatchCountPromise = shouldShowAllMatchCount
+                            const allMatchCountPromise = shouldShowTopAllMatchCount
                                 ? fetchAllMatchCount()
                                 : Promise.resolve(null);
                             if (videoBody) {

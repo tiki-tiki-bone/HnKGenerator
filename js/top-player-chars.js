@@ -9,6 +9,17 @@
     const tabButtons = document.querySelectorAll(".tab-btn");
     const charFilterWrap = document.getElementById("charFilterWrap");
     const charFilterGroup = document.getElementById("charFilterGroup");
+    const rankingTable = document.querySelector('table[aria-label="勝率ランキング"]');
+    const rankingNameCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(2)");
+    const rankingMatchesCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(3)");
+    const rankingWinsCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(4)");
+    const rankingLossesCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(5)");
+    const rankingRateCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(6)");
     if (!tableBody) return;
 
     const bodyData = document.body.dataset || {};
@@ -454,6 +465,7 @@
         const cached = charRowsCache.get(activeCharId);
         if (cached) {
             renderRows(cached, false);
+            syncTableLayout();
             if (lastNoteMeta) setNote(lastNoteMeta);
             return;
         }
@@ -465,6 +477,7 @@
             charRowsCache.set(activeCharId, rows);
             if (currentTab === "character" && activeCharId) {
                 renderRows(rows, false);
+                syncTableLayout();
             }
             setNote(stats);
         } catch {
@@ -492,6 +505,7 @@
 
     function setTab(tab) {
         currentTab = tab;
+        syncTableLayout();
         tabButtons.forEach((btn) => {
             const isActive = btn.dataset.tab === tab;
             btn.classList.toggle("is-active", isActive);
@@ -500,6 +514,78 @@
         if (tab === "player" && topPlayersMeta) setNote(topPlayersMeta);
         if (tab === "pair" && topPairsMeta) setNote(topPairsMeta);
         renderCurrentTab();
+    }
+
+    function estimateNameWidthMobile(rows) {
+        if (!IS_MOBILE) return 180;
+        const list = Array.isArray(rows) ? rows : [];
+        if (!list.length) return 112;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return 112;
+        const sampleEl = tableBody.querySelector(".player-cell span");
+        const cs = window.getComputedStyle(sampleEl || document.body);
+        const fontWeight = cs.fontWeight || "700";
+        const fontSize = cs.fontSize || "14px";
+        const fontFamily = cs.fontFamily || "sans-serif";
+        ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+
+        let maxTextWidth = 0;
+        for (const row of list) {
+            const label = String(row?.playerName || row?.playerId || "-");
+            maxTextWidth = Math.max(maxTextWidth, ctx.measureText(label).width);
+        }
+        // text width + name cell paddings/margins
+        return Math.ceil(maxTextWidth + 18);
+    }
+
+    function estimateRateWidthMobile(rows) {
+        if (!IS_MOBILE) return 170;
+        const list = Array.isArray(rows) ? rows : [];
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return 78;
+        const sampleEl = tableBody.querySelector("td.num");
+        const cs = window.getComputedStyle(sampleEl || document.body);
+        const fontWeight = cs.fontWeight || "400";
+        const fontSize = cs.fontSize || "13px";
+        const fontFamily = cs.fontFamily || "sans-serif";
+        ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+
+        let maxTextWidth = ctx.measureText("100.0%").width;
+        for (const row of list) {
+            const label = fmtPercent(Number(row?.winRate));
+            maxTextWidth = Math.max(maxTextWidth, ctx.measureText(label).width);
+        }
+        // text width + cell paddings + small room for the bar
+        return Math.max(72, Math.min(98, Math.ceil(maxTextWidth + 24)));
+    }
+
+    function syncTableLayout() {
+        if (rankingTable) rankingTable.dataset.tab = currentTab;
+        if (!rankingNameCol) return;
+        const rowsForWidth =
+            currentTab === "player"
+                ? playerRows
+                : currentTab === "character"
+                  ? charRowsCache.get(activeCharId) || []
+                  : pairRows;
+        let width;
+        if (currentTab === "pair") {
+            width = IS_MOBILE ? 180 : 240;
+        } else if (IS_MOBILE) {
+            width = estimateNameWidthMobile(rowsForWidth);
+        } else {
+            width = 180;
+        }
+        rankingNameCol.style.width = `${width}px`;
+        if (rankingMatchesCol) rankingMatchesCol.style.width = IS_MOBILE ? "50px" : "80px";
+        if (rankingWinsCol) rankingWinsCol.style.width = IS_MOBILE ? "44px" : "70px";
+        if (rankingLossesCol) rankingLossesCol.style.width = IS_MOBILE ? "44px" : "70px";
+        if (rankingRateCol)
+            rankingRateCol.style.width = IS_MOBILE
+                ? `${estimateRateWidthMobile(rowsForWidth)}px`
+                : "170px";
     }
 
     async function init() {
@@ -528,6 +614,7 @@
             buildCharList();
             renderCharFilters();
             setNote(topPlayers.updated_at ? topPlayers : topPairs);
+            syncTableLayout();
             renderCurrentTab();
         } catch {
             if (errorEl) errorEl.textContent = dbErrorMsg;

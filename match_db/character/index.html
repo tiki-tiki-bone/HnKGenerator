@@ -2813,6 +2813,19 @@
 
                     matchesData && Array.isArray(matchesData.items) ? matchesData.items : [];
 
+                const matchCharIds = matchesRaw
+                    .flatMap((item) => {
+                        const row = normalizeMatch(item);
+                        return [row.p1CharId || row.p1Char, row.p2CharId || row.p2Char];
+                    })
+                    .filter((value) => String(value || "").trim());
+
+                try {
+                    await hydrateCharacterNames(matchCharIds);
+                } catch {
+                    hadError = true;
+                }
+
                 renderMatches(matchesRaw);
 
 
