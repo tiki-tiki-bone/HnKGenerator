@@ -267,6 +267,14 @@
                 display: none !important;
             }
 
+            #searchPanel:not([data-search-mode="card"]) #cardVideoRow {
+                display: none !important;
+            }
+
+            #searchPanel:not([data-search-mode="player"]) #playerVideoRow {
+                display: none !important;
+            }
+
             .unknown-toggle {
                 position: relative;
                 display: inline-flex;
@@ -330,6 +338,24 @@
                 min-width: 0;
                 width: fit-content;
                 justify-self: start;
+            }
+
+            .form-row.card-controls-row {
+                grid-template-columns:
+                    var(--label-col, 9ch) max-content var(--label-col-sub, 4ch) max-content;
+                align-items: center;
+            }
+
+            .form-row.card-controls-row > .winner-switch {
+                grid-column: auto;
+                min-width: 0;
+                width: fit-content;
+            }
+
+            .form-row.card-controls-row > label:nth-of-type(2) {
+                justify-self: center;
+                text-align: center;
+                width: 100%;
             }
 
             .form-row:not(.duo) > select {
@@ -795,8 +821,8 @@
                     min-width: 0;
                 }
                 .form-row.winner-row {
-                    flex-direction: row;
-                    align-items: center;
+                    flex-direction: column;
+                    align-items: stretch;
                 }
                 .label-full {
                     display: none;
@@ -868,6 +894,30 @@
 
                 [data-mode-fields="card"] .form-row.duo > select {
                     grid-column: 3;
+                }
+
+                [data-mode-fields="card"] .form-row.card-controls-row {
+                    display: grid;
+                    grid-template-columns: 3ch minmax(0, 1fr);
+                    column-gap: 0.5rem;
+                    row-gap: 0.35rem;
+                    align-items: center;
+                }
+
+                [data-mode-fields="card"] .form-row.card-controls-row > label {
+                    font-size: 0.85rem;
+                    white-space: nowrap;
+                }
+
+                [data-mode-fields="card"] .form-row.card-controls-row > label:nth-of-type(2) {
+                    justify-self: start;
+                    text-align: left;
+                    width: auto;
+                }
+
+                [data-mode-fields="card"] .form-row.card-controls-row > .winner-switch {
+                    min-width: 0;
+                    width: fit-content;
                 }
             }
 
@@ -1129,24 +1179,6 @@
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <label for="playerVideo">動画ID/URL</label>
-                            <div class="suggest-field">
-                                <input
-                                    id="playerVideo"
-                                    type="text"
-                                    placeholder="動画ID / URL"
-                                    autocomplete="off"
-                                />
-                                <button
-                                    type="button"
-                                    class="clear-btn is-hidden"
-                                    aria-label="動画ID入力をクリア"
-                                >
-                                    &times;
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="mode-fields" data-mode-fields="card" hidden>
@@ -1202,7 +1234,7 @@
                             <select id="cardChar2"></select>
                         </div>
 
-                        <div class="form-row winner-row">
+                        <div class="form-row card-controls-row">
                             <label>勝者</label>
                             <div class="winner-switch" data-winner-group="card">
                                 <button type="button" class="winner-option active" data-w="all">
@@ -1211,23 +1243,13 @@
                                 <button type="button" class="winner-option" data-w="p1">P1</button>
                                 <button type="button" class="winner-option" data-w="p2">P2</button>
                             </div>
-                        </div>
-
-                        <div class="form-row">
-                            <label for="cardVideo">動画ID/URL</label>
-                            <div class="suggest-field">
-                                <input
-                                    id="cardVideo"
-                                    type="text"
-                                    placeholder="動画ID / URL"
-                                    autocomplete="off"
-                                />
-                                <button
-                                    type="button"
-                                    class="clear-btn is-hidden"
-                                    aria-label="動画ID入力をクリア"
-                                >
-                                    &times;
+                            <label>席順</label>
+                            <div class="winner-switch" data-card-side-group="card">
+                                <button type="button" class="winner-option active" data-w="any">
+                                    どちらでも
+                                </button>
+                                <button type="button" class="winner-option" data-w="fixed">
+                                    固定
                                 </button>
                             </div>
                         </div>
@@ -1265,6 +1287,44 @@
                         <div class="unknown-toggle">
                             <input id="excludeUnknownPlayer" type="checkbox" />
                             <label for="excludeUnknownPlayer">不明プレイヤーを除外</label>
+                        </div>
+                    </div>
+
+                    <div id="playerVideoRow" class="form-row" hidden>
+                        <label for="playerVideo">動画ID/URL</label>
+                        <div class="suggest-field">
+                            <input
+                                id="playerVideo"
+                                type="text"
+                                placeholder="動画ID / URL"
+                                autocomplete="off"
+                            />
+                            <button
+                                type="button"
+                                class="clear-btn is-hidden"
+                                aria-label="動画ID入力をクリア"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="cardVideoRow" class="form-row" hidden>
+                        <label for="cardVideo">動画ID/URL</label>
+                        <div class="suggest-field">
+                            <input
+                                id="cardVideo"
+                                type="text"
+                                placeholder="動画ID / URL"
+                                autocomplete="off"
+                            />
+                            <button
+                                type="button"
+                                class="clear-btn is-hidden"
+                                aria-label="動画ID入力をクリア"
+                            >
+                                &times;
+                            </button>
                         </div>
                     </div>
 
@@ -1370,10 +1430,13 @@
                 const cardChar2El = document.getElementById("cardChar2");
 
                 const cardVideoEl = document.getElementById("cardVideo");
+                const cardSideSwitchEl = document.querySelector('[data-card-side-group="card"]');
 
                 const videoQueryEl = document.getElementById("videoQuery");
                 const locateEl = document.getElementById("locate");
                 const excludeUnknownPlayerEl = document.getElementById("excludeUnknownPlayer");
+                const playerVideoRowEl = document.getElementById("playerVideoRow");
+                const cardVideoRowEl = document.getElementById("cardVideoRow");
 
                 const searchBtn = document.getElementById("searchBtn");
                 const shareBtn = document.getElementById("shareBtn");
@@ -1576,6 +1639,16 @@
                     return container.dataset.value || "all";
                 }
 
+                function setCardSideValue(value) {
+                    if (!cardSideSwitchEl) return;
+                    setWinnerValue(cardSideSwitchEl, value === "fixed" ? "fixed" : "any");
+                }
+
+                function getCardSideValue() {
+                    if (!cardSideSwitchEl) return "any";
+                    return getWinnerValue(cardSideSwitchEl) === "fixed" ? "fixed" : "any";
+                }
+
                 function readPlayerId(inputEl, hiddenEl) {
                     const hidden = hiddenEl ? String(hiddenEl.value || "").trim() : "";
                     if (hidden) return hidden;
@@ -1639,6 +1712,12 @@
                     modeFields.forEach((group) => {
                         group.hidden = group.dataset.modeFields !== mode;
                     });
+                    if (cardVideoRowEl) {
+                        cardVideoRowEl.hidden = mode !== MODE.CARD;
+                    }
+                    if (playerVideoRowEl) {
+                        playerVideoRowEl.hidden = mode !== MODE.PLAYER;
+                    }
                     syncLabelColumns();
                 }
 
@@ -1708,6 +1787,7 @@
                             !state.ch2 &&
                             !state.vid &&
                             (!state.w || state.w === "all") &&
+                            (!state.card_side || state.card_side === "any") &&
                             !state.exclude_unknown_player
                         );
                     }
@@ -1736,6 +1816,7 @@
                             Boolean(cardChar1El && cardChar1El.value) ||
                             Boolean(cardChar2El && cardChar2El.value) ||
                             Boolean(cardVideoEl && cardVideoEl.value.trim()) ||
+                            getCardSideValue() === "fixed" ||
                             Boolean(excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked) ||
                             getWinnerValue(cardWinner) !== "all"
                         );
@@ -1989,6 +2070,7 @@
                             ch2: cardChar2El ? cardChar2El.value : "",
                             vid: extractVideoId(cardVideoEl ? cardVideoEl.value : ""),
                             w: getWinnerValue(document.querySelector('[data-winner-group="card"]')),
+                            card_side: getCardSideValue(),
                             exclude_unknown_player: Boolean(
                                 excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked,
                             ),
@@ -2025,6 +2107,7 @@
                         if (state.ch2) entries.push(["ch2", state.ch2]);
                         if (state.vid) entries.push(["vid", state.vid]);
                         if (state.w && state.w !== "all") entries.push(["w", state.w]);
+                        if (state.card_side === "fixed") entries.push(["card_side", "fixed"]);
                         if (state.exclude_unknown_player)
                             entries.push(["exclude_unknown_player", "1"]);
                     } else {
@@ -2063,6 +2146,7 @@
                         if (state.p2) params.set("p2", state.p2);
                         if (state.ch1) params.set("ch1", state.ch1);
                         if (state.ch2) params.set("ch2", state.ch2);
+                        if (state.card_side === "fixed") params.set("card_side", "fixed");
                     } else {
                         if (state.p) params.set("p", state.p);
                         if (state.ch) params.set("ch", state.ch);
@@ -2673,6 +2757,7 @@
                         };
                     }
                     if (mode === MODE.CARD) {
+                        const cardSideRaw = (params.get("card_side") || "any").trim().toLowerCase();
                         return {
                             mode,
                             p1: (params.get("p1") || "").trim(),
@@ -2681,6 +2766,7 @@
                             ch2: (params.get("ch2") || "").trim(),
                             vid: (params.get("vid") || "").trim(),
                             w: (params.get("w") || "all").trim(),
+                            card_side: cardSideRaw === "fixed" ? "fixed" : "any",
                             exclude_unknown_player: isTrueLike(
                                 params.get("exclude_unknown_player"),
                             ),
@@ -2712,6 +2798,7 @@
                     if (state.mode === MODE.VIDEO) {
                         if (videoQueryEl) videoQueryEl.value = state.q || "";
                         if (locateEl) locateEl.value = state.locate_id || "";
+                        setCardSideValue("any");
                         if (excludeUnknownPlayerEl) excludeUnknownPlayerEl.checked = false;
                     } else if (state.mode === MODE.CARD) {
                         if (cardPlayer1IdEl) cardPlayer1IdEl.value = state.p1 || "";
@@ -2720,6 +2807,7 @@
                         if (cardChar2El) cardChar2El.value = state.ch2 || "";
                         if (cardVideoEl) cardVideoEl.value = state.vid || "";
                         setWinnerValue(cardWinner, state.w || "all");
+                        setCardSideValue(state.card_side || "any");
                         if (excludeUnknownPlayerEl)
                             excludeUnknownPlayerEl.checked = Boolean(state.exclude_unknown_player);
                     } else {
@@ -2727,6 +2815,7 @@
                         if (playerCharEl) playerCharEl.value = state.ch || "";
                         if (playerVideoEl) playerVideoEl.value = state.vid || "";
                         setWinnerValue(playerWinner, state.w || "all");
+                        setCardSideValue("any");
                         if (excludeUnknownPlayerEl)
                             excludeUnknownPlayerEl.checked = Boolean(state.exclude_unknown_player);
                     }
@@ -2933,6 +3022,13 @@
                 });
 
                 document.querySelectorAll("[data-winner-group]").forEach((container) => {
+                    container.addEventListener("click", (e) => {
+                        const target = e.target.closest(".winner-option");
+                        if (!target) return;
+                        setWinnerValue(container, target.dataset.w);
+                    });
+                });
+                document.querySelectorAll("[data-card-side-group]").forEach((container) => {
                     container.addEventListener("click", (e) => {
                         const target = e.target.closest(".winner-option");
                         if (!target) return;
