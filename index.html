@@ -261,29 +261,11 @@
                 }
             }
         </style>
+            <script src="js/site-header.js" defer data-site-header></script>
     </head>
 
     <body>
-        <header>
-            <h1>北斗の拳　トレモ数値表示チートコードジェネレータ</h1>
-            <div
-                class="menu-toggle"
-                id="menuToggle"
-                aria-label="メニュー開閉"
-                role="button"
-                tabindex="0"
-            >
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <nav id="navMenu">
-                <a href="codes.html">チートコード一覧</a>
-                <a href="index.html">チートコードジェネレータ</a>
-                <a href="iad_frame.html">低ダ攻撃発生Fデータ</a>
-                <a href="opening_matchup.html">開幕行動チェッカー</a>
-            </nav>
-        </header>
+        <div id="siteHeader" data-title="北斗の拳　トレモ数値表示チートコードジェネレータ"></div>
         <div class="container">
             <div class="content">
                 <!-- グループ単位で実際のゲーム表示に合わせる -->
@@ -430,20 +412,6 @@ EC878528 1456E79B
             initSelects();
         </script>
         <script>
-            const menuToggle = document.getElementById("menuToggle");
-            const navMenu = document.getElementById("navMenu");
-
-            function toggleMenu() {
-                navMenu.classList.toggle("show");
-            }
-
-            menuToggle.addEventListener("click", toggleMenu);
-            menuToggle.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    toggleMenu();
-                }
-            });
-        </script>
+</script>
     </body>
 </html>
