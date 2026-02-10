@@ -280,6 +280,20 @@
                 color: #3f4654;
                 text-decoration: underline;
             }
+
+            .donation-panel {
+                text-align: center;
+            }
+
+            .donation-panel p {
+                text-align: left;
+            }
+
+            .donation-widget-wrap {
+                display: flex;
+                justify-content: center;
+                margin-top: 0.4rem;
+            }
         </style>
         <script src="../js/site-header.js" defer data-site-header></script>
     </head>
@@ -526,6 +540,31 @@
                             >
                         </li>
                     </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>サイトについて</h2>
+                <div class="panel donation-panel">
+                    <p>
+                        対戦動画DBの維持・改善（データ収集、保守、機能追加）のためにご支援頂けると有難いです。
+                    </p>
+                    <div class="donation-widget-wrap">
+                        <a
+                            data-ofuse-widget-button
+                            href="https://ofuse.me/o?uid=152633"
+                            data-ofuse-id="152633"
+                            data-ofuse-color="dark"
+                            data-ofuse-text="応援を送る"
+                            data-ofuse-style="rectangle"
+                            >応援を送る</a
+                        >
+                        <script
+                            async
+                            src="https://ofuse.me/assets/platform/widget.js"
+                            charset="utf-8"
+                        ></script>
+                    </div>
                 </div>
             </section>
         </main>
