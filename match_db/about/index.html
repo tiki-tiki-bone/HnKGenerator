@@ -281,18 +281,16 @@
                 text-decoration: underline;
             }
 
-            .donation-panel {
-                text-align: center;
-            }
-
-            .donation-panel p {
-                text-align: left;
-            }
-
-            .donation-widget-wrap {
+            .donation-panel .donation-widget-slot {
+                margin-top: 0.65rem;
                 display: flex;
                 justify-content: center;
-                margin-top: 0.4rem;
+            }
+
+            .donation-panel .donation-widget-slot a[data-ofuse-widget-button] {
+                display: block;
+                width: fit-content;
+                margin: 0;
             }
         </style>
         <script src="../js/site-header.js" defer data-site-header></script>
@@ -546,10 +544,8 @@
             <section>
                 <h2>サイトについて</h2>
                 <div class="panel donation-panel">
-                    <p>
-                        対戦動画DBの維持・改善（データ収集、保守、機能追加）のためにご支援頂けると有難いです。
-                    </p>
-                    <div class="donation-widget-wrap">
+                    対戦動画DBの維持・改善（データ収集、保守、機能追加）のためにご支援頂けると有難いです。
+                    <div class="donation-widget-slot">
                         <a
                             data-ofuse-widget-button
                             href="https://ofuse.me/o?uid=152633"
