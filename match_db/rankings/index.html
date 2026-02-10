@@ -314,18 +314,18 @@
                 width: 80px;
             }
 
+            table th:nth-child(3),
+            table td:nth-child(3) {
+                width: 170px;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
             table th:nth-child(5),
             table td:nth-child(5),
             table th:nth-child(6),
             table td:nth-child(6) {
                 width: 70px;
-            }
-
-            table th:nth-child(7),
-            table td:nth-child(7) {
-                width: 170px;
-                font-size: 1rem;
-                font-weight: 600;
             }
 
             tbody tr {
@@ -368,25 +368,27 @@
 
                 table[data-tab="pair"] th:nth-child(2),
                 table[data-tab="pair"] td:nth-child(2) {
-                    width: 180px;
+                    width: auto;
+                    padding-left: 0.15rem;
+                    padding-right: 0.15rem;
                 }
 
                 table th:nth-child(3),
                 table td:nth-child(3) {
-                    width: 50px;
+                    width: auto;
+                    font-size: 0.9rem;
                 }
 
                 table th:nth-child(4),
-                table td:nth-child(4),
-                table th:nth-child(5),
-                table td:nth-child(5) {
-                    width: 44px;
+                table td:nth-child(4) {
+                    width: 50px;
                 }
 
+                table th:nth-child(5),
+                table td:nth-child(5),
                 table th:nth-child(6),
                 table td:nth-child(6) {
-                    width: auto;
-                    font-size: 0.9rem;
+                    width: 44px;
                 }
 
                 .rate-bar {
@@ -397,6 +399,7 @@
                 .player-cell span {
                     font-size: 0.85rem;
                 }
+
             }
 
             .tab-bar {
@@ -512,6 +515,74 @@
             .player-cell.no-portrait {
                 grid-template-columns: 1fr;
             }
+
+            .player-cell.player-cell--overlay {
+                position: relative;
+                display: block;
+                overflow: hidden;
+            }
+
+            .player-cell.player-cell--overlay .table-portrait {
+                position: absolute;
+                left: 0;
+                right: auto;
+                bottom: 0;
+                z-index: 1;
+                pointer-events: none;
+                width: auto;
+                max-width: none;
+            }
+
+            .player-cell.player-cell--overlay span {
+                position: absolute;
+                inset: 0;
+                z-index: 3;
+                display: flex;
+                align-items: flex-end;
+                justify-content: flex-start;
+                line-height: 1.2;
+                padding: 0.25rem 0.35rem;
+                color: #ffffff;
+                text-shadow: none;
+                overflow: visible;
+            }
+
+            .player-cell.player-cell--overlay span::before {
+                content: "";
+                position: absolute;
+                left: 0.2rem;
+                bottom: 0.08rem;
+                width: clamp(96px, calc((var(--name-units, 4) * 1em) + 5.5em), 220px);
+                height: 1.72em;
+                z-index: 0;
+                pointer-events: none;
+                background: radial-gradient(
+                    122% 98% at 0% 52%,
+                    rgba(0, 0, 0, 0.24) 0%,
+                    rgba(0, 0, 0, 0.16) 20%,
+                    rgba(0, 0, 0, 0.08) 38%,
+                    rgba(0, 0, 0, 0.03) 52%,
+                    rgba(0, 0, 0, 0.01) 64%,
+                    rgba(0, 0, 0, 0.00) 100%
+                );
+                filter: blur(0.75px);
+            }
+
+            .player-cell.player-cell--overlay .player-link {
+                color: inherit;
+                text-decoration: none;
+                position: relative;
+                display: inline-flex;
+                align-items: flex-end;
+                width: max-content;
+                max-width: 240px;
+                flex: 0 0 auto;
+                z-index: 1;
+                text-shadow:
+                    0 1px 2px rgba(0, 0, 0, 0.82),
+                    0 0 3px rgba(0, 0, 0, 0.34);
+            }
+
         
             .stats-links {
                 display: grid;
@@ -640,19 +711,19 @@
                             <colgroup>
                                 <col style="width: 40px" />
                                 <col style="width: 180px" />
+                                <col style="width: 170px" />
                                 <col style="width: 80px" />
                                 <col style="width: 70px" />
                                 <col style="width: 70px" />
-                                <col style="width: 170px" />
                             </colgroup>
                             <thead>
                                 <tr>
                                     <th class="rank">順位</th>
                                     <th>プレイヤー</th>
+                                    <th class="num">勝率</th>
                                     <th class="num">対戦数</th>
                                     <th class="num">勝ち</th>
                                     <th class="num">負け</th>
-                                    <th class="num">勝率</th>
                                 </tr>
                             </thead>
                             <tbody id="topBody"></tbody>

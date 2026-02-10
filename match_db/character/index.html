@@ -1456,6 +1456,29 @@
             }
 
 
+            function createRateBar(rate) {
+
+                if (!Number.isFinite(rate)) return null;
+
+                const percent = Math.max(0, Math.min(100, Math.round(rate * 100)));
+
+                const bar = document.createElement("div");
+
+                bar.className = "rate-bar";
+
+                const fill = document.createElement("div");
+
+                fill.className = "rate-bar-fill";
+
+                fill.style.width = `${percent}%`;
+
+                bar.appendChild(fill);
+
+                return bar;
+
+            }
+
+
 
             function toNumber(value) {
 
@@ -1862,6 +1885,10 @@
                 winCell.className = "num";
 
                 winCell.textContent = fmtPercent(row.winRate);
+
+                const rateBar = createRateBar(row.winRate);
+
+                if (rateBar) winCell.appendChild(rateBar);
 
 
 

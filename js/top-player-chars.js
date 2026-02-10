@@ -12,13 +12,13 @@
     const rankingTable = document.querySelector('table[aria-label="勝率ランキング"]');
     const rankingNameCol =
         rankingTable && rankingTable.querySelector("colgroup col:nth-child(2)");
-    const rankingMatchesCol =
-        rankingTable && rankingTable.querySelector("colgroup col:nth-child(3)");
-    const rankingWinsCol =
-        rankingTable && rankingTable.querySelector("colgroup col:nth-child(4)");
-    const rankingLossesCol =
-        rankingTable && rankingTable.querySelector("colgroup col:nth-child(5)");
     const rankingRateCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(3)");
+    const rankingMatchesCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(4)");
+    const rankingWinsCol =
+        rankingTable && rankingTable.querySelector("colgroup col:nth-child(5)");
+    const rankingLossesCol =
         rankingTable && rankingTable.querySelector("colgroup col:nth-child(6)");
     if (!tableBody) return;
 
@@ -51,6 +51,7 @@
     let lastNoteMeta = null;
     let topPlayersMeta = null;
     let topPairsMeta = null;
+    let pairNameWidthRaf = 0;
     const MAX_RANK_ROWS = 20;
 
     function normalizeKey(value) {
@@ -60,6 +61,20 @@
     function isUnknown(value) {
         const key = normalizeKey(value);
         return key && unknownKeys.has(key);
+    }
+
+    function estimateNameUnits(value) {
+        const text = String(value || "");
+        let units = 0;
+        for (const ch of text) {
+            const code = ch.codePointAt(0) || 0;
+            const isWide =
+                (code >= 0x3040 && code <= 0x30ff) || // Hiragana / Katakana
+                (code >= 0x3400 && code <= 0x9fff) || // CJK
+                (code >= 0xff00 && code <= 0xffef); // Fullwidth forms
+            units += isWide ? 1.0 : 0.62;
+        }
+        return Math.max(2.0, Math.min(20.0, units));
     }
 
     function formatUpdatedAt(value) {
@@ -130,8 +145,7 @@
             img.alt = "";
             return img;
         }
-        const portraitPrefix = IS_MOBILE ? "medium_portrait_mobile" : "medium_portrait";
-        img.src = `${IMAGE_BASE}${portraitPrefix}_${encodeURIComponent(cleanId)}.png`;
+        img.src = `${IMAGE_BASE}medium_portrait_${encodeURIComponent(cleanId)}.png`;
         img.addEventListener("error", () => {
             img.classList.add("empty");
             img.removeAttribute("src");
@@ -225,6 +239,7 @@
 
         for (const row of rows) {
             const tr = document.createElement("tr");
+            if (showChar) tr.classList.add("pair-row");
             const rankCell = document.createElement("td");
             rankCell.className = "rank";
             rankCell.textContent = String(row.rank);
@@ -232,8 +247,10 @@
             const playerCell = document.createElement("td");
             const playerWrap = document.createElement("div");
             playerWrap.className = showChar ? "player-cell" : "player-cell no-portrait";
+            if (showChar) playerWrap.classList.add("player-cell--overlay");
             const playerName = document.createElement("span");
             const nameText = row.playerName || row.playerId || "-";
+            playerName.style.setProperty("--name-units", String(estimateNameUnits(nameText)));
             if (row.playerId) {
                 const playerLink = document.createElement("a");
                 playerLink.className = "player-link";
@@ -270,11 +287,14 @@
             const rateBar = createRateBar(row.winRate, winRateLabel);
             if (rateBar) rateCell.appendChild(rateBar);
 
-            tr.append(rankCell, playerCell, matchesCell, winsCell, lossesCell, rateCell);
+            tr.append(rankCell, playerCell, rateCell, matchesCell, winsCell, lossesCell);
             if (currentTab === "pair") {
                 makeRowClickable(tr, buildMatchSearchUrl(row, "all"));
             }
             tableBody.appendChild(tr);
+        }
+        if (showChar) {
+            schedulePairNameColWidthFromPortrait();
         }
     }
 
@@ -561,6 +581,72 @@
         return Math.max(72, Math.min(98, Math.ceil(maxTextWidth + 24)));
     }
 
+    function schedulePairNameColWidthFromPortrait() {
+        if (!IS_MOBILE) return;
+        if (currentTab !== "pair") return;
+        if (!rankingNameCol) return;
+        if (pairNameWidthRaf) cancelAnimationFrame(pairNameWidthRaf);
+        pairNameWidthRaf = requestAnimationFrame(() => {
+            pairNameWidthRaf = 0;
+            applyPairNameColWidthFromPortrait();
+        });
+    }
+
+    function applyPairNameColWidthFromPortrait() {
+        if (!IS_MOBILE) return;
+        if (currentTab !== "pair") return;
+        if (!rankingNameCol) return;
+        const images = Array.from(
+            tableBody.querySelectorAll(".pair-row .player-cell .table-portrait:not(.empty)"),
+        );
+        if (!images.length) return;
+        const rootStyles = window.getComputedStyle(document.documentElement);
+        const rowHeightRaw = parseFloat(rootStyles.getPropertyValue("--char-row-height"));
+        const fallbackHeight = 46;
+        const rowHeight = Number.isFinite(rowHeightRaw) && rowHeightRaw > 0 ? rowHeightRaw : fallbackHeight;
+
+        let maxWidth = 0;
+        for (const img of images) {
+            if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+                const estimatedWidth = (img.naturalWidth / img.naturalHeight) * rowHeight;
+                if (estimatedWidth > maxWidth) maxWidth = estimatedWidth;
+            } else {
+                img.addEventListener("load", schedulePairNameColWidthFromPortrait, { once: true });
+            }
+        }
+        if (maxWidth <= 0) return;
+        // portrait width at row height + minimal cell padding room
+        const dynamicWidth = Math.ceil(maxWidth + 6);
+        setPairNameWidthStyles(dynamicWidth);
+    }
+
+    function setPairNameWidthStyles(widthPx) {
+        if (!rankingNameCol) return;
+        const width = `${Math.max(1, Math.round(widthPx))}px`;
+        rankingNameCol.style.width = width;
+        rankingNameCol.style.minWidth = width;
+        rankingNameCol.style.maxWidth = width;
+        const cells = tableBody.querySelectorAll("tr.pair-row > td:nth-child(2)");
+        cells.forEach((cell) => {
+            cell.style.width = width;
+            cell.style.minWidth = width;
+            cell.style.maxWidth = width;
+        });
+    }
+
+    function clearPairNameWidthStyles() {
+        if (!rankingNameCol) return;
+        rankingNameCol.style.width = "";
+        rankingNameCol.style.minWidth = "";
+        rankingNameCol.style.maxWidth = "";
+        const cells = tableBody.querySelectorAll("tr.pair-row > td:nth-child(2)");
+        cells.forEach((cell) => {
+            cell.style.width = "";
+            cell.style.minWidth = "";
+            cell.style.maxWidth = "";
+        });
+    }
+
     function syncTableLayout() {
         if (rankingTable) rankingTable.dataset.tab = currentTab;
         if (!rankingNameCol) return;
@@ -572,13 +658,16 @@
                   : pairRows;
         let width;
         if (currentTab === "pair") {
-            width = IS_MOBILE ? 180 : 240;
+            width = IS_MOBILE ? 0 : 240;
         } else if (IS_MOBILE) {
             width = estimateNameWidthMobile(rowsForWidth);
         } else {
             width = 180;
         }
-        rankingNameCol.style.width = `${width}px`;
+        clearPairNameWidthStyles();
+        if (!(currentTab === "pair" && IS_MOBILE) && width > 0) {
+            rankingNameCol.style.width = `${width}px`;
+        }
         if (rankingMatchesCol) rankingMatchesCol.style.width = IS_MOBILE ? "50px" : "80px";
         if (rankingWinsCol) rankingWinsCol.style.width = IS_MOBILE ? "44px" : "70px";
         if (rankingLossesCol) rankingLossesCol.style.width = IS_MOBILE ? "44px" : "70px";
@@ -586,6 +675,9 @@
             rankingRateCol.style.width = IS_MOBILE
                 ? `${estimateRateWidthMobile(rowsForWidth)}px`
                 : "170px";
+        if (currentTab === "pair") {
+            schedulePairNameColWidthFromPortrait();
+        }
     }
 
     async function init() {
