@@ -251,6 +251,35 @@
                 margin: 0;
                 color: var(--muted);
             }
+
+            .channel-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: grid;
+                gap: 0;
+            }
+
+            .channel-item {
+                padding: 0.3rem 0.1rem;
+            }
+
+            .channel-item + .channel-item {
+                border-top: 1px dashed var(--line);
+            }
+
+            .channel-item a {
+                display: inline-block;
+                color: #575e6d;
+                font-size: 0.93rem;
+                text-decoration: none;
+            }
+
+            .channel-item a:hover,
+            .channel-item a:focus {
+                color: #3f4654;
+                text-decoration: underline;
+            }
         </style>
         <script src="../js/site-header.js" defer data-site-header></script>
     </head>
@@ -288,7 +317,12 @@
                 <h2>データについて</h2>
                 <div class="panel">
                     <ul>
-                        <li>YouTubeにアップロードされた動画のみ対象です。</li>
+                        <li>
+                            YouTubeにアップロードされた動画のみ対象です。<br />主に<a
+                                href="about/#targetYoutubeChannel"
+                                >集計対象のYoutubeチャンネル</a
+                            >に投稿された動画を集計しています。
+                        </li>
                         <li>
                             主に2020年前後以降の動画を対象にしておりますが、リクエスト等あればより古い動画も対応いたします。
                         </li>
@@ -332,7 +366,7 @@
                         <p class="qa-a qa-line">
                             <span class="qa-label">A.</span>
                             <span
-                                >勝率が50%以上のプレイヤー同士の試合を対象に集計しております。</span
+                                >独自の指標に基づいて算出しております。指標は変更される場合があります。</span
                             >
                         </p>
                     </div>
@@ -344,7 +378,10 @@
                         <p class="qa-a qa-line">
                             <span class="qa-label">A.</span>
                             <span
-                                >集計しますのでDMか任意の試合の訂正提案の備考欄にてお知らせください。</span
+                                >現在<a href="about/#targetYoutubeChannel"
+                                    >集計対象のYoutubeチャンネル</a
+                                >の動画を集計中ですので、該当する場合は集計までお待ち下さい。<br />
+                                該当しない場合は別途集計しますのでDMか任意の試合の訂正提案の備考欄にてお知らせください。</span
                             >
                         </p>
                     </div>
@@ -364,9 +401,119 @@
             </section>
 
             <section>
-                <h2>リンク</h2>
+                <h2 id="targetYoutubeChannel">集計対象のyoutubeチャンネル</h2>
                 <div class="panel">
-                    <p><a href="./">対戦動画DB トップページ</a></p>
+                    <ul class="channel-list">
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@game-newton9875"
+                                target="_blank"
+                                rel="noopener"
+                                >ゲーム ニュートンGAME-NEWTON</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@gamespotversus"
+                                target="_blank"
+                                rel="noopener"
+                                >西日暮里 ゲームスポット バーサス</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a href="https://www.youtube.com/@GCTBD2" target="_blank" rel="noopener"
+                                >宮城格ゲーちゃんねる　GC東部配信</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@Port24Yagoto"
+                                target="_blank"
+                                rel="noopener"
+                                >Port24 Yagoto</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@big-one2ndchannel128"
+                                target="_blank"
+                                rel="noopener"
+                                >BIG-ONE2ndCHANNEL1</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@big-one2ndchannel260"
+                                target="_blank"
+                                rel="noopener"
+                                >BIG-ONE2nd CHANNEL2</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@big-one2ndchannel335"
+                                target="_blank"
+                                rel="noopener"
+                                >BIG-ONE2nd CHANNEL3</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@gamecenterWILL"
+                                target="_blank"
+                                rel="noopener"
+                                >ゲームセンターWILL</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@%E7%99%BD%E4%B8%8A%E9%87%8E"
+                                target="_blank"
+                                rel="noopener"
+                                >白上野</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@%E3%83%9E%E3%82%A8%E3%82%B1%E3%83%B3-l1m"
+                                target="_blank"
+                                rel="noopener"
+                                >マエケン</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@K.I_HKT"
+                                target="_blank"
+                                rel="noopener"
+                                >K.I</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@sham-xv2nv"
+                                target="_blank"
+                                rel="noopener"
+                                >s ham</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/@takuma3344"
+                                target="_blank"
+                                rel="noopener"
+                                >権王</a
+                            >
+                        </li>
+                        <li class="channel-item">
+                            <a
+                                href="https://www.youtube.com/channel/UCKAGTGiATqokbd_QqLgNg8A/"
+                                target="_blank"
+                                rel="noopener"
+                                >宮城マミヤチャンネル</a
+                            >
+                        </li>
+                    </ul>
                 </div>
             </section>
         </main>
