@@ -824,7 +824,7 @@
                 margin-bottom: 0.2rem;
                 display: inline-flex;
                 align-items: center;
-                gap: 0.18rem;
+                gap: 0.35rem;
                 flex-wrap: nowrap;
 
             }
@@ -833,13 +833,21 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 0.06rem 0.28rem;
+                padding: 0.08rem 0.42rem;
                 font-size: 0.68rem;
                 color: var(--muted);
                 background: #f3f3f3;
                 border: 1px solid var(--line);
                 border-radius: 999px;
                 line-height: 1.15;
+            }
+
+            .stat-card.has-rank {
+                padding-right: 2.2rem;
+            }
+
+            .stat-card.has-rank .stat-rank-inline {
+                display: none;
             }
 
 
@@ -863,6 +871,9 @@
                 border: 1px solid var(--line);
                 border-radius: 999px;
                 line-height: 1.2;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
             }
 
 
@@ -1169,8 +1180,17 @@
                 }
 
                 .stat-rank-inline {
+                    display: inline-flex;
                     font-size: 0.62rem;
-                    padding: 0.04rem 0.22rem;
+                    padding: 0.05rem 0.24rem;
+                }
+
+                .stat-card.has-rank .stat-title {
+                    gap: 0.18rem;
+                }
+
+                .stat-card.has-rank .stat-rank {
+                    display: none;
                 }
 
 
@@ -2432,6 +2452,10 @@ const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.d
                             rankInline.textContent = `${card.rank}位`;
                             titleEl.appendChild(rankInline);
                         }
+                        const rankEl = document.createElement("div");
+                        rankEl.className = "stat-rank";
+                        rankEl.textContent = `${card.rank}位`;
+                        el.appendChild(rankEl);
                     }
 
                     if (card.bar !== null && card.bar !== undefined) {
