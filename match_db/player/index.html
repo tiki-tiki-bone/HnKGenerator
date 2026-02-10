@@ -489,6 +489,11 @@
 
             }
 
+            .alias-empty {
+                color: var(--muted);
+                font-weight: 500;
+            }
+
 
 
             .chip-group {
@@ -817,7 +822,24 @@
                 color: var(--muted);
 
                 margin-bottom: 0.2rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                flex-wrap: nowrap;
 
+            }
+
+            .stat-rank-inline {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.08rem 0.42rem;
+                font-size: 0.68rem;
+                color: var(--muted);
+                background: #f3f3f3;
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                line-height: 1.15;
             }
 
 
@@ -1134,23 +1156,21 @@
                 }
 
                 .stat-card.has-rank {
-                    padding-right: 2.45rem;
+                    padding-right: 0.6rem;
                 }
 
                 .stat-card.has-rank .stat-title,
                 .stat-card.has-rank .stat-value {
-                    padding-right: 0.7rem;
+                    padding-right: 0;
                 }
 
                 .stat-card.has-rank .stat-title {
                     white-space: nowrap;
                 }
 
-                .stat-rank {
-                    top: 6px;
-                    right: 6px;
-                    min-width: 1.85rem;
-                    text-align: right;
+                .stat-rank-inline {
+                    font-size: 0.66rem;
+                    padding: 0.06rem 0.34rem;
                 }
 
 
@@ -2285,8 +2305,10 @@ const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.d
                 aliasListEl.innerHTML = "";
 
                 if (!aliases.length) {
-
-                    aliasListEl.appendChild(createChip(NO_ALIAS_TEXT));
+                    const plain = document.createElement("span");
+                    plain.className = "alias-value alias-empty";
+                    plain.textContent = NO_ALIAS_TEXT;
+                    aliasListEl.appendChild(plain);
 
                     return;
 
@@ -2401,6 +2423,17 @@ const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.d
 
                     `;
 
+                    if (card.rank) {
+                        el.classList.add("has-rank");
+                        const titleEl = el.querySelector(".stat-title");
+                        if (titleEl) {
+                            const rankInline = document.createElement("span");
+                            rankInline.className = "stat-rank-inline";
+                            rankInline.textContent = `${card.rank}位`;
+                            titleEl.appendChild(rankInline);
+                        }
+                    }
+
                     if (card.bar !== null && card.bar !== undefined) {
 
                         const bar = document.createElement("div");
@@ -2429,13 +2462,6 @@ const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.d
 
                         el.appendChild(bar);
 
-                    }
-                    if (card.rank) {
-                        el.classList.add("has-rank");
-                        const rankEl = document.createElement("div");
-                        rankEl.className = "stat-rank";
-                        rankEl.textContent = `${card.rank}位`;
-                        el.appendChild(rankEl);
                     }
 
                     summaryStatsEl.appendChild(el);
