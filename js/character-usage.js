@@ -157,8 +157,27 @@ const IS_MOBILE = window.matchMedia("(max-width: 600px)").matches;
             return;
         }
 
+        function moveToCharacterPage(charId) {
+            if (!charId) return;
+            window.location.href = `character/?c=${encodeURIComponent(charId)}`;
+        }
+
         for (const row of rows) {
             const tr = document.createElement("tr");
+            tr.style.cursor = "pointer";
+            tr.tabIndex = 0;
+            tr.setAttribute("role", "link");
+            tr.setAttribute("aria-label", `${row.name}のキャラクターページを開く`);
+            tr.addEventListener("click", () => {
+                moveToCharacterPage(row.id);
+            });
+            tr.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    moveToCharacterPage(row.id);
+                }
+            });
+
             const iconCell = document.createElement("td");
             iconCell.className = "icon-col";
             const iconImg = buildPortrait(row.id, row.name);
