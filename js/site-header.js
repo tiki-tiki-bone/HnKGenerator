@@ -25,7 +25,12 @@
         const title = host.dataset.title || document.title || "";
         titleTarget.textContent = title;
         if (titleTarget.tagName === "A") {
-            titleTarget.setAttribute("href", dbTopHref);
+            const samePageHref =
+                (window.location.pathname || "/") +
+                (window.location.search || "") +
+                (window.location.hash || "");
+            const titleHref = inMatchDb ? dbTopHref : samePageHref;
+            titleTarget.setAttribute("href", titleHref);
             titleTarget.setAttribute("aria-label", title);
         }
     };

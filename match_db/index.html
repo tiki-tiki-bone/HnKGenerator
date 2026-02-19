@@ -446,6 +446,77 @@
                 padding-right: 2.2rem;
             }
 
+            .suggest-field.player-token-field {
+                display: flex;
+                align-items: center;
+                gap: 0.35rem;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                background: #fff;
+                padding: 0.3rem 2rem 0.25rem 0.35rem;
+                min-height: 2.35rem;
+            }
+
+            .suggest-field.player-token-field:focus-within {
+                border-color: #999;
+                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+            }
+
+            .suggest-field.player-token-field input {
+                border: none;
+                outline: none;
+                box-shadow: none;
+                min-width: 0;
+                width: auto;
+                flex: 1 1 7rem;
+                min-height: 1.6rem;
+                padding: 0.2rem 0.35rem;
+                background: transparent;
+            }
+
+            .player-token-list {
+                display: inline-flex;
+                flex-wrap: nowrap;
+                gap: 0.35rem;
+                margin: 0;
+                max-width: 70%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+            }
+
+            .player-token {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                padding: 0.14rem 0.52rem;
+                border-radius: 999px;
+                border: 1px solid #d2d2d2;
+                background: #f3f3f3;
+                color: #222;
+                font-size: 0.84rem;
+                line-height: 1.2;
+            }
+
+            .player-token.is-armed {
+                background: #e6e6e6;
+                border-color: #9a9a9a;
+            }
+
+            .player-token-remove {
+                border: none;
+                background: transparent;
+                color: #666;
+                font-size: 0.9rem;
+                line-height: 1;
+                cursor: pointer;
+                padding: 0;
+            }
+
+            .player-token-remove:hover {
+                color: #111;
+            }
+
             .suggestions {
                 position: absolute;
                 top: calc(100% + 4px);
@@ -500,6 +571,11 @@
 
             .suggest-field .clear-btn:hover {
                 background: #f0f0f0;
+            }
+
+            .suggest-field.player-token-field .clear-btn {
+                top: 50%;
+                transform: translateY(-50%);
             }
 
             .fixed-api {
@@ -1242,13 +1318,13 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-row">
-                            <label for="locate">場所</label>
-                            <select id="locate">
-                                <option value="">すべて</option>
-                            </select>
-                        </div>
+                    <div class="form-row">
+                        <label for="locate">場所</label>
+                        <select id="locate">
+                            <option value="">すべて</option>
+                        </select>
                     </div>
 
                     <div id="unknownPlayerRow" class="form-row unknown-player-row">
@@ -1428,6 +1504,7 @@
 
                 const videoInfoCache = new Map();
                 const videoInfoPending = new Set();
+                const playerTokenState = new WeakMap();
                 function setError(msg) {
                     if (!errorEl) return;
                     if (!msg) {
@@ -1560,7 +1637,8 @@
                     const btn = field.querySelector(".clear-btn");
                     if (!btn) return;
                     const hasValue = Boolean(String(inputEl.value || "").trim());
-                    btn.classList.toggle("is-hidden", !hasValue);
+                    const tokenCount = Number(field.dataset.tokenCount || 0);
+                    btn.classList.toggle("is-hidden", !hasValue && tokenCount <= 0);
                 }
 
                 function refreshClearButtons() {
@@ -1590,6 +1668,163 @@
                     toggleClearButton(inputEl);
                 }
 
+                function splitPlayerTokens(raw) {
+                    return String(raw || "")
+                        .split(/[,\u3001]/)
+                        .map((part) => normalizeTextNfkc(part).trim())
+                        .filter(Boolean);
+                }
+
+                function buildPlayerIdCsv(values) {
+                    const ids = [];
+                    const seen = new Set();
+                    for (const value of values || []) {
+                        const id = String(value || "").trim();
+                        if (!isNumericId(id) || seen.has(id)) continue;
+                        seen.add(id);
+                        ids.push(id);
+                    }
+                    return ids.join(",");
+                }
+
+                function getActivePlayerToken(raw) {
+                    const text = String(raw || "");
+                    const commaIdx = Math.max(text.lastIndexOf(","), text.lastIndexOf("\u3001"));
+                    const token = commaIdx >= 0 ? text.slice(commaIdx + 1) : text;
+                    return normalizeTextNfkc(token).trim();
+                }
+
+                function ensurePlayerTokenField(inputEl, hiddenEl) {
+                    if (!inputEl) return null;
+                    if (playerTokenState.has(inputEl)) return playerTokenState.get(inputEl);
+                    const field = inputEl.closest(".suggest-field");
+                    if (!field) return null;
+                    field.classList.add("player-token-field");
+                    const tokenList = document.createElement("div");
+                    tokenList.className = "player-token-list";
+                    field.insertBefore(tokenList, inputEl);
+                    const state = {
+                        field,
+                        tokenList,
+                        tokens: [],
+                        defaultPlaceholder: inputEl.getAttribute("placeholder") || "",
+                        backspaceArmedId: "",
+                    };
+                    playerTokenState.set(inputEl, state);
+                    const hiddenTokens = splitPlayerTokens(hiddenEl?.value);
+                    if (hiddenTokens.length) {
+                        state.tokens = hiddenTokens.map((id) => ({ id, label: id }));
+                    }
+                    return state;
+                }
+
+                function getPlayerTokens(inputEl, hiddenEl) {
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (state && state.tokens.length) {
+                        return state.tokens.map((token) => ({ ...token }));
+                    }
+                    const ids = splitPlayerTokens(hiddenEl?.value);
+                    return ids.map((id) => ({ id, label: id }));
+                }
+
+                function renderPlayerTokens(inputEl, hiddenEl) {
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (!state) return;
+                    const { tokenList, field } = state;
+                    tokenList.innerHTML = "";
+                    const seen = new Set();
+                    const cleanTokens = [];
+                    for (const token of state.tokens) {
+                        const id = String(token?.id || "").trim();
+                        if (!isNumericId(id) || seen.has(id)) continue;
+                        seen.add(id);
+                        const label = String(token?.label || id).trim() || id;
+                        cleanTokens.push({ id, label });
+                    }
+                    state.tokens = cleanTokens;
+                    for (const token of state.tokens) {
+                        const chip = document.createElement("span");
+                        chip.className = "player-token";
+                        if (token.id === state.backspaceArmedId) {
+                            chip.classList.add("is-armed");
+                        }
+                        chip.textContent = token.label;
+                        const removeBtn = document.createElement("button");
+                        removeBtn.type = "button";
+                        removeBtn.className = "player-token-remove";
+                        removeBtn.textContent = "×";
+                        removeBtn.setAttribute("aria-label", `${token.label} を削除`);
+                        removeBtn.addEventListener("click", () => {
+                            state.tokens = state.tokens.filter((it) => it.id !== token.id);
+                            state.backspaceArmedId = "";
+                            renderPlayerTokens(inputEl, hiddenEl);
+                        });
+                        chip.appendChild(removeBtn);
+                        tokenList.appendChild(chip);
+                    }
+                    const csv = state.tokens.map((token) => token.id).join(",");
+                    if (hiddenEl) hiddenEl.value = csv;
+                    field.dataset.tokenCount = String(state.tokens.length);
+                    inputEl.placeholder =
+                        state.tokens.length > 0 ? "" : state.defaultPlaceholder;
+                    toggleClearButton(inputEl);
+                }
+
+                function setPlayerTokens(inputEl, hiddenEl, tokens) {
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (!state) return;
+                    state.tokens = Array.isArray(tokens) ? tokens.map((token) => ({ ...token })) : [];
+                    state.backspaceArmedId = "";
+                    renderPlayerTokens(inputEl, hiddenEl);
+                }
+
+                function addPlayerToken(inputEl, hiddenEl, id, label) {
+                    const cleanId = String(id || "").trim();
+                    if (!isNumericId(cleanId)) return;
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (!state) return;
+                    const exists = state.tokens.some((token) => token.id === cleanId);
+                    if (!exists) {
+                        state.tokens.push({
+                            id: cleanId,
+                            label: String(label || cleanId).trim() || cleanId,
+                        });
+                        state.backspaceArmedId = "";
+                        renderPlayerTokens(inputEl, hiddenEl);
+                    }
+                }
+
+                function clearPlayerTokens(inputEl, hiddenEl) {
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (!state) return;
+                    state.tokens = [];
+                    state.backspaceArmedId = "";
+                    renderPlayerTokens(inputEl, hiddenEl);
+                }
+
+                function clearBackspaceArmedToken(inputEl, hiddenEl) {
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (!state || !state.backspaceArmedId) return;
+                    state.backspaceArmedId = "";
+                    renderPlayerTokens(inputEl, hiddenEl);
+                }
+
+                function handleBackspaceOnTokenInput(inputEl, hiddenEl) {
+                    const state = ensurePlayerTokenField(inputEl, hiddenEl);
+                    if (!state || !state.tokens.length) return false;
+                    const lastToken = state.tokens[state.tokens.length - 1];
+                    if (!lastToken) return false;
+                    if (state.backspaceArmedId === lastToken.id) {
+                        state.tokens = state.tokens.slice(0, -1);
+                        state.backspaceArmedId = "";
+                        renderPlayerTokens(inputEl, hiddenEl);
+                        return true;
+                    }
+                    state.backspaceArmedId = lastToken.id;
+                    renderPlayerTokens(inputEl, hiddenEl);
+                    return true;
+                }
+
                 function setWinnerValue(container, value) {
                     if (!container) return;
                     const buttons = Array.from(container.querySelectorAll(".winner-option"));
@@ -1617,52 +1852,67 @@
                     return getWinnerValue(cardSideSwitchEl) === "fixed" ? "fixed" : "any";
                 }
 
-                function readPlayerId(inputEl, hiddenEl) {
-                    const hidden = hiddenEl ? String(hiddenEl.value || "").trim() : "";
-                    if (hidden) return hidden;
-                    const raw = inputEl ? String(inputEl.value || "").trim() : "";
-                    if (/^\d+$/.test(raw)) return raw;
-                    return "";
-                }
-
                 function isNumericId(value) {
                     return /^\d+$/.test(String(value || "").trim());
                 }
 
+                async function resolvePlayerTokenCandidate(token) {
+                    const raw = normalizeTextNfkc(token).trim();
+                    if (!raw) return null;
+                    if (isNumericId(raw)) {
+                        return { id: raw, label: raw };
+                    }
+                    const items = await fetchPlayerSuggestions(raw, 20);
+                    const lower = normalizeTextNfkc(raw).toLowerCase();
+                    const kana = normalizeKana(raw);
+                    const exact =
+                        items.find((it) => String(it.player_id) === raw) ||
+                        items.find(
+                            (it) =>
+                                normalizeTextNfkc(it.canonical_name || "").toLowerCase() === lower ||
+                                normalizeTextNfkc(it.display_name || "").toLowerCase() === lower ||
+                                normalizeTextNfkc(it.matched_text || "").toLowerCase() === lower ||
+                                normalizeKana(it.canonical_name || "") === kana ||
+                                normalizeKana(it.display_name || "") === kana ||
+                                normalizeKana(it.matched_text || "") === kana,
+                        );
+                    if (!exact) return null;
+                    const id = String(exact.player_id || "").trim();
+                    if (!isNumericId(id)) return null;
+                    const label =
+                        String(exact.display_name || exact.canonical_name || "").trim() || id;
+                    return { id, label };
+                }
+
+                function readPlayerId(inputEl, hiddenEl) {
+                    const tokenIds = getPlayerTokens(inputEl, hiddenEl).map((token) => token.id);
+                    const draftTokens = splitPlayerTokens(inputEl ? inputEl.value : "");
+                    if (draftTokens.length && draftTokens.every(isNumericId)) {
+                        return buildPlayerIdCsv(tokenIds.concat(draftTokens));
+                    }
+                    if (tokenIds.length) return buildPlayerIdCsv(tokenIds);
+                    return "";
+                }
+
                 function hasUnresolvedPlayer(inputEl, hiddenEl) {
-                    const raw = String(inputEl?.value || "").trim();
-                    if (!raw) return false;
-                    if (isNumericId(raw)) return false;
-                    const id = String(hiddenEl?.value || "").trim();
-                    return !id;
+                    const draftTokens = splitPlayerTokens(inputEl?.value);
+                    if (!draftTokens.length) return false;
+                    return !draftTokens.every(isNumericId);
                 }
 
                 async function resolvePlayerIdFromInput(inputEl, hiddenEl) {
                     if (!inputEl) return "";
-                    const currentHidden = hiddenEl ? String(hiddenEl.value || "").trim() : "";
-                    if (currentHidden) return currentHidden;
-                    const raw = normalizeTextNfkc(inputEl.value).trim();
-                    if (!raw) return "";
-                    if (isNumericId(raw)) return raw;
+                    const draftTokens = splitPlayerTokens(inputEl.value);
+                    if (!draftTokens.length) return readPlayerId(inputEl, hiddenEl);
                     try {
-                        const items = await fetchPlayerSuggestions(raw, 20);
-                        const lower = normalizeTextNfkc(raw).toLowerCase();
-                        const kana = normalizeKana(raw);
-                        const exact =
-                            items.find((it) => String(it.player_id) === raw) ||
-                            items.find(
-                                (it) =>
-                                    normalizeTextNfkc(it.canonical_name || "").toLowerCase() === lower ||
-                                    normalizeTextNfkc(it.display_name || "").toLowerCase() === lower ||
-                                    normalizeTextNfkc(it.matched_text || "").toLowerCase() === lower ||
-                                    normalizeKana(it.canonical_name || "") === kana ||
-                                    normalizeKana(it.display_name || "") === kana ||
-                                    normalizeKana(it.matched_text || "") === kana,
-                            );
-                        if (!exact) return "";
-                        const id = String(exact.player_id || "").trim();
-                        if (id && hiddenEl) hiddenEl.value = id;
-                        return id;
+                        for (const token of draftTokens) {
+                            const resolved = await resolvePlayerTokenCandidate(token);
+                            if (!resolved) return "";
+                            addPlayerToken(inputEl, hiddenEl, resolved.id, resolved.label);
+                        }
+                        inputEl.value = "";
+                        inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+                        return readPlayerId(inputEl, hiddenEl);
                     } catch {
                         return "";
                     }
@@ -1754,6 +2004,7 @@
                             !state.ch1 &&
                             !state.ch2 &&
                             !state.vid &&
+                            !state.locate_id &&
                             (!state.w || state.w === "all") &&
                             (!state.card_side || state.card_side === "any") &&
                             !state.exclude_unknown_player
@@ -1763,6 +2014,7 @@
                         !state.p &&
                         !state.ch &&
                         !state.vid &&
+                        !state.locate_id &&
                         (!state.w || state.w === "all") &&
                         !state.exclude_unknown_player
                     );
@@ -1779,20 +2031,22 @@
                     }
                     if (mode === MODE.CARD) {
                         return (
-                            Boolean(cardPlayer1Input && cardPlayer1Input.value.trim()) ||
-                            Boolean(cardPlayer2Input && cardPlayer2Input.value.trim()) ||
+                            Boolean(readPlayerId(cardPlayer1Input, cardPlayer1IdEl)) ||
+                            Boolean(readPlayerId(cardPlayer2Input, cardPlayer2IdEl)) ||
                             Boolean(cardChar1El && cardChar1El.value) ||
                             Boolean(cardChar2El && cardChar2El.value) ||
                             Boolean(cardVideoEl && cardVideoEl.value.trim()) ||
+                            Boolean(locateEl && locateEl.value) ||
                             getCardSideValue() === "fixed" ||
                             Boolean(excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked) ||
                             getWinnerValue(cardWinner) !== "all"
                         );
                     }
                     return (
-                        Boolean(playerInput && playerInput.value.trim()) ||
+                        Boolean(readPlayerId(playerInput, playerIdEl)) ||
                         Boolean(playerCharEl && playerCharEl.value) ||
                         Boolean(playerVideoEl && playerVideoEl.value.trim()) ||
+                        Boolean(locateEl && locateEl.value) ||
                         Boolean(excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked) ||
                         getWinnerValue(playerWinner) !== "all"
                     );
@@ -2076,6 +2330,7 @@
                             ch1: cardChar1El ? cardChar1El.value : "",
                             ch2: cardChar2El ? cardChar2El.value : "",
                             vid: extractVideoId(cardVideoEl ? cardVideoEl.value : ""),
+                            locate_id: locateEl ? locateEl.value : "",
                             w: getWinnerValue(document.querySelector('[data-winner-group="card"]')),
                             card_side: getCardSideValue(),
                             exclude_unknown_player: Boolean(
@@ -2090,6 +2345,7 @@
                         p: readPlayerId(playerInput, playerIdEl),
                         ch: playerCharEl ? playerCharEl.value : "",
                         vid: extractVideoId(playerVideoEl ? playerVideoEl.value : ""),
+                        locate_id: locateEl ? locateEl.value : "",
                         w: getWinnerValue(document.querySelector('[data-winner-group="player"]')),
                         exclude_unknown_player: Boolean(
                             excludeUnknownPlayerEl && excludeUnknownPlayerEl.checked,
@@ -2113,6 +2369,7 @@
                         if (state.ch1) entries.push(["ch1", state.ch1]);
                         if (state.ch2) entries.push(["ch2", state.ch2]);
                         if (state.vid) entries.push(["vid", state.vid]);
+                        if (state.locate_id) entries.push(["locate_id", state.locate_id]);
                         if (state.w && state.w !== "all") entries.push(["w", state.w]);
                         if (state.card_side === "fixed") entries.push(["card_side", "fixed"]);
                         if (state.exclude_unknown_player)
@@ -2121,6 +2378,7 @@
                         if (state.p) entries.push(["p", state.p]);
                         if (state.ch) entries.push(["ch", state.ch]);
                         if (state.vid) entries.push(["vid", state.vid]);
+                        if (state.locate_id) entries.push(["locate_id", state.locate_id]);
                         if (state.w && state.w !== "all") entries.push(["w", state.w]);
                         if (state.exclude_unknown_player)
                             entries.push(["exclude_unknown_player", "1"]);
@@ -2159,6 +2417,7 @@
                         if (state.ch) params.set("ch", state.ch);
                     }
                     if (state.vid) params.set("vid", state.vid);
+                    if (state.locate_id) params.set("locate_id", state.locate_id);
                     if (state.w && state.w !== "all") params.set("w", state.w);
                     if (state.exclude_unknown_player) params.set("exclude_unknown_player", "1");
                     params.set("sort", "recent");
@@ -2659,6 +2918,7 @@
 
                 function setupPlayerSuggest(inputEl, hiddenEl, listEl) {
                     if (!inputEl || !listEl) return;
+                    ensurePlayerTokenField(inputEl, hiddenEl);
                     let pending = 0;
                     let inputTimer = 0;
 
@@ -2679,8 +2939,8 @@
                                 const selectedDisplay =
                                     String(item.display_name || item.canonical_name || "").trim() ||
                                     playerId;
-                                inputEl.value = selectedDisplay;
-                                if (hiddenEl) hiddenEl.value = playerId;
+                                addPlayerToken(inputEl, hiddenEl, playerId, selectedDisplay);
+                                inputEl.value = "";
                                 closeSuggestions(listEl);
                                 toggleClearButton(inputEl);
                             });
@@ -2690,13 +2950,13 @@
                     };
 
                     inputEl.addEventListener("input", () => {
-                        const value = normalizeTextNfkc(inputEl.value).trim();
-                        if (hiddenEl) hiddenEl.value = "";
+                        const token = getActivePlayerToken(inputEl.value);
+                        if (token) clearBackspaceArmedToken(inputEl, hiddenEl);
                         if (inputTimer) {
                             clearTimeout(inputTimer);
                             inputTimer = 0;
                         }
-                        if (!value) {
+                        if (!token || isNumericId(token)) {
                             pending += 1;
                             closeSuggestions(listEl);
                             return;
@@ -2705,7 +2965,7 @@
                             pending += 1;
                             const currentPending = pending;
                             try {
-                                const items = await fetchPlayerSuggestions(value, 20);
+                                const items = await fetchPlayerSuggestions(token, 20);
                                 if (currentPending !== pending) return;
                                 renderList(items);
                             } catch {
@@ -2714,8 +2974,17 @@
                         }, 220);
                     });
 
+                    inputEl.addEventListener("keydown", (e) => {
+                        if (e.key !== "Backspace") return;
+                        if (String(inputEl.value || "").trim() !== "") return;
+                        if (handleBackspaceOnTokenInput(inputEl, hiddenEl)) {
+                            e.preventDefault();
+                        }
+                    });
+
                     inputEl.addEventListener("blur", () => {
                         setTimeout(() => {
+                            clearBackspaceArmedToken(inputEl, hiddenEl);
                             if (!listEl.matches(":hover")) closeSuggestions(listEl);
                         }, 120);
                     });
@@ -2729,24 +2998,38 @@
 
                 async function applyPlayerIdToInput(inputEl, hiddenEl, id) {
                     if (!inputEl || !id) return;
+                    const idCsv = buildPlayerIdCsv(splitPlayerTokens(id));
+                    const idList = idCsv ? idCsv.split(",").filter(Boolean) : [];
+                    if (!idList.length) return;
                     try {
-                        const url = `${API_BASE}/api/players?pid=${encodeURIComponent(id)}`;
-                        const res = await fetch(url);
-                        if (!res.ok) {
-                            inputEl.value = id;
-                            return;
-                        }
-                        const data = await res.json();
-                        const items = Array.isArray(data.items) ? data.items : [];
-                        const exact = items.find((it) => String(it.player_id) === String(id));
-                        const picked = exact || items[0];
-                        const name = picked
-                            ? String(picked.display_name || picked.canonical_name || id)
-                            : id;
-                        inputEl.value = name;
-                        if (hiddenEl) hiddenEl.value = id;
+                        const tokens = await Promise.all(
+                            idList.map(async (oneId) => {
+                                const url = `${API_BASE}/api/players?pid=${encodeURIComponent(oneId)}`;
+                                const res = await fetch(url);
+                                if (!res.ok) return { id: oneId, label: oneId };
+                                const data = await res.json();
+                                const items = Array.isArray(data.items) ? data.items : [];
+                                const exact = items.find(
+                                    (it) => String(it.player_id) === String(oneId),
+                                );
+                                const picked = exact || items[0];
+                                return {
+                                    id: oneId,
+                                    label: picked
+                                        ? String(picked.display_name || picked.canonical_name || oneId)
+                                        : oneId,
+                                };
+                            }),
+                        );
+                        setPlayerTokens(inputEl, hiddenEl, tokens);
+                        inputEl.value = "";
                     } catch {
-                        inputEl.value = id;
+                        setPlayerTokens(
+                            inputEl,
+                            hiddenEl,
+                            idList.map((oneId) => ({ id: oneId, label: oneId })),
+                        );
+                        inputEl.value = "";
                     }
                 }
 
@@ -2772,6 +3055,7 @@
                             ch1: (params.get("ch1") || "").trim(),
                             ch2: (params.get("ch2") || "").trim(),
                             vid: (params.get("vid") || "").trim(),
+                            locate_id: (params.get("locate_id") || "").trim(),
                             w: (params.get("w") || "all").trim(),
                             card_side: cardSideRaw === "fixed" ? "fixed" : "any",
                             exclude_unknown_player: isTrueLike(
@@ -2786,6 +3070,7 @@
                         p: (params.get("p") || "").trim(),
                         ch: (params.get("ch") || "").trim(),
                         vid: (params.get("vid") || "").trim(),
+                        locate_id: (params.get("locate_id") || "").trim(),
                         w: (params.get("w") || "all").trim(),
                         exclude_unknown_player: isTrueLike(params.get("exclude_unknown_player")),
                         limit: clampInt(params.get("limit"), 1, 200, DEFAULTS.limit),
@@ -2813,6 +3098,7 @@
                         if (cardChar1El) cardChar1El.value = state.ch1 || "";
                         if (cardChar2El) cardChar2El.value = state.ch2 || "";
                         if (cardVideoEl) cardVideoEl.value = state.vid || "";
+                        if (locateEl) locateEl.value = state.locate_id || "";
                         setWinnerValue(cardWinner, state.w || "all");
                         setCardSideValue(state.card_side || "any");
                         if (excludeUnknownPlayerEl)
@@ -2821,6 +3107,7 @@
                         if (playerIdEl) playerIdEl.value = state.p || "";
                         if (playerCharEl) playerCharEl.value = state.ch || "";
                         if (playerVideoEl) playerVideoEl.value = state.vid || "";
+                        if (locateEl) locateEl.value = state.locate_id || "";
                         setWinnerValue(playerWinner, state.w || "all");
                         setCardSideValue("any");
                         if (excludeUnknownPlayerEl)
@@ -3011,11 +3298,13 @@
                     btn.addEventListener("click", () => {
                         const nextMode = btn.dataset.mode;
                         if (currentMode === MODE.PLAYER && nextMode === MODE.CARD) {
-                            if (cardPlayer1Input && playerInput) {
+                            if (cardPlayer1Input && playerInput && cardPlayer1IdEl && playerIdEl) {
+                                setPlayerTokens(
+                                    cardPlayer1Input,
+                                    cardPlayer1IdEl,
+                                    getPlayerTokens(playerInput, playerIdEl),
+                                );
                                 cardPlayer1Input.value = playerInput.value;
-                            }
-                            if (cardPlayer1IdEl && playerIdEl) {
-                                cardPlayer1IdEl.value = playerIdEl.value;
                             }
                             if (cardChar1El && playerCharEl) {
                                 cardChar1El.value = playerCharEl.value;
@@ -3105,13 +3394,20 @@
                     }
                 });
 
+                ensurePlayerTokenField(playerInput, playerIdEl);
+                ensurePlayerTokenField(cardPlayer1Input, cardPlayer1IdEl);
+                ensurePlayerTokenField(cardPlayer2Input, cardPlayer2IdEl);
+
                 attachClearButton(playerInput, () => {
+                    clearPlayerTokens(playerInput, playerIdEl);
                     if (playerIdEl) playerIdEl.value = "";
                 });
                 attachClearButton(cardPlayer1Input, () => {
+                    clearPlayerTokens(cardPlayer1Input, cardPlayer1IdEl);
                     if (cardPlayer1IdEl) cardPlayer1IdEl.value = "";
                 });
                 attachClearButton(cardPlayer2Input, () => {
+                    clearPlayerTokens(cardPlayer2Input, cardPlayer2IdEl);
                     if (cardPlayer2IdEl) cardPlayer2IdEl.value = "";
                 });
                 attachClearButton(playerVideoEl);
@@ -3141,10 +3437,6 @@
                         }
                     });
                 });
-                if (locateEl) {
-                    locateEl.addEventListener("change", () => doSearch(DEFAULTS.page));
-                }
-
                 setupPlayerSuggest(playerInput, playerIdEl, playerSuggestions);
                 setupPlayerSuggest(cardPlayer1Input, cardPlayer1IdEl, cardPlayer1Suggestions);
                 setupPlayerSuggest(cardPlayer2Input, cardPlayer2IdEl, cardPlayer2Suggestions);

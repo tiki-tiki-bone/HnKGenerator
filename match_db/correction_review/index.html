@@ -639,6 +639,7 @@
                                 </div>
                                 <div class="actions">
                                     <button id="applyBtn" type="submit" class="primary">OK</button>
+                                    <button id="rejectBtn" type="button" class="danger">却下</button>
                                 </div>
                             </form>
                             <div id="reviewStatus" class="status"></div>
@@ -692,6 +693,7 @@
             const applyReviewedByEl = document.getElementById("applyReviewedBy");
             const applyReviewNoteEl = document.getElementById("applyReviewNote");
             const applyBtn = document.getElementById("applyBtn");
+            const rejectBtn = document.getElementById("rejectBtn");
             const reviewStatusEl = document.getElementById("reviewStatus");
             const reviewErrorEl = document.getElementById("reviewError");
 
@@ -779,6 +781,16 @@
                 if (status === 503)
                     return "503: サーバー設定不足です（ADMIN_REVIEW_KEY未設定の可能性）。";
                 return fallback || "適用APIの呼び出しに失敗しました。";
+            }
+
+            function mapRejectError(status, fallback) {
+                if (status === 400) return fallback || "400: 入力値が不正です。";
+                if (status === 401) return "401: 管理キーが不正です。";
+                if (status === 404) return "404: /api/correction/reject が見つかりません。";
+                if (status === 409) return fallback || "409: すでに処理済みです。";
+                if (status === 503)
+                    return "503: サーバー設定不足です（ADMIN_REVIEW_KEY未設定の可能性）。";
+                return fallback || "却下APIの呼び出しに失敗しました。";
             }
 
             async function parseResponse(res) {
@@ -1687,6 +1699,7 @@
                 const pending = hasSelection && String(state.selected.status || "") === "pending";
                 const disabled = state.submittingReview || !pending;
                 applyBtn.disabled = disabled;
+                rejectBtn.disabled = disabled;
             }
 
             async function loadCorrections() {
@@ -1864,6 +1877,62 @@
                 }
             }
 
+            async function submitReject() {
+                if (state.submittingReview || !state.selected) return;
+                const correctionId = state.selected.correction_id;
+                const adminKey = String(adminKeyEl.value || "").trim();
+                const adminId = String(adminIdHeaderEl.value || "").trim();
+                const reviewNote = String(applyReviewNoteEl.value || "").trim();
+                const reviewedBy = String(applyReviewedByEl.value || "").trim();
+
+                setStatus(reviewStatusEl, "");
+                setError(reviewErrorEl, "");
+
+                if (!adminKey) {
+                    setError(reviewErrorEl, "管理キーを入力してください。");
+                    return;
+                }
+
+                const body = {
+                    correction_id: correctionId,
+                };
+                if (reviewNote) body.review_note = reviewNote;
+                if (reviewedBy) body.reviewed_by = reviewedBy;
+
+                const headers = {
+                    "Content-Type": "application/json",
+                    "x-admin-key": adminKey,
+                };
+                if (adminId) headers["x-admin-id"] = adminId;
+
+                state.submittingReview = true;
+                updateActionButtons();
+                setStatus(reviewStatusEl, "送信中...");
+                try {
+                    const res = await fetch(`${API_BASE}/api/correction/reject`, {
+                        method: "POST",
+                        headers,
+                        body: JSON.stringify(body),
+                    });
+                    const data = await parseResponse(res);
+                    if (!res.ok) {
+                        const fallback = data && data.error ? String(data.error) : "";
+                        throw new Error(mapRejectError(res.status, fallback));
+                    }
+                    setStatus(reviewStatusEl, "却下しました。");
+                    await loadCorrections();
+                } catch (err) {
+                    setStatus(reviewStatusEl, "");
+                    setError(
+                        reviewErrorEl,
+                        err instanceof Error ? err.message : "却下APIの呼び出しに失敗しました。",
+                    );
+                } finally {
+                    state.submittingReview = false;
+                    updateActionButtons();
+                }
+            }
+
             searchBtn.addEventListener("click", loadCorrections);
             clearBtn.addEventListener("click", () => {
                 statusFilterEl.value = "pending";
@@ -1874,6 +1943,9 @@
             applyFormEl.addEventListener("submit", (event) => {
                 event.preventDefault();
                 submitApply();
+            });
+            rejectBtn.addEventListener("click", () => {
+                submitReject();
             });
             applyP1PlayerEl.addEventListener("input", () => {
                 resetPlayerResolve("p1");
