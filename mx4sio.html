@@ -1,0 +1,126 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex,nofollow,noarchive" />
+        <title>MX4SIO + OPL マニュアル</title>
+        <style>
+            :root {
+                --bg: #f5f5f5;
+                --card: #ffffff;
+                --text: #222;
+                --line: #dcdcdc;
+                --accent: #333;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--text);
+                font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+                line-height: 1.7;
+            }
+            .wrap {
+                max-width: 860px;
+                margin: 0 auto;
+                padding: 24px 16px 40px;
+            }
+            .panel {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 18px;
+                margin-bottom: 14px;
+            }
+            h1,
+            h2 {
+                margin: 0 0 10px;
+            }
+            h1 {
+                font-size: 1.35rem;
+            }
+            h2 {
+                font-size: 1.05rem;
+                border-left: 6px solid var(--accent);
+                padding-left: 8px;
+            }
+            ol,
+            ul {
+                margin: 10px 0 0;
+                padding-left: 20px;
+            }
+            code {
+                background: #efefef;
+                border: 1px solid #e1e1e1;
+                border-radius: 4px;
+                padding: 0 4px;
+            }
+            .small {
+                font-size: 0.9rem;
+                color: #555;
+            }
+            .manual-image {
+                display: block;
+                width: 50%;
+                height: auto;
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                background: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <main id="app" class="wrap">
+            <section class="panel">
+                <h1>OPL + MX4SIO でのPS2北斗の拳マニュアル</h1>
+            </section>
+            <section class="panel">
+                <h2>1. メモリーカードの挿入位置</h2>
+                <ul>
+                    <li>スロット1にFMCB、スロット2にMX4SIOを挿入する。</li>
+                    <img src="/images/manual00.jpg" alt="manual00" class="manual-image" />
+                </ul>
+            </section>
+
+            <section class="panel">
+                <h2>2. 起動方法</h2>
+                <ol>
+                    <li>PS2を起動し、「OPWS2LD(OPL v1.2.0)」を選択する</li>
+                    <img src="/images/manual01.png" alt="manual00" class="manual-image" />
+                    <li>BDMを選択した状態でStart Deviceを押下する</li>
+                    <img src="/images/manual02.png" alt="manual00" class="manual-image" />
+                    <li>hokutoを選択した状態でRunを押下する</li>
+                    <img src="/images/manual03.png" alt="manual00" class="manual-image" />
+                    <li>
+                        使用するチートコードを選んでRunを押下する<br />()内の数字がコード行数。足して250に収まるように選ぶ
+                    </li>
+                    <img src="/images/manual04.png" alt="manual00" class="manual-image" />
+                </ol>
+            </section>
+
+            <section class="panel">
+                <h2>3. チートコードの追加の仕方</h2>
+                <ol>
+                    <li>MX4SIOに刺さっているSDカードをPCに接続する。(カードリーダーが必要)</li>
+                    <li>CHTフォルダ内にあるSLPM_666.60.chtをメモ帳などで開く</li>
+                    <img src="/images/manual05.png" alt="manual00" class="manual-image" />
+                    <li>
+                        追加したいチートコードのタイトルとコードを書き込む。<br />(タイトル単位でチートコードON/OFFが可能)
+                    </li>
+                    <img src="/images/manual06.png" alt="manual00" class="manual-image" />
+                </ol>
+                <ul>
+                    <li>
+                        チートコードは復号した形式を記載します。<br />本サイト記載のコードは暗号化されているため復号する必要があります。<br /><a
+                            href="http://raid.s500.xrea.com/tool/ps2crypt.html"
+                            >変換サイト</a
+                        >
+                    </li>
+                </ul>
+            </section>
+        </main>
+    </body>
+</html>
