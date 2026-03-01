@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
     <head>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
@@ -44,7 +44,10 @@
                 padding: 0.4rem 1rem;
                 border: 2px solid transparent;
                 border-radius: 6px;
-                transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+                transition:
+                    background-color 0.3s ease,
+                    border-color 0.3s ease,
+                    color 0.3s ease;
                 font-size: 1rem;
                 user-select: none;
             }
@@ -205,15 +208,36 @@
                 color: #666;
             }
         </style>
-            <script src="js/site-header.js" defer data-site-header></script>
     </head>
 
     <body>
-        <div id="siteHeader" data-title="北斗の拳 トレモ用チートコード一覧"></div>
+        <header>
+            <h1>北斗の拳 トレモ用チートコード一覧</h1>
+            <div
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="メニュー開閉"
+                role="button"
+                tabindex="0"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="navMenu">
+                <a href="codes.html">チートコード一覧</a>
+                <a href="index.html">チートコードジェネレータ</a>
+                <a href="iad_frame.html">低ダ攻撃発生Fデータ</a>
+                <a href="opening_matchup.html">開幕行動チェッカー</a>
+            </nav>
+        </header>
         <main>
             <nav id="toc">
                 <h2>目次</h2>
-                <ul></ul>
+                <h3>チートコード</h3>
+                <ul id="toc-cheats"></ul>
+                <h3>チートツール</h3>
+                <ul id="toc-links"></ul>
             </nav>
             <section>
                 <h2>トレモ数値をキャラより手前に表示する</h2>
@@ -386,7 +410,9 @@
 1C9A7E90 3854E7A6
 1C9A7E94 3854E7A5
 1C9A7E98 419FE7BD
-1C9A7E9C 15F6E79D</pre>
+1C9A7E9C 15F6E79D
+</pre
+                >
                 <p>
                     <strong>備考:</strong>
                     <br />・ガード設定が有効かつスタンディングがNORMAL以外の場合にランダムでガーキャンを出します。<br />
@@ -442,7 +468,8 @@
 1C9A23A8 DDB3E7B5
 1C9A23AC 419FE7C5
 1C9A23B0 15F6E79D
-1C9A23B4 39A1E7D5</pre>
+1C9A23B4 39A1E7D5</pre
+                >
             </section>
             <section>
                 <h2 id="extendRecording">レコーディング記録時間を最長1分に</h2>
@@ -452,7 +479,8 @@
 1C85A5FC 2054E79C
 1C85A500 3894E7A5
 1C85A480 2053E79C
-1C85A484 3873E7A5</pre>
+1C85A484 3873E7A5</pre
+                >
                 <p>
                     <strong>備考:</strong>
                     <br />・未使用メモリ領域を大量に使用するため、併用するチートによってはフリーズする可能性があります。
@@ -513,8 +541,7 @@
 1C9A77D8 1476D7C6
 1C9A77DC 3873EEA5
 1C9A77E0 B874E7A5
-1C9A77E8 1536E79D
-1C9A77EC 145607C6
+1C9A77E8 0C4CAD76
 1C9A77F0 1053B2A8
 1C9A77F8 3873EEA5
 1C9A77FC 9875E7A5
@@ -578,8 +605,8 @@
 1C85A47C 3864E7A6
 1C85A480 0C53B292
 1C85A494 BA44E7A3
-1CBE6A64 1053B2BE
-1CBE6A68 15F69FC6
+1CBE6A64 0C53B2BE
+1CBE6A68 1456E7A5
 1CBE6D48 0C53B285
 1CBB9078 0C53B2D0
 1CBB905C 1496CFC6
@@ -587,12 +614,12 @@
 1CBE6AC4 0C53B266
 1CBE6AC8 1456E7A5
 1CBE643C 3854E1B5
-1C85A520 2C95E1B5
-1CBB934C 1053B2BE
-1CBB9350 15F69FC6</pre>
+1C85A520 2C95E1B5</pre
+                >
                 <p>
                     <strong>備考:</strong>
                     <br />・コード行数が多いため、複数チートをあわせて同時使用するとゲームが起動しない可能性があります。<br />
+                    ・<strong>レコーディング時は必ず終了操作（もう一度RECボタン押下）まで行ってください。</strong>レコーディング中にリセットやメニューを開くと正しく記録されません。<br />
                     ・設定をOFFにするとレコーディングがクリアされます。<br />
                     ・「レコーディング記録時間を最長1分に」との併用はできません。（本コードのみで1分に延長されます）
                 </p>
@@ -604,7 +631,8 @@
 3C3D7528 1456E7A4
 3C3D7221 1456E7A4
 3C3E9548 1456E7A4
-3C3E9541 1456E7A4</pre>
+3C3E9541 1456E7A4</pre
+                >
                 <p>
                     <strong>備考:</strong>
                     コードの短さを優先しているため、このチートを有効にすると北斗有情断迅拳がヒットしなくても演出移行するバグが発生します。<br />
@@ -622,134 +650,53 @@
 1C9A7038 C496E7A7
 1C9A7040 3853E7A1
 1C9A7044 0C4D3E41
-1C9A7048 91B4E7A9</pre>
+1C9A7048 91B4E7A9
+</pre
+                >
                 <p>
                     <strong>備考:</strong>
-                    受け身設定を変えた後は一時ポジションリセットをしてください。<br />
-                    リベンジマークは表示されません。
+                    受け身設定を変えた後は一時ポジションリセットをしてください。
                 </p>
             </section>
-            <section>
-                <h2 id="damageRoundCorrect">スタンディング設定有効時にラウンド有利時のダメージ補正</h2>
-                <pre>
-1C86F6C8 0C53B3E5
-1C9A7428 C836E79F
-1C9A7430 104BEA85
-1C9A7438 0496E79D
-1C9A7440 2053E7CE
-1C9A7444 287380A5
-1C9A7448 9073E7A5
-1C9A744C C476E7A8
-1C9A7454 0C5A927F
-1C9A745C 0C5A9296</pre>
-            </section>
-                        <section>
-                <h2>ガード設定ALL時はレコーディング中もガードする</h2>
-                <pre>
-1CBE6588 0456E7A8
-1C8600EC 0C53B325
-1C8600F0 1456E7A5
-1C9A7528 C474E7A1
-1C9A7530 99D464D5
-1C9A7534 0496E7A8
-1C9A753C 0C5A9012
-1C9A7540 9294E7A5
-1C9A7544 0C5A9018</pre>
+            <section id="codeExtended640">
+                <h2 data-toc-group="links">CheatDevicePS2 チートコード上限拡張版</h2>
                 <p>
-                    <strong>備考:</strong>
-                    ガード設定がFIRSTやLIMITEDのときの動作は考慮してません<br />
-                    軽微な不具合ありますが修正するとコードが長くなるので直していません
+                    CheatDevicePS2のチートコード行数上限を250行から640行に拡張します。<br>
+                    <a
+                        href="https://github.com/tiki-tiki-bone/CheatDevicePS2/releases/download/v1.0.0/CheatDevicePS2-CodeExtended-v1.0.0.zip"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >ダウンロード</a
+                    >
                 </p>
-            </section>
-            <section>
-                <h2>時間経過でINPUT表示が消えない</h2>
-                <pre>
-1CBE7AE8 1456E7A5
-</pre>
-            </section>
-            <section>
-                <h2>トレモでリセット・KO時に気絶耐久値初期化</h2>
-                <pre>
-1CB7B97C 0C53B365
-1C9A7228 104BEA85
-1C9A7230 0496E7A2
-1C9A7238 3854B00C
-1C9A723C B254E70D
-1C9A7240 104ECC25
-1C9A7248 0C4EE233</pre>
-            </section>
-            <section>
-                <h2>位置リセット時にレバー入力で位置変更</h2>
-                <pre>
-1C8AD1C0 1456E7A5
-1CB1638C 0C53AC1C
-1CB15CE0 0C53AC29
-1C9A7128 619FB005
-1C9A712C 104BEA85
-1C9A7138 0496E7A4
-1C9A713C 91DA68F5
-1C9A7140 104CB0F9
-1C9A7144 90DAE7A1
-1C9A7148 0496E7A7
-1C9A714C 205AE73F
-1C9A7150 B0D4E7B5
-1C9A7154 90D4E7B5
-1C9A7158 419FB005
-1C9A715C 15F6E79D
-1C9A7164 1053AC25
-1C9A716C 2493E799
-1C9A7170 C476E7A4
-1C9A7174 20532445
-1C9A7178 2493E7A1
-1C9A717C C876E7A1
-1C9A7180 2053E7A5
-1C9A7184 2493E79D
-1C9A7188 C876E7A6
-1C9A718C 20532BC5
-1C9A7190 0C4D6FB0
-1C9A7198 1053AC25
-1C9A71A0 385AE7A7
-1C9A71A4 04D4E7B0
-1C9A71A8 385AE7A6
-1C9A71AC C8D4E7A3
-1C9A71B4 205A2B5D
-1C9A71B8 CA96E7A6
-1C9A71BC 205A2415
-1C9A71C0 0C53AC50
-1C9A71C4 D8DADFA5
-1C9A71C8 249AE7A7
-1C9A71CC 3A99E7A5
-1C9A71D0 C8D6E7A6
-1C9A71D4 1CB9E7A6
-1C9A71D8 249AE7A1
-1C9A71DC 04D6E7A3
-1C9A71E4 385AE7A5
-1C9A71E8 C8B6E7A6
-1C9A71EC 205A2645
-1C9A71F0 0C53AC50
-1C9A71F4 D8DADFA5
-1C9A71F8 249AE79D
-1C9A71FC 04D6E7A2
-1C9A7104 205A2B35
-1C9A7108 C8B6E7A6
-1C9A710C 205A2B45
-1C9A7110 D8DADFA5
-1C9A7114 0C4D79FC
-1C9A7118 7A55E7A5</pre>
                 <p>
-                    <strong>備考:</strong></br>
-                    位置はスト6準拠です。</br>
-                    4入力：左画面端(1Pが端)</br>
-                    1入力：左画面端(2Pが端)</br>
-                    2入力：中央</br>
-                    3入力：右画面端(1Pが端)</br>
-                    6入力：右画面端(2Pが端)</br>
-                    8入力：中央(1P2P反転)</br>
-                    5入力：前回と同じ位置
+                    <strong>備考</strong>
+                    <ul>
+                        <li>
+                    CheatDevicePS2を導入済みの場合はcheatdevice.elfを上書きするのみです。</li>
+                    <li>
+                    <strong>オリジナルのelfファイルは必ずバックアップを取ってください。</strong></li>
+<li>動作確認は十分に行っていないため不具合発生する可能性があります。自己責任で使用してください。</li>
+                    </ul>
                 </p>
             </section>
             <script>
-const tocList = document.querySelector("#toc ul");
+                const menuToggle = document.getElementById("menuToggle");
+                const navMenu = document.getElementById("navMenu");
+
+                function toggleMenu() {
+                    navMenu.classList.toggle("show");
+                }
+
+                menuToggle.addEventListener("click", toggleMenu);
+                menuToggle.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleMenu();
+                    }
+                });
+                const tocCheats = document.querySelector("#toc-cheats");
+                const tocLinks = document.querySelector("#toc-links");
                 const headings = document.querySelectorAll("section > h2");
 
                 headings.forEach((h2, i) => {
@@ -766,7 +713,11 @@ const tocList = document.querySelector("#toc ul");
                     a.href = "#" + id;
                     a.textContent = h2.textContent;
                     li.appendChild(a);
-                    tocList.appendChild(li);
+                    if (h2.dataset.tocGroup === "links") {
+                        tocLinks.appendChild(li);
+                    } else {
+                        tocCheats.appendChild(li);
+                    }
                 });
             </script>
         </main>
@@ -783,7 +734,7 @@ const tocList = document.querySelector("#toc ul");
         <div id="annotation">
             <button
                 id="annotation-close"
-                onclick="document.getElementById('annotation').style.display='none'"
+                onclick="document.getElementById('annotation').style.display = 'none'"
             >
                 ×
             </button>
@@ -792,6 +743,3 @@ const tocList = document.querySelector("#toc ul");
         </div>
     </body>
 </html>
-
-
-
