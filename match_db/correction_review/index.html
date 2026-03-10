@@ -14,7 +14,7 @@
         </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>北斗の拳 対戦動画DB - 訂正提案レビュー</title>
-        <link rel="stylesheet" href="../css/match-cards.css" />
+        <link rel="stylesheet" href="/css/match-cards.css" />
         <style>
             :root {
                 --ink: #222;
@@ -261,6 +261,24 @@
                 background: #ececec;
             }
 
+            td.select-cell,
+            th.select-all-cell {
+                width: 44px;
+                text-align: center;
+            }
+
+            td.select-cell input,
+            th.select-all-cell input {
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+            }
+
+            td.select-cell input:disabled,
+            th.select-all-cell input:disabled {
+                cursor: not-allowed;
+            }
+
             .detail-box {
                 border: 1px solid var(--line);
                 border-radius: 8px;
@@ -482,7 +500,7 @@
                 }
             }
         </style>
-        <script src="../js/site-header.js" defer data-site-header></script>
+        <script src="/js/site-header.js" defer data-site-header></script>
     </head>
     <body>
         <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
@@ -538,15 +556,20 @@
                             <label>&nbsp;</label>
                             <div class="actions">
                                 <button id="searchBtn" type="button" class="primary">再取得</button>
-                                <button id="clearBtn" type="button" class="secondary">クリア</button>
+                                <button id="clearBtn" type="button" class="secondary">繧ｯ繝ｪ繧｢</button>
+                                <button id="bulkApproveBtn" type="button" class="primary">選択をまとめて承認</button>
                             </div>
                         </div>
                     </div>
+                    <div id="listStatus" class="status"></div>
                     <div id="listError" class="error"></div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
+                                    <th class="select-all-cell">
+                                        <input id="selectAllPending" type="checkbox" aria-label="表示中の pending を全選択" />
+                                    </th>
                                     <th>correction_id</th>
                                     <th>match_id</th>
                                     <th>start_sec</th>
@@ -649,12 +672,13 @@
                 </div>
             </section>
         </main>
-        <script src="../js/api-config.local.js"></script>
-        <script src="../js/match-cards.js"></script>
+        <script src="/js/api-config.local.js"></script>
+        <script src="/js/match-cards.js"></script>
         <script>
             const API_BASE = window.API_BASE || "https://hnk-match-db-api.tikibone.workers.dev";
-            const IMAGE_BASE = "../images/";
-            const DATE_PREFIX = "投稿日：";
+            const IMAGE_BASE = "/images/";
+            const DATE_PREFIX = "\u6295\u7a3f\u65e5: ";
+            const BULK_APPROVE_LABEL = "\u9078\u629e\u3092\u307e\u3068\u3081\u3066\u627f\u8a8d";
 
             const statusFilterEl = document.getElementById("statusFilter");
             const matchIdFilterEl = document.getElementById("matchIdFilter");
@@ -663,6 +687,7 @@
             const clearBtn = document.getElementById("clearBtn");
             const listMetaEl = document.getElementById("listMeta");
             const listBodyEl = document.getElementById("listBody");
+            const listStatusEl = document.getElementById("listStatus");
             const listErrorEl = document.getElementById("listError");
             const listSectionEl = document.getElementById("listSection");
             const detailSectionEl = document.getElementById("detailSection");
@@ -696,10 +721,13 @@
             const rejectBtn = document.getElementById("rejectBtn");
             const reviewStatusEl = document.getElementById("reviewStatus");
             const reviewErrorEl = document.getElementById("reviewError");
+            const bulkApproveBtn = document.getElementById("bulkApproveBtn");
+            const selectAllPendingEl = document.getElementById("selectAllPending");
 
             const state = {
                 list: [],
                 selected: null,
+                checkedIds: new Set(),
                 loadingList: false,
                 submittingReview: false,
                 authenticated: false,
@@ -1202,7 +1230,9 @@
                 if (!state.authenticated) {
                     state.list = [];
                     state.selected = null;
+                    state.checkedIds.clear();
                     renderRows();
+                    setStatus(listStatusEl, "");
                     detailHintEl.hidden = false;
                     detailAreaEl.hidden = true;
                     resetPlayerResolve("p1");
@@ -1253,6 +1283,47 @@
                 }
             }
 
+            function getCorrectionKey(row) {
+                return String(row?.correction_id ?? "");
+            }
+
+            function isPendingCorrection(row) {
+                return String(row?.status || "").trim() === "pending";
+            }
+
+            function getVisiblePendingRows() {
+                return state.list.filter((row) => isPendingCorrection(row));
+            }
+
+            function getCheckedPendingRows() {
+                return getVisiblePendingRows().filter((row) => state.checkedIds.has(getCorrectionKey(row)));
+            }
+
+            function syncCheckedIds() {
+                const allowed = new Set(getVisiblePendingRows().map((row) => getCorrectionKey(row)));
+                state.checkedIds = new Set(
+                    [...state.checkedIds].filter((id) => allowed.has(id)),
+                );
+            }
+
+            function updateBulkSelectionUi() {
+                const pendingRows = getVisiblePendingRows();
+                const checkedRows = getCheckedPendingRows();
+                if (selectAllPendingEl) {
+                    selectAllPendingEl.disabled = !pendingRows.length || state.loadingList || state.submittingReview;
+                    selectAllPendingEl.checked =
+                        pendingRows.length > 0 && checkedRows.length === pendingRows.length;
+                    selectAllPendingEl.indeterminate =
+                        checkedRows.length > 0 && checkedRows.length < pendingRows.length;
+                }
+                if (bulkApproveBtn) {
+                    bulkApproveBtn.disabled = !checkedRows.length || state.loadingList || state.submittingReview;
+                    bulkApproveBtn.textContent = checkedRows.length
+                        ? `${BULK_APPROVE_LABEL} (${checkedRows.length})`
+                        : BULK_APPROVE_LABEL;
+                }
+            }
+
             function renderRows() {
                 listBodyEl.innerHTML = "";
                 const buildCell = (value) => {
@@ -1262,9 +1333,34 @@
                 };
                 for (const row of state.list) {
                     const tr = document.createElement("tr");
-                    if (state.selected && String(state.selected.correction_id) === String(row.correction_id)) {
+                    const key = getCorrectionKey(row);
+                    const pending = isPendingCorrection(row);
+                    if (state.selected && String(state.selected.correction_id) === key) {
                         tr.classList.add("selected");
                     }
+
+                    const selectCell = document.createElement("td");
+                    selectCell.className = "select-cell";
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = state.checkedIds.has(key);
+                    checkbox.disabled = !pending || state.loadingList || state.submittingReview;
+                    checkbox.setAttribute("aria-label", `提案 #${key} を選択`);
+                    checkbox.addEventListener("click", (event) => {
+                        event.stopPropagation();
+                    });
+                    checkbox.addEventListener("change", (event) => {
+                        event.stopPropagation();
+                        if (checkbox.checked) {
+                            state.checkedIds.add(key);
+                        } else {
+                            state.checkedIds.delete(key);
+                        }
+                        updateBulkSelectionUi();
+                    });
+                    selectCell.appendChild(checkbox);
+                    tr.appendChild(selectCell);
+
                     tr.appendChild(buildCell(row.correction_id));
                     tr.appendChild(buildCell(row.match_id));
                     tr.appendChild(buildCell(row.start_sec));
@@ -1282,7 +1378,8 @@
                     tr.addEventListener("click", () => selectCorrection(row));
                     listBodyEl.appendChild(tr);
                 }
-                listMetaEl.textContent = `${state.list.length}件`;
+                listMetaEl.textContent = `${state.list.length}莉ｶ`;
+                updateBulkSelectionUi();
             }
 
             function normalizeWinnerSide(value) {
@@ -1700,6 +1797,7 @@
                 const disabled = state.submittingReview || !pending;
                 applyBtn.disabled = disabled;
                 rejectBtn.disabled = disabled;
+                updateBulkSelectionUi();
             }
 
             async function loadCorrections() {
@@ -1724,6 +1822,7 @@
                           ? data
                           : [];
                     state.list = items;
+                    syncCheckedIds();
                     if (
                         state.selected &&
                         !items.some(
@@ -1754,6 +1853,8 @@
                     );
                     state.list = [];
                     state.selected = null;
+                    state.checkedIds.clear();
+                    setStatus(listStatusEl, "");
                     renderRows();
                     detailHintEl.hidden = false;
                     detailAreaEl.hidden = true;
@@ -1766,6 +1867,127 @@
                     updateActionButtons();
                 }
                 return ok;
+            }
+
+            async function resolvePlayerIdForBulk(rawName) {
+                const clean = normalizeTextNfkc(rawName).trim();
+                if (!clean) return null;
+                const existingId = await findPlayerIdByExactName(clean);
+                if (existingId !== null) return existingId;
+                throw new Error(`player not found: ${clean}`);
+            }
+
+            async function applyCorrectionRow(row, adminKey, adminId, reviewNote, reviewedBy) {
+                const p1PlayerId = await resolvePlayerIdForBulk(row.p1_player);
+                const p2PlayerId = await resolvePlayerIdForBulk(row.p2_player);
+                const p1Char = String(row.p1_char || "").trim();
+                const p2Char = String(row.p2_char || "").trim();
+                const winnerValue = winnerToCode(row.winner);
+                const startSec = toNumberOrNull(row.start_sec);
+                const endSec = toNumberOrNull(row.end_sec);
+
+                const body = {
+                    correction_id: row.correction_id,
+                    match_id: row.match_id,
+                };
+                if (p1PlayerId !== null) body.p1_player = p1PlayerId;
+                if (p2PlayerId !== null) body.p2_player = p2PlayerId;
+                if (p1Char) body.p1_char = p1Char;
+                if (p2Char) body.p2_char = p2Char;
+                if (winnerValue === "0" || winnerValue === "1" || winnerValue === "2") {
+                    body.winner = Number(winnerValue);
+                }
+                if (startSec !== null) body.start_sec = startSec;
+                if (endSec !== null) body.end_sec = endSec;
+                if (reviewNote) body.review_note = reviewNote;
+                if (reviewedBy) body.reviewed_by = reviewedBy;
+
+                const hasUpdateField = [
+                    "start_sec",
+                    "end_sec",
+                    "p1_player",
+                    "p2_player",
+                    "winner",
+                    "p1_char",
+                    "p2_char",
+                ].some((key) => Object.prototype.hasOwnProperty.call(body, key));
+                if (!hasUpdateField) {
+                    throw new Error("\u66f4\u65b0\u3059\u308b\u5909\u66f4\u9805\u76ee\u304c\u3042\u308a\u307e\u305b\u3093\u3002");
+                }
+
+                const headers = {
+                    "Content-Type": "application/json",
+                    "x-admin-key": adminKey,
+                };
+                if (adminId) headers["x-admin-id"] = adminId;
+
+                const res = await fetch(`${API_BASE}/api/correction/apply`, {
+                    method: "POST",
+                    headers,
+                    body: JSON.stringify(body),
+                });
+                const data = await parseResponse(res);
+                if (!res.ok) {
+                    const fallback = data && data.error ? String(data.error) : "";
+                    throw new Error(mapApplyError(res.status, fallback));
+                }
+            }
+
+            async function submitBulkApprove() {
+                if (state.submittingReview) return;
+                const rows = getCheckedPendingRows();
+                if (!rows.length) return;
+
+                const adminKey = String(adminKeyEl.value || "").trim();
+                const adminId = String(adminIdHeaderEl.value || "").trim();
+                const commonReviewNote = String(applyReviewNoteEl.value || "").trim();
+                const commonReviewedBy = String(applyReviewedByEl.value || "").trim();
+
+                setStatus(listStatusEl, "");
+                setError(listErrorEl, "");
+                if (!adminKey) {
+                    setError(listErrorEl, "\u7ba1\u7406\u30ad\u30fc\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002");
+                    return;
+                }
+
+                state.submittingReview = true;
+                searchBtn.disabled = true;
+                clearBtn.disabled = true;
+                updateActionButtons();
+
+                const failures = [];
+                let successCount = 0;
+                try {
+                    setStatus(listStatusEl, `\u627f\u8a8d\u4e2d... (${successCount}/${rows.length})`);
+                    for (const row of rows) {
+                        try {
+                            const reviewNote = commonReviewNote || String(row.review_note || "").trim();
+                            const reviewedBy = commonReviewedBy || String(row.reviewed_by || "").trim();
+                            await applyCorrectionRow(row, adminKey, adminId, reviewNote, reviewedBy);
+                            successCount += 1;
+                            state.checkedIds.delete(getCorrectionKey(row));
+                            setStatus(listStatusEl, `\u627f\u8a8d\u4e2d... (${successCount}/${rows.length})`);
+                        } catch (err) {
+                            failures.push(
+                                `#${row.correction_id}: ${err instanceof Error ? err.message : "\u627f\u8a8d\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002"}`,
+                            );
+                        }
+                    }
+                    if (successCount > 0) {
+                        await loadCorrections();
+                        setStatus(listStatusEl, `${successCount}\u4ef6\u3092\u627f\u8a8d\u3057\u307e\u3057\u305f\u3002`);
+                    } else {
+                        setStatus(listStatusEl, "");
+                    }
+                    if (failures.length) {
+                        setError(listErrorEl, failures.join(" / "));
+                    }
+                } finally {
+                    state.submittingReview = false;
+                    searchBtn.disabled = false;
+                    clearBtn.disabled = false;
+                    updateActionButtons();
+                }
             }
 
             async function submitApply() {
@@ -1933,6 +2155,20 @@
                 }
             }
 
+            bulkApproveBtn.addEventListener("click", () => {
+                submitBulkApprove();
+            });
+            selectAllPendingEl.addEventListener("change", () => {
+                for (const row of getVisiblePendingRows()) {
+                    const key = getCorrectionKey(row);
+                    if (selectAllPendingEl.checked) {
+                        state.checkedIds.add(key);
+                    } else {
+                        state.checkedIds.delete(key);
+                    }
+                }
+                renderRows();
+            });
             searchBtn.addEventListener("click", loadCorrections);
             clearBtn.addEventListener("click", () => {
                 statusFilterEl.value = "pending";
