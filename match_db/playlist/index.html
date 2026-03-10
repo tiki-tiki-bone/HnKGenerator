@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <base href="../" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
-        <script src="../js/api-config.local.js"></script>
+        <script src="/js/api-config.local.js"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag() {
@@ -209,10 +209,47 @@
             }
 
             .playlist li {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
                 padding: 0.25rem 0.1rem;
                 white-space: nowrap;
                 overflow: hidden;
+            }
+
+            .playlist-entry-label {
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
                 text-overflow: ellipsis;
+            }
+
+            .playlist-correction {
+                flex: 0 0 auto;
+                width: 24px;
+                height: 24px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+                border: 1px solid #e3b3b3;
+                background: #fff4f4;
+                color: #c64b4b;
+                text-decoration: none;
+            }
+
+            .playlist-correction:hover,
+            .playlist-correction:focus {
+                border-color: #c64b4b;
+                background: #ffe3e3;
+                color: #b23d3d;
+                outline: none;
+            }
+
+            .playlist-correction svg {
+                width: 14px;
+                height: 14px;
+                display: block;
             }
 
             .playlist li:hover {
@@ -313,7 +350,7 @@
             }
         
             </style>
-        <script src="../js/site-header.js" defer data-site-header></script>
+        <script src="/js/site-header.js" defer data-site-header></script>
     </head>
     <body>
         <div id="siteHeader" data-title="北斗の拳 対戦動画DB"></div>
@@ -371,7 +408,7 @@
             };
 
             function parseEntry(entry) {
-                const [core, labelPart = ""] = String(entry || "").split("~");
+                const [core, labelPart = "", matchIdPart = ""] = String(entry || "").split("~");
                 const [vidPart, timePart = ""] = core.split("@");
                 const vid = safeDecode(vidPart).trim();
                 if (!vid) return null;
@@ -380,7 +417,8 @@
                 const endNum = Number(endStr);
                 const end = Number.isFinite(endNum) ? Math.max(0, Math.trunc(endNum)) : null;
                 const label = labelPart ? safeDecode(labelPart) : "";
-                return { videoId: vid, start, end, label };
+                const matchId = matchIdPart ? safeDecode(matchIdPart).trim() : "";
+                return { videoId: vid, start, end, label, matchId };
             }
 
             let items = [];
@@ -428,10 +466,34 @@
                     items.forEach((item, idx) => {
                         const li = document.createElement("li");
                         li.dataset.videoId = item.videoId;
+                        if (item.matchId) {
+                            li.dataset.matchId = item.matchId;
+                        }
                         const label = item.label || item.videoId;
-                        li.textContent = `${label} (${formatTime(item.start)}${
+                        const labelEl = document.createElement("span");
+                        labelEl.className = "playlist-entry-label";
+                        labelEl.textContent = `${label} (${formatTime(item.start)}${
                             item.end != null ? `-${formatTime(item.end)}` : ""
                         })`;
+                        li.appendChild(labelEl);
+                        if (item.matchId) {
+                            const correction = document.createElement("a");
+                            correction.className = "playlist-correction";
+                            correction.href = `correction/?id=${encodeURIComponent(item.matchId)}`;
+                            correction.target = "_blank";
+                            correction.rel = "noopener";
+                            correction.setAttribute("aria-label", "情報訂正");
+                            correction.title = "情報訂正";
+                            correction.innerHTML =
+                                '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+                                '<rect x="5" y="3" width="2" height="18" fill="currentColor"/>' +
+                                '<path fill="currentColor" d="M7 4h10l-2.6 3.6 2.6 3.6H7z"/>' +
+                                "</svg>";
+                            correction.addEventListener("click", (event) => {
+                                event.stopPropagation();
+                            });
+                            li.appendChild(correction);
+                        }
                         li.tabIndex = 0;
                         li.addEventListener("click", () => {
                             if (idx === currentIndex) return;
@@ -599,6 +661,8 @@
         <script src="https://www.youtube.com/iframe_api"></script>
     </body>
 </html>
+
+
 
 
 
