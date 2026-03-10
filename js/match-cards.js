@@ -316,6 +316,8 @@
                     const correction = document.createElement("a");
                     correction.className = "match-correction";
                     correction.href = correctionHref;
+                    correction.target = "_blank";
+                    correction.rel = "noopener";
                     correction.setAttribute("aria-label", correctionLabel);
                     correction.title = correctionLabel;
                     correction.innerHTML =
