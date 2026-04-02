@@ -907,17 +907,20 @@
                         h2.parentElement.id = id;
                     }
 
-                    // 目次に追加
-                    const li = document.createElement("li");
-                    const a = document.createElement("a");
-                    a.href = "#" + id;
-                    a.textContent = h2.textContent;
-                    li.appendChild(a);
-                    if (h2.dataset.tocGroup === "links") {
-                        tocLinks.appendChild(li);
-                    } else {
-                        tocCheats.appendChild(li);
+                    if (!h2.parentElement.hidden) {
+                        // 目次に追加
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = "#" + id;
+                        a.textContent = h2.textContent;
+                        li.appendChild(a);
+                        if (h2.dataset.tocGroup === "links") {
+                            tocLinks.appendChild(li);
+                        } else {
+                            tocCheats.appendChild(li);
+                        }
                     }
+
                 });
             </script>
         </main>
