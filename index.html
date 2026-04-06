@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
     <head>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5249633077991567" crossorigin="anonymous"></script>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
@@ -180,6 +179,57 @@
                 color: #333;
             }
 
+            .code-panel-header {
+                margin: 0 0 10px;
+            }
+
+            .code-panel-header h2 {
+                margin: 0;
+            }
+
+            .code-block {
+                position: relative;
+            }
+
+            .code-block textarea {
+                margin: 0;
+                padding-right: 5.5rem;
+            }
+
+            .code-block-toolbar {
+                position: absolute;
+                top: 0.55rem;
+                right: 0.55rem;
+                z-index: 1;
+            }
+
+            .code-mode-button {
+                border: 1px solid rgba(0, 0, 0, 0.14);
+                background: rgba(255, 255, 255, 0.88);
+                color: rgba(0, 0, 0, 0.6);
+                border-radius: 999px;
+                font-size: 0.76rem;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                padding: 0.22rem 0.72rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+                cursor: pointer;
+                transition:
+                    background-color 0.15s ease,
+                    border-color 0.15s ease,
+                    color 0.15s ease,
+                    box-shadow 0.15s ease;
+            }
+
+            .code-mode-button:hover,
+            .code-mode-button:focus {
+                border-color: rgba(0, 0, 0, 0.22);
+                background: rgba(255, 255, 255, 0.96);
+                color: rgba(0, 0, 0, 0.78);
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+                outline: none;
+            }
+
             textarea {
                 width: 100%;
                 height: 180px;
@@ -300,23 +350,31 @@
                 </p>
                 <!-- 前提チートコード表示 -->
                 <div class="base">
-                    <h2>前提チートコード</h2>
-                    <textarea readonly id="base-codes">
+                    <div class="code-panel-header">
+                        <h2>前提チートコード</h2>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-block-toolbar">
+                            <button type="button" class="code-mode-button" id="base-codes-mode">
+                                平文
+                            </button>
+                        </div>
+                        <textarea readonly id="base-codes">
 マスターコード:
-EC878528 1456E79B
+F0100200 0000000E
 
 数値変更コード:
-1CBE6E88 205AE79C
-1CBE6E8C 28DAB025
-1CBE6E90 1446FF25
-1CBE6E94 14D907C6
-1CBE6E98 80DAE7A5
-1CBE6E9C 04D6E7A8
-1CBE6EA0 1446FF65
-1CBE6EA8 88DAE7A5
-1CBE6EAC 14A1FFC6
-1CBE6EB4 B8BAE7C5</textarea
-                    >
+202BED60 3C04000F
+202BED64 3484FF80
+202BED68 00102880
+202BED6C 00852021
+202BED70 9C840000
+202BED74 10800003
+202BED78 00102840
+202BED80 94840000
+202BED84 00BD2821
+202BED8C A4A40020</textarea>
+                    </div>
                 </div>
                 <p style="margin-top: 0.5rem; text-align: right">
                     <a href="codes.html" style="text-decoration: underline"
@@ -330,12 +388,19 @@ EC878528 1456E79B
 
                 <!-- 実際に生成されるコード -->
                 <div class="generated">
-                    <h2>生成チートコード</h2>
-                    <textarea
-                        id="output"
-                        readonly
-                        placeholder="ここにチートコードが表示されます..."
-                    ></textarea>
+                    <div class="code-panel-header">
+                        <h2>生成チートコード</h2>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-block-toolbar">
+                            <button type="button" class="code-mode-button" id="output-mode">平文</button>
+                        </div>
+                        <textarea
+                            id="output"
+                            readonly
+                            placeholder="ここにチートコードが表示されます..."
+                        ></textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -362,11 +427,6 @@ EC878528 1456E79B
             ];
             // itemsは外部ファイル(js/items.js)で定義されます
 
-            const maskAddr = [0xa6, 0x96, 0x01, 0x82];
-            const subAddr = [0x6a, 0xff, 0x7e, 0x5a];
-            const maskVal = [0xd9, 0x3b, 0x1b, 0xcc];
-            const subVal = [0xc5, 0xe5, 0x34, 0x27];
-
             function initSelects() {
                 for (let i = 0; i < 8; i++) {
                     const sel = document.getElementById(`slot-${i}`);
@@ -380,10 +440,42 @@ EC878528 1456E79B
                 }
             }
 
+            document.getElementById("generate-btn").addEventListener("click", () => {
+                const out = [];
+                for (let i = 0; i < 8; i++) {
+                    const sel = document.getElementById(`slot-${i}`);
+                    if (sel.value) {
+                        const disp = displayAddresses[i]
+                            .toString(16)
+                            .toUpperCase()
+                            .padStart(8, "0");
+                        out.push(`${disp} ${sel.value}`);
+                    }
+                }
+                window.__hnkGeneratedRawText = out.join("\n");
+                if (typeof window.renderGeneratorOutput === "function") {
+                    window.renderGeneratorOutput();
+                } else {
+                    document.getElementById("output").value = window.__hnkGeneratedRawText;
+                }
+            });
+
+            // 初期化
+            initSelects();
+        </script>
+        <script>
+            const maskAddr = [0xa6, 0x96, 0x01, 0x82];
+            const subAddr = [0x6a, 0xff, 0x7e, 0x5a];
+            const maskVal = [0xd9, 0x3b, 0x1b, 0xcc];
+            const subVal = [0xc5, 0xe5, 0x34, 0x27];
+
             function encryptDword(hexStr, masks, subs) {
-                const bytes = hexStr.match(/.{2}/g).map((b) => parseInt(b, 16));
-                const enc = bytes.map((b, i) => ((b ^ masks[i]) - subs[i] + 0x100) & 0xff);
-                return enc.map((b) => b.toString(16).toUpperCase().padStart(2, "0")).join("");
+                return String(hexStr || "")
+                    .match(/.{2}/g)
+                    .map((b) => parseInt(b, 16))
+                    .map((b, i) => ((b ^ masks[i]) - subs[i] + 0x100) & 0xff)
+                    .map((b) => b.toString(16).toUpperCase().padStart(2, "0"))
+                    .join("");
             }
 
             function encryptLine(addrHex, valHex) {
@@ -394,26 +486,50 @@ EC878528 1456E79B
                 )}`;
             }
 
-            document.getElementById("generate-btn").addEventListener("click", () => {
-                const out = [];
-                for (let i = 0; i < 8; i++) {
-                    const sel = document.getElementById(`slot-${i}`);
-                    if (sel.value) {
-                        const disp = displayAddresses[i]
-                            .toString(16)
-                            .toUpperCase()
-                            .padStart(8, "0");
-                        out.push(encryptLine(disp, sel.value));
-                    }
-                }
-                document.getElementById("output").value = out.join("\n");
-            });
+            function encryptCodeBlock(text) {
+                return String(text || "")
+                    .replace(/\r\n?/g, "\n")
+                    .split("\n")
+                    .map((line) =>
+                        line.replace(
+                            /^(\s*)([0-9a-fA-F]{8})\s+([0-9a-fA-F]{8})(\s*)$/,
+                            (_, lead, addrHex, valHex, trail) =>
+                                `${lead}${encryptLine(addrHex, valHex)}${trail}`,
+                        ),
+                    )
+                    .join("\n");
+            }
 
-            // 初期化
-            initSelects();
-        </script>
-        <script>
+            function registerCodeToggle(textareaId, buttonId, getRawText) {
+                const textarea = document.getElementById(textareaId);
+                const button = document.getElementById(buttonId);
+                if (!textarea || !button) {
+                    return () => {};
+                }
+
+                const applyMode = () => {
+                    const rawText = getRawText().replace(/\r\n?/g, "\n");
+                    textarea.value = button.dataset.mode === "encrypted" ? encryptCodeBlock(rawText) : rawText;
+                    button.textContent = button.dataset.mode === "encrypted" ? "暗号" : "平文";
+                };
+
+                button.dataset.mode = "raw";
+                applyMode();
+                button.addEventListener("click", () => {
+                    button.dataset.mode = button.dataset.mode === "encrypted" ? "raw" : "encrypted";
+                    applyMode();
+                });
+                return applyMode;
+            }
+
+            const baseCodesRawText = document.getElementById("base-codes").value.replace(/\r\n?/g, "\n");
+            window.__hnkGeneratedRawText = "";
+            registerCodeToggle("base-codes", "base-codes-mode", () => baseCodesRawText);
+            window.renderGeneratorOutput = registerCodeToggle(
+                "output",
+                "output-mode",
+                () => window.__hnkGeneratedRawText,
+            );
 </script>
     </body>
 </html>
-
