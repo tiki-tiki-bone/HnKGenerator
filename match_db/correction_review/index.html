@@ -1076,6 +1076,10 @@
             async function resolvePlayerIdForApply(side, rawName, adminKey) {
                 const clean = normalizeTextNfkc(rawName).trim();
                 if (!clean) return null;
+                if (clean === "不明") {
+                    resetPlayerResolve(side);
+                    return 0;
+                }
 
                 const existingId = await findPlayerIdByExactName(clean);
                 if (existingId !== null) {
@@ -1123,6 +1127,10 @@
                 const token = (state.resolveToken[side] || 0) + 1;
                 state.resolveToken[side] = token;
                 if (!raw) {
+                    resetPlayerResolve(side);
+                    return;
+                }
+                if (raw === "不明") {
                     resetPlayerResolve(side);
                     return;
                 }
@@ -1872,7 +1880,7 @@
             async function resolvePlayerIdForBulk(rawName) {
                 const clean = normalizeTextNfkc(rawName).trim();
                 if (!clean) return null;
-                if (clean === "不明") return null;
+                if (clean === "不明") return 0;
                 const existingId = await findPlayerIdByExactName(clean);
                 if (existingId !== null) return existingId;
                 throw new Error(`player not found: ${clean}`);
