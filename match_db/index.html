@@ -912,6 +912,89 @@
                     min-width: 0;
                     width: 100%;
                 }
+                .suggest-field.player-token-field {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 0.4rem;
+                    min-height: auto;
+                    padding: 0.35rem 2rem 0.35rem 0.35rem;
+                }
+                .suggest-field.player-token-field input {
+                    width: 100%;
+                    flex: 0 0 auto;
+                    min-height: 1.9rem;
+                    padding: 0.28rem 0.35rem;
+                    transition:
+                        max-height 0.15s ease,
+                        padding 0.15s ease,
+                        opacity 0.15s ease;
+                }
+                .player-token-list {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.35rem;
+                    width: 100%;
+                    max-width: none;
+                    overflow: visible;
+                    white-space: normal;
+                    padding-right: 0.15rem;
+                }
+                .player-token-row {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    width: 100%;
+                    min-width: 0;
+                }
+                .player-token-row.with-input {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                }
+                .player-token-row input {
+                    width: auto;
+                    flex: 1 1 2rem;
+                    min-width: 1.4rem;
+                }
+                .player-token-row.with-input input {
+                    flex: 0 0 1.7rem;
+                    width: 1.7rem;
+                    min-width: 1.7rem;
+                }
+                .player-token-row.with-input:focus-within input {
+                    flex: 1 1 4.5rem;
+                    width: auto;
+                    min-width: 4.5rem;
+                }
+                .player-token {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.3rem;
+                    max-width: 90%;
+                    min-width: 0;
+                    flex: 0 1 auto;
+                }
+                .player-token-row.with-input .player-token {
+                    width: fit-content;
+                    max-width: calc(100% - 2.1rem);
+                }
+                .player-token-label {
+                    display: inline-block;
+                    flex: 1 1 auto;
+                    min-width: 0;
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .player-token-remove {
+                    flex: 0 0 auto;
+                }
+                .suggest-field.player-token-field .clear-btn {
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
                 .form-row.unknown-player-row > .unknown-toggle {
                     min-width: 0;
                     width: 100%;
@@ -1705,17 +1788,61 @@
                     field.insertBefore(tokenList, inputEl);
                     const state = {
                         field,
+                        hiddenEl,
                         tokenList,
                         tokens: [],
                         defaultPlaceholder: inputEl.getAttribute("placeholder") || "",
                         backspaceArmedId: "",
                     };
+                    field.addEventListener("click", (event) => {
+                        if (event.target instanceof Element) {
+                            if (
+                                event.target.closest(".player-token-remove") ||
+                                event.target.closest(".suggestions")
+                            ) {
+                                return;
+                            }
+                        }
+                        inputEl.focus();
+                    });
                     playerTokenState.set(inputEl, state);
                     const hiddenTokens = splitPlayerTokens(hiddenEl?.value);
                     if (hiddenTokens.length) {
                         state.tokens = hiddenTokens.map((id) => ({ id, label: id }));
                     }
                     return state;
+                }
+
+                function isMobilePlayerTokenLayout() {
+                    return window.matchMedia("(max-width: 600px)").matches;
+                }
+
+                function placeTokenInput(state, inputEl) {
+                    if (!state || !inputEl) return;
+                    const { field, tokenList, tokens } = state;
+                    const clearBtn = field.querySelector(".clear-btn");
+                    const anchor = clearBtn || field.querySelector(".suggestions") || null;
+                    tokenList.querySelectorAll(".player-token-row.with-input").forEach((row) => {
+                        row.classList.remove("with-input");
+                    });
+                    if (!isMobilePlayerTokenLayout() || tokens.length === 0) {
+                        if (inputEl.parentElement !== field) {
+                            field.insertBefore(inputEl, anchor);
+                        }
+                        return;
+                    }
+                    const rows = tokenList.querySelectorAll(".player-token-row");
+                    const lastRow = rows[rows.length - 1];
+                    if (!lastRow) {
+                        if (inputEl.parentElement !== field) {
+                            field.insertBefore(inputEl, anchor);
+                        }
+                        return;
+                    }
+                    lastRow.classList.add("with-input");
+                    if (inputEl.parentElement !== lastRow) {
+                        lastRow.appendChild(inputEl);
+                    }
                 }
 
                 function getPlayerTokens(inputEl, hiddenEl) {
@@ -1743,12 +1870,17 @@
                     }
                     state.tokens = cleanTokens;
                     for (const token of state.tokens) {
+                        const row = document.createElement("div");
+                        row.className = "player-token-row";
                         const chip = document.createElement("span");
                         chip.className = "player-token";
                         if (token.id === state.backspaceArmedId) {
                             chip.classList.add("is-armed");
                         }
-                        chip.textContent = token.label;
+                        const labelEl = document.createElement("span");
+                        labelEl.className = "player-token-label";
+                        labelEl.textContent = token.label;
+                        labelEl.title = token.label;
                         const removeBtn = document.createElement("button");
                         removeBtn.type = "button";
                         removeBtn.className = "player-token-remove";
@@ -1759,9 +1891,12 @@
                             state.backspaceArmedId = "";
                             renderPlayerTokens(inputEl, hiddenEl);
                         });
+                        chip.appendChild(labelEl);
                         chip.appendChild(removeBtn);
-                        tokenList.appendChild(chip);
+                        row.appendChild(chip);
+                        tokenList.appendChild(row);
                     }
+                    placeTokenInput(state, inputEl);
                     const csv = state.tokens.map((token) => token.id).join(",");
                     if (hiddenEl) hiddenEl.value = csv;
                     field.dataset.tokenCount = String(state.tokens.length);
@@ -2997,6 +3132,15 @@
                         }
                     });
                 }
+
+                window.addEventListener("resize", () => {
+                    for (const inputEl of [playerInput, cardPlayer1Input, cardPlayer2Input]) {
+                        if (!inputEl) continue;
+                        const state = playerTokenState.get(inputEl);
+                        if (!state) continue;
+                        renderPlayerTokens(inputEl, state.hiddenEl);
+                    }
+                });
 
                 async function applyPlayerIdToInput(inputEl, hiddenEl, id) {
                     if (!inputEl || !id) return;
