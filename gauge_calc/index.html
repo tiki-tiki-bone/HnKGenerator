@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5249633077991567"
+            crossorigin="anonymous"
+        ></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NM6S92KNW1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-NM6S92KNW1");
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>北斗の拳 ゲージ回収量計算機</title>
+        <meta
+            name="description"
+            content="攻撃レベル、ヒット数、蓄積値と各種状態から、自分と相手のブースト・オーラ回収量を計算します。"
+        />
+        <style>
+            :root {
+                color-scheme: light;
+                --bg: #f3f4f7;
+                --panel: #ffffff;
+                --panel-soft: #f7f8fb;
+                --line: #d7dbe5;
+                --line-strong: #c4cada;
+                --text: #2d3340;
+                --muted: #697387;
+                --accent: #ffb347;
+                --accent-deep: #ff9e1a;
+                --danger: #b14e4e;
+                --shadow: 0 10px 32px rgba(23, 33, 58, 0.08);
+            }
+
+            html {
+                touch-action: manipulation;
+            }
+
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--text);
+                font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+            }
+
+            header {
+                background-color: #333;
+                color: white;
+                padding: 2rem 1rem 1rem;
+                text-align: center;
+                position: relative;
+            }
+
+            nav {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: nowrap;
+            }
+
+            nav a {
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.4rem 1rem;
+                border: 2px solid transparent;
+                border-radius: 6px;
+                transition:
+                    background-color 0.3s ease,
+                    border-color 0.3s ease,
+                    color 0.3s ease;
+                font-size: 1rem;
+                user-select: none;
+            }
+
+            nav a:hover,
+            nav a:focus {
+                background-color: #ffb347;
+                color: #333;
+                border-color: #ffb347;
+                outline: none;
+            }
+
+            .menu-toggle {
+                display: none;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                width: 30px;
+                height: 22px;
+                cursor: pointer;
+                flex-direction: column;
+                justify-content: space-between;
+                user-select: none;
+                z-index: 10;
+            }
+
+            .menu-toggle span {
+                display: block;
+                height: 4px;
+                background: white;
+                border-radius: 2px;
+            }
+
+            main {
+                max-width: 1040px;
+                margin: 0 auto;
+                padding: 1.5rem 1rem 2.5rem;
+            }
+
+            .hero,
+            .panel {
+                background: var(--panel);
+                border: 1px solid var(--line);
+                border-radius: 18px;
+                box-shadow: var(--shadow);
+            }
+
+            .hero {
+                padding: 1.4rem 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero h2 {
+                margin: 0 0 0.4rem;
+                font-size: 1.4rem;
+            }
+
+            .hero p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.7;
+            }
+
+            .panel {
+                padding: 1.2rem 1.2rem 1.35rem;
+                margin-bottom: 1rem;
+            }
+
+            .panel h3 {
+                margin: 0 0 0.85rem;
+                font-size: 1.08rem;
+            }
+
+            .details-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.8rem;
+            }
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: 0.38rem;
+            }
+
+            .field label,
+            .field legend,
+            .row-meta-label {
+                font-size: 0.92rem;
+                font-weight: 700;
+            }
+
+            .accumulation-control {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .accumulation-control .js-accumulation {
+                padding-right: 0.8rem;
+            }
+
+            .accumulation-step {
+                display: none;
+                position: absolute;
+                right: 0.42rem;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1.72rem;
+                height: 1.72rem;
+                border: 1px solid #d8dde8;
+                border-radius: 10px;
+                background: linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+                color: #5e6676;
+                font-size: 0.9rem;
+                font-weight: 700;
+                line-height: 1;
+                padding: 0;
+                box-shadow: 0 1px 2px rgba(25, 35, 58, 0.06);
+                cursor: pointer;
+            }
+
+            .accumulation-step:hover,
+            .accumulation-step:focus-visible {
+                outline: none;
+                border-color: #bac4d7;
+                background: linear-gradient(180deg, #ffffff 0%, #eef2f8 100%);
+                color: #3f4857;
+            }
+
+            select,
+            input[type="number"],
+            button {
+                font: inherit;
+            }
+
+            select,
+            input[type="number"] {
+                width: 100%;
+                min-height: 42px;
+                border: 1px solid var(--line-strong);
+                border-radius: 10px;
+                padding: 0.65rem 0.8rem;
+                box-sizing: border-box;
+                background: #fff;
+                color: var(--text);
+            }
+
+            .check-card {
+                min-height: 42px;
+                display: flex;
+                align-items: center;
+                gap: 0.55rem;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 0.55rem 0.8rem;
+                box-sizing: border-box;
+                background: var(--panel-soft);
+            }
+
+            .details-grid > .check-card {
+                min-height: 42px;
+                height: 42px;
+                padding: 0 0.8rem;
+            }
+
+            .check-card input {
+                margin: 0;
+            }
+
+            .toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.8rem;
+                margin-bottom: 0.9rem;
+            }
+
+            .toolbar-meta {
+                color: var(--muted);
+                font-size: 0.9rem;
+            }
+
+            .button-row {
+                display: flex;
+                gap: 0.6rem;
+                flex-wrap: wrap;
+            }
+
+            .bottom-action-row {
+                margin-top: 0.9rem;
+                justify-content: flex-end;
+            }
+
+            .button {
+                appearance: none;
+                border: 1px solid var(--line-strong);
+                background: #fff;
+                color: var(--text);
+                border-radius: 999px;
+                padding: 0.62rem 1rem;
+                cursor: pointer;
+                transition:
+                    background-color 0.18s ease,
+                    border-color 0.18s ease,
+                    color 0.18s ease;
+            }
+
+            .button:hover,
+            .button:focus-visible {
+                outline: none;
+                border-color: var(--accent);
+                background: #fff7eb;
+            }
+
+            .button-primary {
+                background: var(--accent);
+                border-color: var(--accent);
+                font-weight: 700;
+            }
+
+            .button-primary:hover,
+            .button-primary:focus-visible {
+                background: var(--accent-deep);
+                border-color: var(--accent-deep);
+            }
+
+            .icon-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.55rem;
+                min-width: 48px;
+                min-height: 48px;
+                padding: 0.72rem 1rem;
+                box-shadow: 0 8px 18px rgba(255, 179, 71, 0.22);
+            }
+
+            .icon-button-mark {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 1.45rem;
+                height: 1.45rem;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.28);
+                font-size: 1.2rem;
+                line-height: 1;
+                font-weight: 700;
+                flex: 0 0 auto;
+            }
+
+            .icon-button-label {
+                font-size: 0.94rem;
+                letter-spacing: 0.01em;
+            }
+
+            .rows {
+                display: grid;
+                gap: 0.9rem;
+            }
+
+            .calc-row {
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                padding: 1rem;
+                background: var(--panel-soft);
+            }
+
+            .row-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .row-title {
+                display: flex;
+                align-items: center;
+            }
+
+            .row-title-input {
+                width: min(100%, 12rem);
+                border: 1px dashed #cfd5e2;
+                background: rgba(255, 255, 255, 0.72);
+                color: var(--text);
+                font-size: 0.98rem;
+                font-weight: 700;
+                padding: 0.28rem 0.55rem;
+                border-radius: 8px;
+                cursor: text;
+                transition:
+                    border-color 0.18s ease,
+                    background-color 0.18s ease,
+                    box-shadow 0.18s ease;
+            }
+
+            .row-title-input:hover {
+                border-color: #b7c1d6;
+                background: rgba(255, 255, 255, 0.92);
+            }
+
+            .row-title-input:focus {
+                outline: 2px solid rgba(255, 179, 71, 0.45);
+                outline-offset: 2px;
+                border-color: #ffb347;
+                background: rgba(255, 255, 255, 0.98);
+                box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.12);
+            }
+
+            .row-grid {
+                display: grid;
+                grid-template-columns: 140px 140px minmax(140px, 1fr);
+                gap: 0.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .flag-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.6rem;
+            }
+
+            .flag-grid .check-card {
+                font-size: 0.88rem;
+            }
+
+            .mobile-only-break {
+                display: none;
+            }
+
+            .mobile-only-inline {
+                display: none;
+            }
+
+            .desktop-only-inline {
+                display: inline;
+            }
+
+            .mobile-only-label {
+                display: none;
+            }
+
+            .desktop-only-label {
+                display: inline;
+            }
+
+            .row-summary {
+                margin-top: 0.9rem;
+                padding-top: 0.85rem;
+                border-top: 1px dashed var(--line);
+                color: var(--muted);
+                font-size: 0.88rem;
+            }
+
+            .result-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .result-card {
+                background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%);
+                border: 1px solid #f2d7a5;
+                border-radius: 16px;
+                padding: 0.95rem 1rem;
+            }
+
+            .result-label {
+                margin: 0 0 0.4rem;
+                font-size: 0.88rem;
+                color: var(--muted);
+            }
+
+            .result-value {
+                margin: 0;
+                font-size: 1.9rem;
+                font-weight: 800;
+                letter-spacing: 0.02em;
+            }
+
+            .breakdown-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.92rem;
+                overflow: hidden;
+                border-radius: 14px;
+            }
+
+            .breakdown-table th,
+            .breakdown-table td {
+                padding: 0.72rem 0.68rem;
+                text-align: right;
+                border-bottom: 1px solid var(--line);
+                white-space: nowrap;
+            }
+
+            .breakdown-table th:first-child,
+            .breakdown-table td:first-child,
+            .breakdown-table th:nth-child(2),
+            .breakdown-table td:nth-child(2) {
+                text-align: left;
+            }
+
+            .breakdown-table thead th {
+                background: #f6f7fb;
+                color: var(--muted);
+                font-size: 0.82rem;
+            }
+
+            .breakdown-wrap {
+                overflow-x: auto;
+            }
+
+            .note-list {
+                margin: 0;
+                padding-left: 1.2rem;
+                color: var(--muted);
+                line-height: 1.75;
+            }
+
+            .danger-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                min-width: 42px;
+                padding: 0;
+                color: var(--danger);
+                background: #fff;
+                border-color: #dfcaca;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(177, 78, 78, 0.1);
+            }
+
+            .danger-button svg {
+                width: 18px;
+                height: 18px;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.9;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
+
+            .danger-button:hover,
+            .danger-button:focus-visible {
+                background: #fff5f5;
+                border-color: #d89a9a;
+            }
+
+            .danger-button:disabled {
+                opacity: 0.45;
+                cursor: default;
+            }
+
+            .footer {
+                text-align: center;
+                color: var(--muted);
+                font-size: 0.86rem;
+                padding: 0.6rem 0 0.2rem;
+            }
+
+            @media (max-width: 900px) {
+                .details-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .row-grid,
+                .result-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .flag-grid {
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                }
+            }
+
+            @media (max-width: 600px) {
+                nav {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background-color: #333;
+                    flex-direction: column;
+                    display: none;
+                    margin: 0;
+                    padding: 0.5rem 0;
+                }
+
+                nav a {
+                    padding: 1rem;
+                    border: none;
+                    text-align: center;
+                    font-size: 1.2rem;
+                    display: block;
+                    margin: 10px 0;
+                }
+
+                nav.show {
+                    display: flex;
+                }
+
+                .menu-toggle {
+                    display: flex;
+                }
+
+                h1 {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+
+                main {
+                    padding: 1rem 0.65rem 2rem;
+                }
+
+                .hero,
+                .panel {
+                    padding: 1rem;
+                    border-radius: 14px;
+                }
+
+                .toolbar,
+                .row-head {
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                .details-grid,
+                .flag-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .row-grid {
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                    gap: 0.5rem;
+                }
+
+                .result-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .flag-grid {
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                }
+
+                .flag-grid .check-card {
+                    font-size: 0.82rem;
+                    gap: 0.36rem;
+                    padding: 0.46rem 0.56rem;
+                }
+
+                .accumulation-control .js-accumulation {
+                    padding-right: 2.85rem;
+                }
+
+                .accumulation-step {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .mobile-only-break {
+                    display: inline;
+                }
+
+                .mobile-only-inline {
+                    display: inline;
+                }
+
+                .desktop-only-inline {
+                    display: none;
+                }
+
+                .mobile-only-label {
+                    display: inline;
+                }
+
+                .desktop-only-label {
+                    display: none;
+                }
+
+                .breakdown-table th,
+                .breakdown-table td {
+                    padding: 0.58rem 0.34rem;
+                }
+
+                .result-value {
+                    font-size: 1.58rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="siteHeader" data-title="ゲージ回収量計算機"></div>
+        <script src="/js/site-header.js" data-site-header></script>
+
+        <main>
+            <section class="panel">
+                <h3>詳細設定</h3>
+                <div class="details-grid">
+                    <div class="field">
+                        <label for="roundTime">ラウンド時間補正</label>
+                        <select id="roundTime">
+                            <option value="99">99秒 / 無限</option>
+                            <option value="77" selected>77秒</option>
+                            <option value="55">55秒</option>
+                            <option value="33">33秒</option>
+                            <option value="7">7秒</option>
+                            <option value="special">サバイバル / ヒストリー / デモプレイ</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="attackerType">攻撃側キャラ補正</label>
+                        <select id="attackerType">
+                            <option value="normal" selected>通常キャラ</option>
+                            <option value="heart">ハート様</option>
+                            <option value="raoh">拳王</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="defenderType">防御側キャラ補正</label>
+                        <select id="defenderType">
+                            <option value="normal" selected>通常キャラ</option>
+                            <option value="heart">ハート様</option>
+                            <option value="raoh">拳王</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="toolbar">
+                    <div>
+                        <h3 style="margin-bottom: 0.25rem">入力項目</h3>
+                        <div class="toolbar-meta" id="toolbarMeta">1行</div>
+                    </div>
+                </div>
+                <div class="rows" id="rows"></div>
+                <div class="button-row bottom-action-row">
+                    <button
+                        id="addRowButton"
+                        class="button button-primary icon-button"
+                        type="button"
+                        aria-label="入力項目を追加"
+                    >
+                        <span class="icon-button-mark" aria-hidden="true">+</span>
+                        <span class="icon-button-label">入力項目を追加</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h3>計算結果</h3>
+                <div class="result-grid">
+                    <article class="result-card">
+                        <p class="result-label">自分ブースト回収量</p>
+                        <p class="result-value" id="selfBoostValue">0</p>
+                    </article>
+                    <article class="result-card">
+                        <p class="result-label">相手ブースト回収量</p>
+                        <p class="result-value" id="opponentBoostValue">0</p>
+                    </article>
+                    <article class="result-card">
+                        <p class="result-label">自分オーラ回収量</p>
+                        <p class="result-value" id="selfAuraValue">0</p>
+                    </article>
+                    <article class="result-card">
+                        <p class="result-label">相手オーラ回収量</p>
+                        <p class="result-value" id="opponentAuraValue">0</p>
+                    </article>
+                </div>
+
+                <div class="breakdown-wrap">
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>名前</th>
+                                <th>
+                                    <span class="desktop-only-inline">ヒット数</span>
+                                    <span class="mobile-only-inline">ﾋｯﾄ数</span>
+                                </th>
+                                <th>
+                                    <span class="desktop-only-inline">自分ブースト</span>
+                                    <span class="mobile-only-inline">自分ブ</span>
+                                </th>
+                                <th>
+                                    <span class="desktop-only-inline">相手ブースト</span>
+                                    <span class="mobile-only-inline">相手ブ</span>
+                                </th>
+                                <th>
+                                    <span class="desktop-only-inline">自分オーラ</span>
+                                    <span class="mobile-only-inline">自分オ</span>
+                                </th>
+                                <th>
+                                    <span class="desktop-only-inline">相手オーラ</span>
+                                    <span class="mobile-only-inline">相手オ</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="breakdownBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h3>補足</h3>
+                <ul class="note-list">
+                    <li>一部技は特殊処理のため上記計算式が当てはまりません。</li>
+                    <li>
+                        サウザーハートマミヤ以外の掴み投げ初段はブースト・オーラの自分側回収量が2倍になります。
+                    </li>
+                    <li>
+                        各技の攻撃レベルについては<a
+                            href="https://w.atwiki.jp/achokuto/pages/19.html#id_1675c32b"
+                            >こちらのページ</a
+                        >を参照ください。
+                    </li>
+                    <li>
+                        計算結果に誤り等ございましたら<a href="https://x.com/tiki_tiki_bone"
+                            >@tiki_tiki_bone</a
+                        >までご連絡ください。
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <template id="rowTemplate">
+            <section class="calc-row">
+                <div class="row-head">
+                    <div class="row-title">
+                        <input class="row-title-input js-row-title" type="text" value="" />
+                    </div>
+                    <button
+                        class="button danger-button js-remove-row"
+                        type="button"
+                        aria-label="この行を削除"
+                        title="この行を削除"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7h16"></path>
+                            <path d="M9 7V5.5h6V7"></path>
+                            <path d="M8 10.5v6"></path>
+                            <path d="M12 10.5v6"></path>
+                            <path d="M16 10.5v6"></path>
+                            <path
+                                d="M6.5 7.5l.7 11a2 2 0 0 0 2 1.9h5.6a2 2 0 0 0 2-1.9l.7-11"
+                            ></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="row-grid">
+                    <div class="field">
+                        <label>攻撃レベル</label>
+                        <select class="js-level">
+                            <option value="1">Lv1</option>
+                            <option value="2">Lv2</option>
+                            <option value="3" selected>Lv3</option>
+                            <option value="4">Lv4</option>
+                            <option value="5">Lv5</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>ヒット数</label>
+                        <select class="js-hit-count">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10" selected>10以上</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>蓄積値</label>
+                        <div class="accumulation-control">
+                            <input
+                                class="js-accumulation"
+                                type="number"
+                                inputmode="numeric"
+                                min="0"
+                                step="1"
+                                value="0"
+                            />
+                            <button
+                                class="accumulation-step js-accumulation-step"
+                                type="button"
+                                aria-label="蓄積値を1増やす"
+                            >
+                                +1
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flag-grid">
+                    <label class="check-card">
+                        <input class="js-grave" type="checkbox" />
+                        <span>グレコン</span>
+                    </label>
+                    <label class="check-card">
+                        <input class="js-wall" type="checkbox" />
+                        <span>壁やられ</span>
+                    </label>
+                    <label class="check-card">
+                        <input class="js-projectile" type="checkbox" />
+                        <span>飛び道具</span>
+                    </label>
+                    <label class="check-card">
+                        <input class="js-bani" type="checkbox" />
+                        <span>バニ属性</span>
+                    </label>
+                    <label class="check-card">
+                        <input class="js-counter-bani" type="checkbox" />
+                        <span>カウンター時バニ属性</span>
+                    </label>
+                    <label class="check-card">
+                        <input class="js-low-health" type="checkbox" />
+                        <span
+                            >相手体力<span class="mobile-only-break"><br /></span>半分以下</span
+                        >
+                    </label>
+                    <label class="check-card">
+                        <input class="js-guard" type="checkbox" />
+                        <span>ガード</span>
+                    </label>
+                    <label class="check-card">
+                        <input class="js-aura-drain" type="checkbox" />
+                        <span
+                            >ブースト<span class="mobile-only-break"><br /></span>減少中</span
+                        >
+                    </label>
+                </div>
+
+                <div class="row-summary js-row-summary">
+                    この行の計算結果は下の表に反映されます。
+                </div>
+            </section>
+        </template>
+
+        <script src="/js/gauge-calc.js"></script>
+        <script>
+            (() => {
+                const ROUND_SCALES = {
+                    99: 1,
+                    77: 1.1,
+                    55: 1.2,
+                    33: 1.4,
+                    7: 1.5,
+                    special: 1.1,
+                };
+
+                const rowsEl = document.getElementById("rows");
+                const rowTemplate = document.getElementById("rowTemplate");
+                const addRowButton = document.getElementById("addRowButton");
+                const toolbarMeta = document.getElementById("toolbarMeta");
+                const roundTimeEl = document.getElementById("roundTime");
+                const attackerTypeEl = document.getElementById("attackerType");
+                const defenderTypeEl = document.getElementById("defenderType");
+
+                const selfBoostValueEl = document.getElementById("selfBoostValue");
+                const opponentBoostValueEl = document.getElementById("opponentBoostValue");
+                const selfAuraValueEl = document.getElementById("selfAuraValue");
+                const opponentAuraValueEl = document.getElementById("opponentAuraValue");
+                const breakdownBody = document.getElementById("breakdownBody");
+
+                function clampNonNegativeInteger(value, fallback) {
+                    const parsed = Number.parseInt(value, 10);
+                    if (!Number.isFinite(parsed) || parsed < 0) {
+                        return fallback;
+                    }
+                    return parsed;
+                }
+
+                function getRoundScale() {
+                    return ROUND_SCALES[roundTimeEl.value] || 1;
+                }
+
+                function readSettings() {
+                    return {
+                        roundScale: getRoundScale(),
+                        attackerType: attackerTypeEl.value,
+                        defenderType: defenderTypeEl.value,
+                    };
+                }
+
+                function readRow(rowEl) {
+                    const hits = Math.max(
+                        1,
+                        clampNonNegativeInteger(rowEl.querySelector(".js-hit-count").value, 10),
+                    );
+                    return {
+                        level:
+                            clampNonNegativeInteger(rowEl.querySelector(".js-level").value, 3) || 3,
+                        hits,
+                        accumulation: clampNonNegativeInteger(
+                            rowEl.querySelector(".js-accumulation").value,
+                            0,
+                        ),
+                        grave: rowEl.querySelector(".js-grave").checked,
+                        wall: rowEl.querySelector(".js-wall").checked,
+                        projectile: rowEl.querySelector(".js-projectile").checked,
+                        bani: rowEl.querySelector(".js-bani").checked,
+                        counterBani: rowEl.querySelector(".js-counter-bani").checked,
+                        lowHealth: rowEl.querySelector(".js-low-health").checked,
+                        guard: rowEl.querySelector(".js-guard").checked,
+                        auraDrain: rowEl.querySelector(".js-aura-drain").checked,
+                    };
+                }
+
+                function describeHitLabel(hitIndex) {
+                    return hitIndex >= 10 ? "10ヒット目以降" : `${hitIndex}ヒット目`;
+                }
+
+                function buildBreakdownRow(rowName, hitLabel, contribution) {
+                    const mobileHitLabel =
+                        hitLabel === "10ヒット目以降" ? "10～" : hitLabel.replace("ヒット目", "");
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${rowName}</td>
+                        <td><span class="desktop-only-label">${hitLabel}</span><span class="mobile-only-label">${mobileHitLabel}</span></td>
+                        <td>${contribution.selfBoost}</td>
+                        <td>${contribution.opponentBoost}</td>
+                        <td>${contribution.selfAura}</td>
+                        <td>${contribution.opponentAura}</td>
+                    `;
+                    return tr;
+                }
+
+                function syncRowLabels() {
+                    const rowEls = rowsEl.querySelectorAll(".calc-row");
+                    rowEls.forEach((rowEl, index) => {
+                        const titleEl = rowEl.querySelector(".js-row-title");
+                        if (titleEl && !titleEl.value.trim()) {
+                            titleEl.value = `入力 ${index + 1}`;
+                        }
+                    });
+
+                    const disableRemove = rowEls.length <= 1;
+                    rowEls.forEach((rowEl) => {
+                        rowEl.querySelector(".js-remove-row").disabled = disableRemove;
+                    });
+                }
+
+                function syncGuardModeState(rowEl) {
+                    const forceSingleHit = rowEl.querySelector(".js-guard")?.checked;
+                    const hitCountEl = rowEl.querySelector(".js-hit-count");
+                    if (!hitCountEl) return;
+                    if (forceSingleHit) {
+                        hitCountEl.value = "1";
+                    }
+                    hitCountEl.disabled = Boolean(forceSingleHit);
+                }
+
+                function syncBaniState(rowEl, changedClass) {
+                    const baniEl = rowEl.querySelector(".js-bani");
+                    const counterBaniEl = rowEl.querySelector(".js-counter-bani");
+                    const wallEl = rowEl.querySelector(".js-wall");
+                    const hitCountEl = rowEl.querySelector(".js-hit-count");
+                    if (!baniEl || !counterBaniEl || !wallEl || !hitCountEl) return;
+                    const hits = clampNonNegativeInteger(hitCountEl.value, 10);
+
+                    if (changedClass === ".js-bani" && baniEl.checked) {
+                        counterBaniEl.checked = false;
+                        if (hits === 1) {
+                            wallEl.checked = true;
+                        }
+                    }
+                    if (changedClass === ".js-counter-bani" && counterBaniEl.checked) {
+                        baniEl.checked = false;
+                        wallEl.checked = true;
+                    }
+                    if (changedClass === ".js-wall" && !wallEl.checked) {
+                        counterBaniEl.checked = false;
+                    }
+                }
+
+                function syncCounterBaniAvailability(rowEl) {
+                    const hitCountEl = rowEl.querySelector(".js-hit-count");
+                    const counterBaniEl = rowEl.querySelector(".js-counter-bani");
+                    if (!hitCountEl || !counterBaniEl) return;
+                    const hits = clampNonNegativeInteger(hitCountEl.value, 10);
+                    const canUseCounterBani = hits === 1;
+                    if (!canUseCounterBani) {
+                        counterBaniEl.checked = false;
+                    }
+                    counterBaniEl.disabled = !canUseCounterBani;
+                }
+
+                function syncAllGuardModeStates() {
+                    rowsEl.querySelectorAll(".calc-row").forEach((rowEl) => {
+                        syncGuardModeState(rowEl);
+                        syncCounterBaniAvailability(rowEl);
+                    });
+                }
+
+                function recalculate() {
+                    const settings = readSettings();
+                    const rowEls = [...rowsEl.querySelectorAll(".calc-row")];
+
+                    const totals = {
+                        selfBoost: 0,
+                        opponentBoost: 0,
+                        selfAura: 0,
+                        opponentAura: 0,
+                    };
+
+                    breakdownBody.innerHTML = "";
+
+                    rowEls.forEach((rowEl, index) => {
+                        const rowData = readRow(rowEl);
+                        const contribution = window.calculateGaugeRow(rowData, settings);
+                        const hitLabel = describeHitLabel(rowData.hits);
+                        const rowName =
+                            rowEl.querySelector(".js-row-title")?.value.trim() ||
+                            `入力 ${index + 1}`;
+                        totals.selfBoost += contribution.selfBoost;
+                        totals.opponentBoost += contribution.opponentBoost;
+                        totals.selfAura += contribution.selfAura;
+                        totals.opponentAura += contribution.opponentAura;
+
+                        rowEl.querySelector(".js-row-summary").textContent =
+                            `自分ブースト ${contribution.selfBoost} / 相手ブースト ${contribution.opponentBoost} / 自分オーラ ${contribution.selfAura} / 相手オーラ ${contribution.opponentAura}`;
+                        breakdownBody.appendChild(
+                            buildBreakdownRow(rowName, hitLabel, contribution),
+                        );
+                    });
+
+                    selfBoostValueEl.textContent = totals.selfBoost;
+                    opponentBoostValueEl.textContent = totals.opponentBoost;
+                    selfAuraValueEl.textContent = Number.parseFloat(
+                        Number(totals.selfAura).toPrecision(7),
+                    );
+                    opponentAuraValueEl.textContent = Number.parseFloat(
+                        Number(totals.opponentAura).toPrecision(7),
+                    );
+                    toolbarMeta.textContent = `${rowEls.length}行`;
+                }
+
+                function addRow(data) {
+                    const fragment = rowTemplate.content.cloneNode(true);
+                    const rowEl = fragment.querySelector(".calc-row");
+
+                    if (data) {
+                        rowEl.querySelector(".js-level").value = String(data.level ?? 3);
+                        rowEl.querySelector(".js-hit-count").value = String(data.hits ?? 10);
+                        rowEl.querySelector(".js-accumulation").value = String(
+                            data.accumulation ?? 0,
+                        );
+                        rowEl.querySelector(".js-grave").checked = Boolean(data.grave);
+                        rowEl.querySelector(".js-wall").checked = Boolean(data.wall);
+                        rowEl.querySelector(".js-projectile").checked = Boolean(data.projectile);
+                        rowEl.querySelector(".js-bani").checked = Boolean(data.bani);
+                        rowEl.querySelector(".js-counter-bani").checked = Boolean(data.counterBani);
+                        rowEl.querySelector(".js-low-health").checked = Boolean(data.lowHealth);
+                        rowEl.querySelector(".js-aura-drain").checked = Boolean(data.auraDrain);
+                    }
+
+                    rowEl.querySelector(".js-remove-row").addEventListener("click", () => {
+                        if (rowsEl.querySelectorAll(".calc-row").length <= 1) {
+                            return;
+                        }
+                        rowEl.remove();
+                        syncRowLabels();
+                        recalculate();
+                    });
+
+                    rowsEl.appendChild(fragment);
+                    syncRowLabels();
+                    syncGuardModeState(rowEl);
+                    syncCounterBaniAvailability(rowEl);
+                    recalculate();
+                }
+
+                function getNextHitValueFromLastRow() {
+                    const rowEls = [...rowsEl.querySelectorAll(".calc-row")];
+                    const lastRowEl = rowEls[rowEls.length - 1];
+                    if (!lastRowEl) {
+                        return 1;
+                    }
+                    const lastHits = clampNonNegativeInteger(
+                        lastRowEl.querySelector(".js-hit-count")?.value,
+                        1,
+                    );
+                    if (lastHits >= 10) {
+                        return 10;
+                    }
+                    return Math.min(lastHits + 1, 10);
+                }
+
+                function getLastRowData() {
+                    const rowEls = [...rowsEl.querySelectorAll(".calc-row")];
+                    const lastRowEl = rowEls[rowEls.length - 1];
+                    if (!lastRowEl) {
+                        return {
+                            level: 3,
+                            hits: 1,
+                            accumulation: 0,
+                            grave: false,
+                            wall: false,
+                            projectile: false,
+                            bani: false,
+                            counterBani: false,
+                            lowHealth: false,
+                            guard: false,
+                            auraDrain: false,
+                        };
+                    }
+                    return readRow(lastRowEl);
+                }
+
+                rowsEl.addEventListener("input", (event) => {
+                    if (event.target.matches('input[type="number"]')) {
+                        const input = event.target;
+                        if (input.value === "") {
+                            return;
+                        }
+                    }
+                    recalculate();
+                });
+
+                rowsEl.addEventListener("click", (event) => {
+                    const stepButton = event.target.closest(".js-accumulation-step");
+                    if (!stepButton) {
+                        return;
+                    }
+                    const rowEl = stepButton.closest(".calc-row");
+                    const accumulationEl = rowEl?.querySelector(".js-accumulation");
+                    if (!accumulationEl) {
+                        return;
+                    }
+                    const currentValue = clampNonNegativeInteger(accumulationEl.value, 0);
+                    accumulationEl.value = String(currentValue + 1);
+                    recalculate();
+                });
+
+                rowsEl.addEventListener("change", (event) => {
+                    const rowEl = event.target.closest(".calc-row");
+                    if (rowEl) {
+                        if (event.target.matches(".js-guard")) {
+                            syncGuardModeState(rowEl);
+                            syncCounterBaniAvailability(rowEl);
+                        }
+                        if (event.target.matches(".js-bani")) {
+                            syncBaniState(rowEl, ".js-bani");
+                        }
+                        if (event.target.matches(".js-counter-bani")) {
+                            syncBaniState(rowEl, ".js-counter-bani");
+                        }
+                        if (event.target.matches(".js-wall")) {
+                            syncBaniState(rowEl, ".js-wall");
+                        }
+                        if (event.target.matches(".js-hit-count")) {
+                            syncCounterBaniAvailability(rowEl);
+                        }
+                    }
+                    recalculate();
+                });
+                roundTimeEl.addEventListener("change", recalculate);
+                attackerTypeEl.addEventListener("change", recalculate);
+                defenderTypeEl.addEventListener("change", recalculate);
+
+                addRowButton.addEventListener("click", () => {
+                    const lastRowData = getLastRowData();
+                    addRow({
+                        ...lastRowData,
+                        hits: getNextHitValueFromLastRow(),
+                    });
+                });
+
+                addRow({
+                    level: 3,
+                    hits: 1,
+                    accumulation: 0,
+                });
+                syncAllGuardModeStates();
+            })();
+        </script>
+    </body>
+</html>
